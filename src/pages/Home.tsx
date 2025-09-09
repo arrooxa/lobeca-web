@@ -1,11 +1,13 @@
-import Header from "../components/Header";
+import Header from "@/components/Header";
+import HeroSection from "@/components/HeroSection";
 
-const Home = () => {
+const Homepage = () => {
   return (
     <>
       <Header />
+      <HeroSection />
     </>
   );
 };
 
-export default Home;
+export default Homepage;

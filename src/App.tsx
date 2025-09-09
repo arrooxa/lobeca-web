@@ -1,11 +1,12 @@
+import "./App.css";
 import { Route, Routes } from "react-router";
-import Home from "./pages";
-import { ROUTES } from "./constants";
+import Homepage from "./pages/Home";
 
 function App() {
   return (
     <Routes>
-      <Route path={ROUTES.HOME} element={<Home />} />
+      <Route path="/" element={<Homepage />} />
+      {/* <Route path="*" element={<NotFound />} /> */}
     </Routes>
   );
 }

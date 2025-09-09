@@ -1,25 +1,36 @@
+import { Scissors } from "lucide-react";
+import { Button } from "./ui/button";
+
 const Header = () => {
   return (
-    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+    <header className="border-b border-color-border bg-fill-color/95 backdrop-blur supports-[backdrop-filter]:bg-fill-color/60 sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <span className="text-2xl font-bold text-primary">Lobeca</span>
+          <Scissors className="h-8 w-8 text-brand-secondary" />
+          <span className="text-2xl font-bold text-font-primary">Lobeca</span>
         </div>
         <nav className="hidden md:flex items-center space-x-6">
-          <a href="#" className="hover:text-brand-tertiary transition-colors">
+          <a
+            href="#"
+            className="text-font-secondary hover:text-brand-secondary transition-colors"
+          >
             Serviços
           </a>
-          <a href="#" className="hover:text-brand-tertiary transition-colors">
+          <a
+            href="#"
+            className="text-font-secondary hover:text-brand-secondary transition-colors"
+          >
             Para Barbeiros
           </a>
-          <a href="#" className="hover:text-brand-tertiary transition-colors">
+          <a
+            href="#"
+            className="text-font-secondary hover:text-brand-secondary transition-colors"
+          >
             Contato
           </a>
         </nav>
         <div className="flex items-center">
-          <button className="bg-brand-primary text-primary-foreground">
-            Já sou barbeiro
-          </button>
+          <Button variant="default">Já sou barbeiro</Button>
         </div>
       </div>
     </header>
