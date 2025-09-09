@@ -2,7 +2,7 @@ import { Scissors } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-fill-color py-12 px-4">
+    <footer className="bg-fill-color py-12 px-4" id="footer">
       <div className="container mx-auto">
         <div className="grid md:grid-cols-4 gap-8">
           <div>

@@ -3,7 +3,7 @@ import { Card, CardContent } from "./ui/card";
 
 const FeaturedServices = () => {
   return (
-    <section className="py-16 px-4">
+    <section className="py-16 px-4" id="featured-services">
       <div className="container mx-auto">
         <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
           Serviços Populares

@@ -11,19 +11,19 @@ const Header = () => {
         </div>
         <nav className="hidden md:flex items-center space-x-6">
           <a
-            href="#"
+            href="#featured-services"
             className="text-font-secondary hover:text-brand-secondary transition-colors"
           >
             Serviços
           </a>
           <a
-            href="#"
+            href="#for-barbers"
             className="text-font-secondary hover:text-brand-secondary transition-colors"
           >
             Para Barbeiros
           </a>
           <a
-            href="#"
+            href="#footer"
             className="text-font-secondary hover:text-brand-secondary transition-colors"
           >
             Contato

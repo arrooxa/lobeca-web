@@ -3,7 +3,10 @@ import { Button } from "./ui/button";
 
 const ForBarbers = () => {
   return (
-    <section className="py-16 px-4 bg-brand-primary text-foreground-on-primary">
+    <section
+      className="py-16 px-4 bg-brand-primary text-foreground-on-primary"
+      id="for-barbers"
+    >
       <div className="container mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4 text-foreground-on-primary">
