@@ -1,5 +1,7 @@
 import { Scissors } from "lucide-react";
 import { Button } from "./ui/button";
+import { NavLink } from "react-router";
+import { ROUTES } from "@/constants";
 
 const Header = () => {
   return (
@@ -30,7 +32,9 @@ const Header = () => {
           </a>
         </nav>
         <div className="flex items-center">
-          <Button variant="default">Já sou barbeiro</Button>
+          <Button variant="default">
+            <NavLink to={ROUTES.LOGIN}>Já sou barbeiro</NavLink>
+          </Button>
         </div>
       </div>
     </header>
