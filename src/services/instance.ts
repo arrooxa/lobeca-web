@@ -1,5 +1,6 @@
 import axios from "axios";
 import { config } from "@/utils/env";
+import { supabase } from "@/utils/supabase";
 
 const localIp = config.hostUri?.split(":")[0] ?? "localhost";
 const apiUrl = config.apiUrl || `http://${localIp}:8080`;
@@ -13,8 +14,19 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(
-  (config) => {
-    // TODO: Add Authentication headers here
+  async (config) => {
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (session?.access_token) {
+        config.headers.Authorization = `Bearer ${session.access_token}`;
+      }
+    } catch (error) {
+      console.error("Erro ao obter token do Supabase:", error);
+    }
+
     return config;
   },
   (error) => {

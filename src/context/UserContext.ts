@@ -11,16 +11,20 @@ import {
   setItemAsync,
   deleteItemAsync,
 } from "../utils/secureStorage.js";
+import { supabase } from "../utils/supabase.js";
 import { userService } from "../services/users/index.js";
 import type { User } from "../types/user.js";
+import type { Session } from "@supabase/supabase-js";
 
 interface UserContextData {
   user: User | null;
+  session: Session | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   isWorker: boolean;
   isCustomer: boolean;
-  login: (userData: User) => Promise<void>;
+  loginWithOtp: (phone: string) => Promise<void>;
+  verifyOtp: (phone: string, otp: string) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (userData: Partial<User>) => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -32,52 +36,126 @@ interface UserProviderProps {
 
 const UserContext = createContext<UserContextData>({} as UserContextData);
 
-const USER_STORAGE_KEY = "lobeca_user";
+const USER_PROFILE_KEY = "lobeca_user_profile";
 
 export function UserProvider({ children }: UserProviderProps) {
   const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const isAuthenticated = Boolean(user);
+  const isAuthenticated = Boolean(session);
   const isCustomer = user?.typeID === 1;
   const isWorker = user?.typeID === 2;
 
   useEffect(() => {
-    loadUserFromStorage();
+    const initializeAuth = async () => {
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        setSession(session);
+
+        if (session?.user) {
+          await loadUserProfile(session.user.id);
+        }
+      } catch (error) {
+        console.error("Erro ao inicializar auth:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeAuth();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("Auth state changed:", event, session);
+      setSession(session);
+
+      if (session?.user) {
+        await loadUserProfile(session.user.id);
+      } else {
+        setUser(null);
+        await deleteItemAsync(USER_PROFILE_KEY);
+      }
+
+      setIsLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const loadUserFromStorage = async () => {
+  const loadUserProfile = async (supabaseId: string) => {
     try {
-      setIsLoading(true);
-      const storedUser = await getItemAsync(USER_STORAGE_KEY);
+      // Primeiro, tentar carregar do cache local
+      const cachedProfile = await getItemAsync(USER_PROFILE_KEY);
+      if (cachedProfile) {
+        const parsedProfile = JSON.parse(cachedProfile) as User;
+        if (parsedProfile.supabaseID === supabaseId) {
+          setUser(parsedProfile);
+        }
+      }
 
-      if (storedUser) {
-        const userData = JSON.parse(storedUser);
-        setUser(userData);
+      const userProfile = await userService.get();
+      if (userProfile) {
+        setUser(userProfile);
+        await setItemAsync(USER_PROFILE_KEY, JSON.stringify(userProfile));
       }
     } catch (error) {
-      console.error("Erro ao carregar dados do usuário:", error);
+      console.error("Erro ao carregar perfil:", error);
+      setUser(null);
+      setIsLoading(false);
+    }
+  };
+
+  const loginWithOtp = async (phone: string) => {
+    try {
+      setIsLoading(true);
+      const { error } = await supabase.auth.signInWithOtp({
+        phone,
+        options: {
+          channel: "sms",
+        },
+      });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error("Erro ao enviar OTP:", error);
+      throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const login = async (userData: User) => {
+  const verifyOtp = async (phone: string, otp: string) => {
     try {
-      setUser(userData);
-      await setItemAsync(USER_STORAGE_KEY, JSON.stringify(userData));
+      setIsLoading(true);
+      const { data, error } = await supabase.auth.verifyOtp({
+        phone,
+        token: otp,
+        type: "sms",
+      });
+
+      if (error) throw error;
+
+      if (data.user && !user) {
+        await loadUserProfile(data.user.id);
+      }
     } catch (error) {
-      console.error("Erro ao salvar dados do usuário:", error);
+      console.error("Erro na verificação OTP:", error);
       throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const logout = async () => {
     try {
-      setUser(null);
-      await deleteItemAsync(USER_STORAGE_KEY);
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
     } catch (error) {
-      console.error("Erro ao fazer logout:", error);
+      console.error("Erro no logout:", error);
       throw error;
     }
   };
@@ -86,9 +164,14 @@ export function UserProvider({ children }: UserProviderProps) {
     try {
       if (!user) return;
 
-      const updatedUser = { ...user, ...userData };
+      const sanitizedData = sanitizeUserData(userData);
+      const updatedUser = { ...user, ...sanitizedData };
+
       setUser(updatedUser);
-      await setItemAsync(USER_STORAGE_KEY, JSON.stringify(updatedUser));
+      await setItemAsync(USER_PROFILE_KEY, JSON.stringify(updatedUser));
+
+      // Atualizar no backend se necessário
+      // await userService.updateUser(user.id, sanitizedData);
     } catch (error) {
       console.error("Erro ao atualizar dados do usuário:", error);
       throw error;
@@ -97,27 +180,41 @@ export function UserProvider({ children }: UserProviderProps) {
 
   const refreshUser = async () => {
     try {
-      if (!user?.supabaseID) return;
-
-      const refreshedUser = await userService.getUserBySupabaseId(
-        user.supabaseID
-      );
-      if (refreshedUser) {
-        await updateUser(refreshedUser);
-      }
+      if (!session?.user) return;
+      await loadUserProfile(session.user.id);
     } catch (error) {
       console.error("Erro ao atualizar dados do usuário:", error);
       throw error;
     }
   };
 
+  const sanitizeUserData = (data: Partial<User>): Partial<User> => {
+    const sanitized = { ...data };
+
+    if (sanitized.name) {
+      sanitized.name = sanitized.name.replace(/<[^>]*>/g, "").trim();
+    }
+
+    if (sanitized.nickname) {
+      sanitized.nickname = sanitized.nickname.replace(/<[^>]*>/g, "").trim();
+    }
+
+    if (sanitized.address) {
+      sanitized.address = sanitized.address.replace(/<[^>]*>/g, "").trim();
+    }
+
+    return sanitized;
+  };
+
   const value: UserContextData = {
     user,
+    session,
     isLoading,
     isAuthenticated,
     isWorker,
     isCustomer,
-    login,
+    loginWithOtp,
+    verifyOtp,
     logout,
     updateUser,
     refreshUser,

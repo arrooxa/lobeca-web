@@ -4,10 +4,19 @@ import { queryKeys } from "../queryClient";
 import type { AxiosError } from "axios";
 import { TIMES } from "@/constants";
 
-export const useGetUser = (uid: string, enabled: boolean = true) => {
+export const useGetUser = (enabled: boolean = true) => {
+  return useQuery({
+    queryKey: queryKeys.users.details(),
+    queryFn: () => userService.get(),
+    enabled: enabled,
+    staleTime: 0,
+  });
+};
+
+export const useGetUserByUUID = (uid: string, enabled: boolean = true) => {
   return useQuery({
     queryKey: queryKeys.users.detail(uid),
-    queryFn: () => userService.get(uid),
+    queryFn: () => userService.getUserByUUID(uid),
     enabled: enabled && Boolean(uid),
     staleTime: TIMES.DEFAULT_STALE,
   });

@@ -12,17 +12,19 @@ import { MessageSquare } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useCallback, useState } from "react";
 import { formatToE164 } from "@/utils/formatter";
-import { config } from "@/utils";
-import { supabase } from "@/utils/supabase";
-import { sendOTP, verifyOTP } from "@/utils/auth";
-import { userService } from "@/services";
+import { checkPhoneExists } from "@/utils/auth";
 import { useUser } from "@/context/UserContext";
 import { useNavigate } from "react-router";
 import { ROUTES } from "@/constants";
+import { useAuthRedirect } from "@/hooks/useAuth";
 
 const Loginpage = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedPhone, setSelectedPhone] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Redirecionar se já estiver autenticado
+  const { isAuthenticated, isLoading: authLoading } = useAuthRedirect();
 
   const nextStep = useCallback(() => {
     setCurrentStep((prev) => prev + 1);
@@ -32,12 +34,35 @@ const Loginpage = () => {
     setCurrentStep((prev) => prev - 1);
   }, []);
 
+  // Mostrar loading enquanto verifica autenticação
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // Se já autenticado, não renderizar (será redirecionado)
+  if (isAuthenticated) {
+    return null;
+  }
+
   const STEPS = [
-    <PhoneInput nextStep={nextStep} setSelectedPhone={setSelectedPhone} />,
+    <PhoneInput
+      key="phone"
+      nextStep={nextStep}
+      setSelectedPhone={setSelectedPhone}
+      isLoading={isLoading}
+      setIsLoading={setIsLoading}
+    />,
     <CodeInput
+      key="code"
       prevStep={prevStep}
       selectedPhone={selectedPhone}
       setSelectedPhone={setSelectedPhone}
+      isLoading={isLoading}
+      setIsLoading={setIsLoading}
     />,
   ];
 
@@ -53,43 +78,52 @@ const Loginpage = () => {
 
 export default Loginpage;
 
+interface PhoneInputProps {
+  nextStep: () => void;
+  setSelectedPhone: (phone: string) => void;
+  isLoading: boolean;
+  setIsLoading: (loading: boolean) => void;
+}
+
 const PhoneInput = ({
   nextStep,
   setSelectedPhone,
-}: {
-  nextStep: () => void;
-  setSelectedPhone: (phone: string) => void;
-}) => {
-  const { control, handleSubmit } = useForm<LoginFormData>({
+  isLoading,
+  setIsLoading,
+}: PhoneInputProps) => {
+  const { control, handleSubmit, setError } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
 
+  const { loginWithOtp } = useUser();
+
   async function onSubmit(data: LoginFormData) {
-    const formattedPhone = formatToE164(data.phone);
+    try {
+      setIsLoading(true);
+      const formattedPhone = formatToE164(data.phone);
 
-    if (!config.isDev) {
-      const { data: exists } = await supabase.rpc("check_phone_exists", {
-        phone_number: formattedPhone.slice(1), // Remove the leading '+' for the RPC call
-      });
-
-      if (!exists) {
-        return console.error("Telefone não cadastrado");
+      const phoneExists = await checkPhoneExists(formattedPhone);
+      if (!phoneExists) {
+        setError("phone", {
+          type: "manual",
+          message: "Telefone não cadastrado no sistema",
+        });
+        return;
       }
+
+      await loginWithOtp(formattedPhone);
+
+      setSelectedPhone(data.phone);
+      nextStep();
+    } catch (error) {
+      console.error("Erro no envio do OTP:", error);
+      setError("phone", {
+        type: "manual",
+        message: "Erro inesperado. Tente novamente.",
+      });
+    } finally {
+      setIsLoading(false);
     }
-
-    const response = await sendOTP(formattedPhone);
-
-    if (response.error) {
-      console.error("Erro ao enviar código:", response.error);
-
-      return console.error(
-        "Erro tentando enviar código para o número de telefone"
-      );
-    }
-
-    setSelectedPhone(data.phone);
-
-    return nextStep();
   }
 
   return (
@@ -103,7 +137,7 @@ const PhoneInput = ({
             Enviaremos um código de verificação via SMS
           </p>
         </div>
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div>
             <label
               htmlFor="phone"
@@ -124,15 +158,16 @@ const PhoneInput = ({
                     placeholder="(11) 99999-9999"
                     id="phone"
                     error={fieldState.invalid}
+                    disabled={isLoading}
                   />
                   <ErrorMessage>{fieldState.error?.message}</ErrorMessage>
                 </>
               )}
             />
           </div>
-          <Button className="w-full" onClick={handleSubmit(onSubmit)}>
+          <Button className="w-full" type="submit" disabled={isLoading}>
             <MessageSquare />
-            Enviar código SMS
+            {isLoading ? "Enviando..." : "Enviar código SMS"}
           </Button>
         </form>
       </CardContent>
@@ -140,40 +175,47 @@ const PhoneInput = ({
   );
 };
 
-const CodeInput = ({
-  selectedPhone,
-}: {
+interface CodeInputProps {
   prevStep: () => void;
   selectedPhone: string;
   setSelectedPhone: (phone: string) => void;
-}) => {
-  const { control, handleSubmit } = useForm<CodeFormData>({
+  isLoading: boolean;
+  setIsLoading: (loading: boolean) => void;
+}
+
+const CodeInput = ({
+  selectedPhone,
+  isLoading,
+  setIsLoading,
+}: CodeInputProps) => {
+  const { control, handleSubmit, setError } = useForm<CodeFormData>({
     resolver: zodResolver(codeSchema),
   });
 
   const navigate = useNavigate();
-
-  const { login } = useUser();
+  const { verifyOtp } = useUser();
 
   async function onSubmit(data: CodeFormData) {
-    const formattedPhone = formatToE164(selectedPhone);
-
     try {
-      const response = await verifyOTP(formattedPhone, data.code);
+      setIsLoading(true);
+      const formattedPhone = formatToE164(selectedPhone);
 
-      if (!response.data.user?.id) {
-        return console.error("Falha na autenticação. Tente novamente.");
-      }
+      // Verificar OTP usando o contexto
+      await verifyOtp(formattedPhone, data.code);
 
-      const supabaseID = response.data.user.id;
+      // Após verificação bem-sucedida, o onAuthStateChange do contexto
+      // já vai carregar o perfil automaticamente
 
-      const user = await userService.getUserBySupabaseId(supabaseID);
-
-      await login(user);
-
-      return navigate(ROUTES.DASHBOARD, { replace: true });
+      // Navegar para dashboard
+      navigate(ROUTES.DASHBOARD, { replace: true });
     } catch (error) {
-      console.error("Erro ao verificar código. Tente novamente.", error);
+      console.error("Erro ao verificar código:", error);
+      setError("code", {
+        type: "manual",
+        message: "Erro ao verificar código. Tente novamente.",
+      });
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -182,13 +224,13 @@ const CodeInput = ({
       <CardContent>
         <div className="mb-6 space-y-1.5 text-center">
           <h2 className="text-2xl font-bold  text-foreground">
-            Entre com seu telefone
+            Digite o código de verificação
           </h2>
           <p className="text-sm text-font-secondary">
             Insira o código enviado via SMS para o número {selectedPhone}
           </p>
         </div>
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div>
             <label
               htmlFor="code"
@@ -207,15 +249,16 @@ const CodeInput = ({
                     id="code"
                     error={fieldState.invalid}
                     maxLength={6}
+                    disabled={isLoading}
                   />
                   <ErrorMessage>{fieldState.error?.message}</ErrorMessage>
                 </>
               )}
             />
           </div>
-          <Button className="w-full" onClick={handleSubmit(onSubmit)}>
+          <Button className="w-full" type="submit" disabled={isLoading}>
             <MessageSquare />
-            Enviar código SMS
+            {isLoading ? "Verificando..." : "Verificar código"}
           </Button>
         </form>
       </CardContent>

@@ -49,30 +49,10 @@ export const deleteItemAsync = async (key: string): Promise<void> => {
   }
 };
 
-export const hasItemAsync = async (key: string): Promise<boolean> => {
-  try {
-    const item = await getItemAsync(key);
-    return item !== null;
-  } catch {
-    return false;
-  }
-};
-
-export const clearAsync = async (): Promise<void> => {
-  try {
-    localStorage.clear();
-  } catch (error) {
-    console.error("Erro ao limpar storage seguro:", error);
-    throw new Error("Falha ao limpar armazenamento seguro");
-  }
-};
-
 export const secureStorage = {
   setItemAsync,
   getItemAsync,
   deleteItemAsync,
-  hasItemAsync,
-  clearAsync,
 };
 
 export default secureStorage;
