@@ -23,7 +23,6 @@ const Loginpage = () => {
   const [selectedPhone, setSelectedPhone] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Redirecionar se já estiver autenticado
   const { isAuthenticated, isLoading: authLoading } = useAuthRedirect();
 
   const nextStep = useCallback(() => {
@@ -34,7 +33,6 @@ const Loginpage = () => {
     setCurrentStep((prev) => prev - 1);
   }, []);
 
-  // Mostrar loading enquanto verifica autenticação
   if (authLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -43,7 +41,6 @@ const Loginpage = () => {
     );
   }
 
-  // Se já autenticado, não renderizar (será redirecionado)
   if (isAuthenticated) {
     return null;
   }
@@ -69,9 +66,15 @@ const Loginpage = () => {
   return (
     <div className="max-h-screen flex">
       <img src="/haircut-and-beard-combo-barber.jpg" alt="Image" className="" />
-      <div className="flex flex-1 items-center justify-center p-6">
-        {STEPS[currentStep]}
-      </div>
+      {authLoading ? (
+        <div className="flex flex-1 items-center justify-center p-6">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      ) : (
+        <div className="flex flex-1 items-center justify-center p-6">
+          {STEPS[currentStep]}
+        </div>
+      )}
     </div>
   );
 };

@@ -59,7 +59,7 @@ export function UserProvider({ children }: UserProviderProps) {
           await loadUserProfile(session.user.id);
         }
       } catch (error) {
-        console.error("Erro ao inicializar auth:", error);
+        console.error("❌ Erro ao inicializar auth:", error);
       } finally {
         setIsLoading(false);
       }
@@ -70,42 +70,49 @@ export function UserProvider({ children }: UserProviderProps) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth state changed:", event, session);
       setSession(session);
 
       if (session?.user) {
-        await loadUserProfile(session.user.id);
+        if (event === "SIGNED_IN") {
+          await loadUserProfile(session.user.id);
+        }
       } else {
         setUser(null);
-        await deleteItemAsync(USER_PROFILE_KEY);
+        try {
+          await deleteItemAsync(USER_PROFILE_KEY);
+        } catch (error) {
+          console.error("❌ Erro ao limpar cache:", error);
+        }
       }
 
       setIsLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const loadUserProfile = async (supabaseId: string) => {
     try {
-      // Primeiro, tentar carregar do cache local
       const cachedProfile = await getItemAsync(USER_PROFILE_KEY);
       if (cachedProfile) {
         const parsedProfile = JSON.parse(cachedProfile) as User;
         if (parsedProfile.supabaseID === supabaseId) {
           setUser(parsedProfile);
+          return;
         }
       }
 
       const userProfile = await userService.get();
+
       if (userProfile) {
         setUser(userProfile);
         await setItemAsync(USER_PROFILE_KEY, JSON.stringify(userProfile));
       }
     } catch (error) {
-      console.error("Erro ao carregar perfil:", error);
+      console.error("❌ Erro ao carregar perfil:", error);
       setUser(null);
-      setIsLoading(false);
     }
   };
 
@@ -151,10 +158,9 @@ export function UserProvider({ children }: UserProviderProps) {
   };
 
   const logout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-    } catch (error) {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
       console.error("Erro no logout:", error);
       throw error;
     }
@@ -169,9 +175,6 @@ export function UserProvider({ children }: UserProviderProps) {
 
       setUser(updatedUser);
       await setItemAsync(USER_PROFILE_KEY, JSON.stringify(updatedUser));
-
-      // Atualizar no backend se necessário
-      // await userService.updateUser(user.id, sanitizedData);
     } catch (error) {
       console.error("Erro ao atualizar dados do usuário:", error);
       throw error;

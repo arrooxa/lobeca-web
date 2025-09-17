@@ -10,8 +10,6 @@ export const useAuthRedirect = () => {
   const { isAuthenticated, isLoading } = useUser();
   const navigate = useNavigate();
 
-  console.log("oba1");
-
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
       navigate(ROUTES.DASHBOARD, { replace: true });
@@ -27,8 +25,6 @@ export const useAuthRedirect = () => {
 export const useRequireAuth = () => {
   const { isAuthenticated, isLoading } = useUser();
   const navigate = useNavigate();
-
-  console.log("oba2");
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
