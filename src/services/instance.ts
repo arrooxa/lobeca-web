@@ -3,7 +3,7 @@ import { config } from "@/utils/env";
 import { supabase } from "@/utils/supabase";
 
 const localIp = config.hostUri?.split(":")[0] ?? "localhost";
-const apiUrl = config.apiUrl || `http://${localIp}:8080`;
+const apiUrl = config.apiUrl || `http://${localIp}:8080/api/v1`;
 
 const api = axios.create({
   baseURL: apiUrl,
