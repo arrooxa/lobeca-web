@@ -61,10 +61,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         `}
       >
         <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
-          <div className="flex items-center">
-            <Scissors className="h-8 w-8 text-blue-600 mr-2" />
-            <h1 className="text-xl font-bold text-gray-800">Lobeca</h1>
-          </div>
+          <img
+            src="/lobeca-logo.svg"
+            alt="Lobeca Logo"
+            className="h-8 w-auto"
+          />
           <button
             onClick={() => setSidebarOpen(false)}
             className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
@@ -86,13 +87,15 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200
                   ${
                     isActive
-                      ? "bg-blue-50 text-blue-700 border-r-2 border-blue-600"
+                      ? "bg-brand-primary/10 text-brand-primary border-r-2 border-brand-primary"
                       : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                   }
                 `}
               >
                 <Icon
-                  className={`mr-3 h-5 w-5 ${isActive ? "text-blue-600" : ""}`}
+                  className={`mr-3 h-5 w-5 ${
+                    isActive ? "text-brand-primary" : ""
+                  }`}
                 />
                 {item.name}
               </a>
@@ -103,7 +106,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <div className="border-t border-gray-200 p-4">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-r from-brand-primary to-brand-secondary flex items-center justify-center">
                 <span className="text-sm font-medium text-white">U</span>
               </div>
             </div>
