@@ -2,6 +2,7 @@ export const ROUTES = {
   HOME: "/",
   LOGIN: "/login",
   DASHBOARD: "/dashboard",
+  DASHBOARD_SUBSCRIPTION: "/dashboard/subscription",
 } as const;
 
 export const TIMES = {

@@ -1,11 +1,15 @@
-import z from "zod";
-
-import type {
-  BaseEntityWithUUID,
-  BaseApiResponseWithUUID,
-  Location,
+import { z } from "zod";
+import {
+  withApiTransformUUID,
+  type BaseApiResponseWithUUID,
+  type BaseEntityWithUUID,
+  type CreateRequest,
 } from "./base";
-import { withApiTransformUUID } from "./base";
+import {
+  mapWorkerServiceFromApi,
+  type WorkerService,
+  type WorkerServiceResponseAPI,
+} from "./service";
 
 // ========== DOMAIN INTERFACES ==========
 
@@ -24,7 +28,39 @@ export interface User extends BaseEntityWithUUID {
   recommendations: number;
 }
 
+export interface PublicWorker extends BaseEntityWithUUID {
+  uuid: string;
+  name: string;
+  nickname?: string;
+  phone: string;
+  photoURL?: string;
+  recommendations: number;
+  establishmentID?: number;
+  role?: string;
+  services: WorkerService[];
+}
+
 // ========== VALIDATION SCHEMAS ==========
+
+export const registerUserSchema = z.object({
+  name: z.string().min(1, "Nome é obrigatório"),
+  phone: z
+    .string()
+    .min(14, "Telefone é obrigatório")
+    .regex(/^\(\d{2}\) \d{5}-\d{4}$/, "Formato de telefone inválido"),
+});
+
+export type RegisterFormData = z.infer<typeof registerUserSchema>;
+
+export const updateUserAddressSchema = z.object({
+  address: z.string().min(1, "Endereço é obrigatório"),
+  location: z.object({
+    latitude: z.number().min(-90).max(90),
+    longitude: z.number().min(-180).max(180),
+  }),
+});
+
+export type UpdateUserAddressData = z.infer<typeof updateUserAddressSchema>;
 
 export const loginSchema = z.object({
   phone: z
@@ -61,7 +97,41 @@ export interface UserResponseAPI extends BaseApiResponseWithUUID {
   recommendations: number;
 }
 
+export interface PublicWorkerResponseAPI extends BaseApiResponseWithUUID {
+  name: string;
+  nickname?: string;
+  phone: string;
+  photo_url?: string;
+  recommendations: number;
+  establishment_id?: number;
+  role?: string;
+  services?: WorkerServiceResponseAPI[];
+}
+
 // ========== REQUEST INTERFACES ==========
+
+export type CreateUserRequest = CreateRequest<User>;
+
+export type RegisterUserData = Pick<User, "name" | "phone" | "typeID">;
+
+export interface UpdateUserRequest {
+  name?: string;
+  phone?: string;
+  nickname?: string;
+  address?: string;
+  location?: Location;
+  photoURL?: string;
+  isActive?: boolean;
+  role?: string;
+}
+
+export interface GetWorkersParams {
+  limit?: number;
+  offset?: number;
+  name?: string;
+  service?: number;
+  has_establishment?: boolean;
+}
 
 // ========== MAPPERS/TRANSFORMERS ==========
 
@@ -81,3 +151,20 @@ export const mapUserFromApi = withApiTransformUUID<UserResponseAPI, User>(
     establishmentID: apiResponse.establishment_id,
   })
 );
+
+export const mapPublicWorkerFromApi = withApiTransformUUID<
+  PublicWorkerResponseAPI,
+  PublicWorker
+>((apiResponse) => ({
+  uuid: apiResponse.uuid,
+  name: apiResponse.name,
+  nickname: apiResponse.nickname,
+  phone: apiResponse.phone,
+  photoURL: apiResponse.photo_url,
+  recommendations: apiResponse.recommendations,
+  establishmentID: apiResponse.establishment_id,
+  role: apiResponse.role,
+  services: apiResponse.services
+    ? apiResponse.services.map(mapWorkerServiceFromApi)
+    : [],
+}));

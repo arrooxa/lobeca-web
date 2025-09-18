@@ -11,27 +11,35 @@ import {
   Scissors,
 } from "lucide-react";
 import { useUser } from "@/context/UserContext";
+import { useNavigate } from "react-router";
+import { ROUTES } from "@/constants";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
-  const { user } = useUser();
+  const { user, logout } = useUser();
+  const navigate = useNavigate();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navigation = [
-    { name: "Dashboard", href: "/dashboard", icon: Home },
-    { name: "Agendamentos", href: "/dashboard/appointments", icon: Calendar },
+    { name: "Dashboard", href: ROUTES.DASHBOARD, icon: Home },
+    {
+      name: "Assinatura",
+      href: ROUTES.DASHBOARD_SUBSCRIPTION,
+      icon: Calendar,
+    },
     { name: "Serviços", href: "/dashboard/services", icon: Scissors },
     { name: "Clientes", href: "/dashboard/clients", icon: Users },
     { name: "Relatórios", href: "/dashboard/reports", icon: BarChart3 },
     { name: "Configurações", href: "/dashboard/settings", icon: Settings },
   ];
 
-  const handleLogout = () => {
-    console.log("Logout");
+  const handleLogout = async () => {
+    await logout();
+    navigate(ROUTES.HOME, { replace: true });
   };
 
   return (
@@ -106,7 +114,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           </div>
           <button
             onClick={handleLogout}
-            className="mt-3 w-full flex items-center justify-center px-4 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+            className="cursor-pointer mt-3 w-full flex items-center justify-center px-4 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200"
           >
             <LogOut className="mr-2 h-4 w-4" />
             Sair
