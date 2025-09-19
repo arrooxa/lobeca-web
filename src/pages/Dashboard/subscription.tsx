@@ -60,7 +60,7 @@ export default function SubscriptionPage() {
 
   const isEstablishmentTrialing =
     establishment.establishment.status === "trial" &&
-    !establishment.establishment.subscriptionStartedAt;
+    !establishment.establishment.lastPaymentDate;
 
   const trialDaysLeft =
     isEstablishmentTrialing && establishment.establishment.trialEndsAt

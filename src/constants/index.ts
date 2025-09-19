@@ -3,6 +3,7 @@ export const ROUTES = {
   LOGIN: "/login",
   DASHBOARD: "/dashboard",
   DASHBOARD_SUBSCRIPTION: "/dashboard/subscription",
+  DASHBOARD_SUBSCRIPTION_SUCCESS: "/dashboard/subscription/success",
 } as const;
 
 export const TIMES = {
