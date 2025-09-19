@@ -4,3 +4,5 @@ export { queryClient, queryKeys } from "./queryClient";
 
 // If necessary
 export { userService } from "./users";
+export { establishmentService } from "./establishments";
+export { subscriptionService } from "./subscriptions";

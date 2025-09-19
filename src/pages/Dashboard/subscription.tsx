@@ -19,7 +19,10 @@ import {
 } from "lucide-react";
 import DashboardLayout from "@/layouts/dashboard";
 import { useGetCurrentUserEstablishment } from "@/services/establishments/queries";
-import { useGetSubscriptionsPlans } from "@/services/subscriptions/queries";
+import {
+  useCreateSubscription,
+  useGetSubscriptionsPlans,
+} from "@/services/subscriptions/queries";
 import { cn } from "@/utils/cn";
 
 export default function SubscriptionPage() {
@@ -34,6 +37,8 @@ export default function SubscriptionPage() {
     isLoading: isLoadingPlans,
     error: errorPlans,
   } = useGetSubscriptionsPlans();
+
+  const createSubscriptionMutation = useCreateSubscription();
 
   if (isLoadingEstablishment || isLoadingPlans) {
     return (
@@ -81,8 +86,17 @@ export default function SubscriptionPage() {
 
   const enterprisePlan = plans.find((p) => p.maxWorkers === undefined);
 
-  const handlePlanChange = (planId: number) => {
+  const handlePlanChange = async (planId: number) => {
     console.log("Change to plan ID:", planId);
+
+    const response = await createSubscriptionMutation.mutateAsync({
+      establishmentId: establishment.establishment.id,
+      planId,
+    });
+
+    if (response.checkout_url) {
+      window.location.href = response.checkout_url;
+    }
   };
 
   const getTrialCardColor = () => {
@@ -250,10 +264,15 @@ export default function SubscriptionPage() {
                         ? "outline"
                         : "default"
                     }
-                    disabled={currentPlan?.id === plan.id}
+                    disabled={
+                      currentPlan?.id === plan.id ||
+                      createSubscriptionMutation.isPending
+                    }
                     onClick={() => handlePlanChange(plan.id)}
                   >
-                    {enterprisePlan?.id === plan.id
+                    {createSubscriptionMutation.isPending
+                      ? "Processando..."
+                      : enterprisePlan?.id === plan.id
                       ? "Entrar em contato"
                       : currentPlan?.id === plan.id
                       ? "Plano Atual"

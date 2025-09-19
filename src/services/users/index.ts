@@ -4,7 +4,7 @@ import api from "../instance";
 export const userService = {
   get: async () => {
     try {
-      const response = await api.get<UserResponseAPI>(`api/v1/user`);
+      const response = await api.get<UserResponseAPI>(`/user`);
       return mapUserFromApi(response.data);
     } catch (error) {
       throw new Error(
