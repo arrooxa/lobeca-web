@@ -33,11 +33,13 @@ export interface Establishment extends BaseEntity {
 
 export interface EstablishmentWithSubscriptions extends Establishment {
   planID: number;
+  externalCustomerId?: string;
+  externalSubscriptionId?: string;
   status: string;
   trialStartedAt?: Date;
   trialEndsAt?: Date;
-  subscriptionStartedAt?: Date;
-  subscriptionEndsAt?: Date;
+  lastPaymentDate?: Date;
+  nextBillingDate?: Date;
 }
 
 export interface EstablishmentInvite extends BaseEntity {
@@ -88,10 +90,12 @@ export interface EstablishmentWithSubscriptionsResponseAPI
   extends EstablishmentResponseAPI {
   plan_id: number;
   status: string;
+  external_customer_id?: string;
+  external_subscription_id?: string;
   trial_started_at?: string;
   trial_ends_at?: string;
   subscription_started_at?: string;
-  subscription_ends_at?: string;
+  next_billing_date?: string;
 }
 
 export interface EstablishmentInviteResponseAPI extends BaseApiResponse {
@@ -203,6 +207,8 @@ export const mapEstablishmentWithSubscriptionsFromApi = withApiTransform<
   ...mapEstablishmentFromApi(apiResponse),
   planID: apiResponse.plan_id,
   status: apiResponse.status,
+  externalCustomerId: apiResponse.external_customer_id,
+  externalSubscriptionId: apiResponse.external_subscription_id,
   trialStartedAt: apiResponse.trial_started_at
     ? new Date(apiResponse.trial_started_at)
     : undefined,
@@ -212,8 +218,8 @@ export const mapEstablishmentWithSubscriptionsFromApi = withApiTransform<
   subscriptionStartedAt: apiResponse.subscription_started_at
     ? new Date(apiResponse.subscription_started_at)
     : undefined,
-  subscriptionEndsAt: apiResponse.subscription_ends_at
-    ? new Date(apiResponse.subscription_ends_at)
+  nextBillingDate: apiResponse.next_billing_date
+    ? new Date(apiResponse.next_billing_date)
     : undefined,
 }));
 

@@ -6,6 +6,7 @@ import { BrowserRouter } from "react-router";
 import { UserProvider } from "./context/UserContext.ts";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./services/queryClient.ts";
+import { ToastContainer } from "react-toastify";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -13,6 +14,7 @@ createRoot(document.getElementById("root")!).render(
       <BrowserRouter>
         <UserProvider>
           <App />
+          <ToastContainer />
         </UserProvider>
       </BrowserRouter>
     </QueryClientProvider>

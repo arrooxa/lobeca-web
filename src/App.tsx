@@ -6,6 +6,8 @@ import Loginpage from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import { ProtectedRoute } from "./components";
 import SubscriptionPage from "./pages/Dashboard/subscription";
+import SubscriptionCheckout from "./pages/Dashboard/subscription-checkout";
+import SubscriptionSuccess from "./pages/Dashboard/subscription-success";
 
 function App() {
   return (
@@ -18,6 +20,14 @@ function App() {
         <Route
           path={ROUTES.DASHBOARD_SUBSCRIPTION}
           element={<SubscriptionPage />}
+        />
+        <Route
+          path={ROUTES.DASHBOARD_SUBSCRIPTION_CHECKOUT}
+          element={<SubscriptionCheckout />}
+        />
+        <Route
+          path={ROUTES.DASHBOARD_SUBSCRIPTION_SUCCESS}
+          element={<SubscriptionSuccess />}
         />
       </Route>
 

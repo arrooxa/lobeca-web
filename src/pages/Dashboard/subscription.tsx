@@ -8,24 +8,38 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import {
   Crown,
   Scissors,
   Star,
-  Users,
   Clock,
   Check,
   CheckCheck,
+  X,
+  ShieldX,
 } from "lucide-react";
 import DashboardLayout from "@/layouts/dashboard";
 import { useGetCurrentUserEstablishment } from "@/services/establishments/queries";
 import {
-  useCreateSubscription,
+  useCancelSubscription,
   useGetSubscriptionsPlans,
 } from "@/services/subscriptions/queries";
 import { cn } from "@/utils/cn";
+import { useNavigate } from "react-router";
+import { defaultToastProps, ROUTES } from "@/constants";
+import { intervalToDuration } from "date-fns";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function SubscriptionPage() {
+  const navigate = useNavigate();
+  const [isConfirmCancelOpen, setIsConfirmCancelOpen] = useState(false);
+  const [isCancellingSubscription, setIsCancellingSubscription] =
+    useState(false);
+
+  const cancelSubscriptionMutation = useCancelSubscription();
+
   const {
     data: establishment,
     isLoading: isLoadingEstablishment,
@@ -37,8 +51,6 @@ export default function SubscriptionPage() {
     isLoading: isLoadingPlans,
     error: errorPlans,
   } = useGetSubscriptionsPlans();
-
-  const createSubscriptionMutation = useCreateSubscription();
 
   if (isLoadingEstablishment || isLoadingPlans) {
     return (
@@ -67,13 +79,15 @@ export default function SubscriptionPage() {
     establishment.establishment.status === "trial" &&
     !establishment.establishment.lastPaymentDate;
 
+  const isEstablishmentCanceled =
+    establishment.establishment.status === "canceled";
+
   const trialDaysLeft =
     isEstablishmentTrialing && establishment.establishment.trialEndsAt
-      ? Math.ceil(
-          (new Date(establishment.establishment.trialEndsAt).getTime() -
-            Date.now()) /
-            (1000 * 60 * 60 * 24)
-        )
+      ? intervalToDuration({
+          start: new Date(),
+          end: new Date(establishment.establishment.trialEndsAt),
+        }).days || 0
       : 0;
 
   const trialProgress = ((30 - trialDaysLeft) / 30) * 100;
@@ -86,17 +100,40 @@ export default function SubscriptionPage() {
 
   const enterprisePlan = plans.find((p) => p.maxWorkers === undefined);
 
-  const handlePlanChange = async (planId: number) => {
-    console.log("Change to plan ID:", planId);
-
-    const response = await createSubscriptionMutation.mutateAsync({
-      establishmentId: establishment.establishment.id,
-      planId,
+  const handlePlanChange = async (planID: number) => {
+    const searchParams = new URLSearchParams({
+      plan: planID.toString(),
+      establishment: establishment.establishment.id.toString(),
     });
 
-    if (response.checkout_url) {
-      window.location.href = response.checkout_url;
+    navigate(`${ROUTES.DASHBOARD_SUBSCRIPTION_CHECKOUT}?${searchParams}`);
+  };
+
+  const handleCancelSubscription = async () => {
+    try {
+      setIsCancellingSubscription(true);
+
+      await cancelSubscriptionMutation.mutateAsync({
+        establishmentId: establishment.establishment.id,
+      });
+
+      toast.success("Assinatura cancelada com sucesso.", defaultToastProps);
+
+      setIsConfirmCancelOpen(false);
+      navigate(ROUTES.DASHBOARD);
+    } catch (error) {
+      console.error("Erro ao cancelar assinatura:", error);
+      toast.error(
+        "Erro ao cancelar assinatura. Tente novamente.",
+        defaultToastProps
+      );
+    } finally {
+      setIsCancellingSubscription(false);
     }
+  };
+
+  const handleOpenCancelModal = () => {
+    setIsConfirmCancelOpen(true);
   };
 
   const getTrialCardColor = () => {
@@ -121,7 +158,7 @@ export default function SubscriptionPage() {
             <div className="flex items-center justify-center gap-2 mb-4">
               <Scissors className="h-8 w-8 text-brand-primary" />
               <h1 className="text-3xl font-bold text-foreground">
-                Gerenciar Assinatura
+                Gerenciar Assinatura - {establishment.establishment.name}
               </h1>
             </div>
             <p className="text-foreground-muted text-lg">
@@ -159,12 +196,41 @@ export default function SubscriptionPage() {
             </Card>
           )}
 
+          {isEstablishmentCanceled && (
+            <Card className={cn("border-2", getTrialCardColor())}>
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <ShieldX className="h-5 w-5 text-red-500" />
+                  <CardTitle className="text-red-500">
+                    Plano {currentPlan?.name} cancelado
+                  </CardTitle>
+                </div>
+                <CardDescription>
+                  Faça parte novamente da nossa plataforma e aproveite todos os
+                  recursos disponibilizados.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Button
+                  variant="default"
+                  onClick={() => handlePlanChange(currentPlan?.id as number)}
+                >
+                  Reativar Plano
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
           <Card className="border-brand-primary/20 bg-card">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Crown className="h-5 w-5 text-brand-primary" />
-                  <CardTitle className="text-foreground">Plano Atual</CardTitle>
+                  <CardTitle className="text-foreground">
+                    Plano Atual{" "}
+                    {isEstablishmentTrialing && "(Período de Teste)"}
+                    {isEstablishmentCanceled && " (Cancelado)"}
+                  </CardTitle>
                 </div>
                 <Badge size="lg">{currentPlan?.name}</Badge>
               </div>
@@ -178,11 +244,26 @@ export default function SubscriptionPage() {
                       /mês
                     </span>
                   </p>
-                  <p className="text-sm text-foreground-muted">
-                    Próxima cobrança em 23 dias
-                  </p>
+                  {!isEstablishmentTrialing && !isEstablishmentCanceled && (
+                    <p className="text-sm text-foreground-muted">
+                      Próxima cobrança em{" "}
+                      {
+                        intervalToDuration({
+                          start: new Date(),
+                          end: new Date(
+                            establishment.establishment.nextBillingDate || ""
+                          ),
+                        }).days
+                      }{" "}
+                      dias
+                    </p>
+                  )}
                 </div>
-                <CheckCheck className="h-8 w-8 text-green-500" />
+                {isEstablishmentCanceled ? (
+                  <X className="h-8 w-8 text-red-500" />
+                ) : (
+                  <CheckCheck className="h-8 w-8 text-green-500" />
+                )}
               </div>
             </CardContent>
           </Card>
@@ -210,7 +291,7 @@ export default function SubscriptionPage() {
                   </div>
                 )}
 
-                {currentPlan?.id === plan.id && (
+                {currentPlan?.id === plan.id && !isEstablishmentCanceled && (
                   <div className="absolute -top-3 right-4">
                     <Badge className="bg-brand-primary text-foreground-on-primary px-3 py-1">
                       Atual
@@ -258,22 +339,32 @@ export default function SubscriptionPage() {
                   <Button
                     className="w-full mt-auto"
                     variant={
-                      currentPlan?.id === plan.id
-                        ? "secondary"
-                        : enterprisePlan?.id === plan.id
+                      enterprisePlan?.id === plan.id
                         ? "outline"
+                        : currentPlan?.id === plan.id &&
+                          !isEstablishmentTrialing &&
+                          !isEstablishmentCanceled
+                        ? "secondary"
                         : "default"
                     }
                     disabled={
-                      currentPlan?.id === plan.id ||
-                      createSubscriptionMutation.isPending
+                      currentPlan?.id === plan.id &&
+                      !isEstablishmentTrialing &&
+                      !isEstablishmentCanceled
                     }
-                    onClick={() => handlePlanChange(plan.id)}
+                    onClick={() =>
+                      enterprisePlan?.id === plan.id
+                        ? window.open(
+                            "https://api.whatsapp.com/message/GDMC6R2MLTOHE1?autoload=1&app_absent=0",
+                            "_blank"
+                          )
+                        : handlePlanChange(plan.id)
+                    }
                   >
-                    {createSubscriptionMutation.isPending
-                      ? "Processando..."
-                      : enterprisePlan?.id === plan.id
+                    {enterprisePlan?.id === plan.id
                       ? "Entrar em contato"
+                      : isEstablishmentTrialing || isEstablishmentCanceled
+                      ? "Ativar plano"
                       : currentPlan?.id === plan.id
                       ? "Plano Atual"
                       : "Mudar para este plano"}
@@ -283,44 +374,34 @@ export default function SubscriptionPage() {
             ))}
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Informações Importantes
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <h4 className="font-medium text-foreground">
-                    Upgrade de Plano
-                  </h4>
-                  <p className="text-sm text-foreground-muted">
-                    Ao fazer upgrade, você terá acesso imediato aos novos
-                    recursos. A cobrança será proporcional ao período restante.
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <h4 className="font-medium text-foreground">
-                    Downgrade de Plano
-                  </h4>
-                  <p className="text-sm text-foreground-muted">
-                    O downgrade será efetivado no próximo ciclo de cobrança.
-                    Você manterá os recursos atuais até lá.
-                  </p>
-                </div>
-              </div>
-              <div className="pt-4 border-t">
-                <p className="text-xs text-foreground-muted text-center">
-                  Plano Starter inclui 30 dias de teste gratuito • Cancele a
-                  qualquer momento • Suporte em português
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="flex gap-4 justify-between">
+            <Button variant="link" onClick={() => navigate(ROUTES.DASHBOARD)}>
+              Voltar para o Dashboard
+            </Button>
+            {!isEstablishmentTrialing && (
+              <Button
+                variant="link"
+                onClick={handleOpenCancelModal}
+                className="text-red-600 hover:text-red-700"
+              >
+                Cancelar assinatura
+              </Button>
+            )}
+          </div>
         </div>
       </div>
+
+      <ConfirmationModal
+        open={isConfirmCancelOpen}
+        onOpenChange={setIsConfirmCancelOpen}
+        title="Cancelar Assinatura"
+        description="Tem certeza que deseja cancelar sua assinatura? Esta ação não pode ser desfeita e você perderá acesso aos recursos premium imediatamente."
+        confirmText="Sim, cancelar assinatura"
+        cancelText="Não, manter assinatura"
+        onConfirm={handleCancelSubscription}
+        variant="destructive"
+        isLoading={isCancellingSubscription}
+      />
     </DashboardLayout>
   );
 }
