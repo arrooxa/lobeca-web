@@ -4,9 +4,6 @@ import {
   Scissors,
   Radar as Razor,
   Bomb as Comb,
-  Clock,
-  Mail,
-  Phone,
   BicepsFlexed,
   MessageSquare,
 } from "lucide-react";
