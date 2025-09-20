@@ -1,4 +1,5 @@
 import Benefits from "@/components/Benefits";
+import UnderConstructionPage from "@/components/Constructing";
 import CTA from "@/components/CTA";
 import FeaturedServices from "@/components/FeaturedServices";
 import Footer from "@/components/Footer";
@@ -8,7 +9,11 @@ import HeroSection from "@/components/HeroSection";
 import Testimonials from "@/components/Testimonials";
 
 const Homepage = () => {
-  return (
+  const isConstructing = true;
+
+  return isConstructing ? (
+    <UnderConstructionPage />
+  ) : (
     <>
       <Header />
       <HeroSection />

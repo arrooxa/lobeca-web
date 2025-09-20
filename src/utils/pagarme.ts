@@ -143,32 +143,16 @@ export const isCardExpired = (month: string, year: string): boolean => {
   );
 };
 
-// Declaração global para o tokenizecard.js
-declare global {
-  interface Window {
-    PagarmeCheckout: {
-      init: (
-        successCallback?: (data: any) => boolean,
-        failCallback?: (error: any) => void
-      ) => void;
-    };
-  }
+// Interface para resposta do tokenizecard.js
+interface TokenizeResponse {
+  "pagarmetoken-0": string;
+  [key: string]: string | number | boolean;
 }
 
-// Interface para dados do cartão no formato esperado pelo pagarme.js
-interface CardData {
-  card_number: string;
-  card_holder_name: string;
-  card_expiration_date: string;
-  card_cvv: string;
-}
-
-// Interface para dados do formulário
-interface PaymentFormData {
-  cardNumber: string;
-  cardholderName: string;
-  expiryDate: string;
-  cvv: string;
+// Interface para erro do tokenizecard.js
+interface TokenizeError {
+  message: string;
+  code?: string;
 }
 
 // Declaração global para o tokenizecard.js
@@ -183,19 +167,7 @@ declare global {
   }
 }
 
-// Interface para resposta do tokenizecard.js
-interface TokenizeResponse {
-  "pagarmetoken-0": string;
-  [key: string]: string | number | boolean;
-}
-
-// Interface para erro do tokenizecard.js
-interface TokenizeError {
-  message: string;
-  [key: string]: string | number | boolean;
-}
-
-// Interface para dados do cartão no formato esperado pelo tokenizecard.js
+// Interface para dados do cartão no formato esperado pelo pagarme.js
 interface CardData {
   card_number: string;
   card_holder_name: string;
