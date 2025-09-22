@@ -123,6 +123,7 @@ export function UserProvider({ children }: UserProviderProps) {
         phone,
         options: {
           channel: "sms",
+          shouldCreateUser: false,
         },
       });
 
