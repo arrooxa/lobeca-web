@@ -3,6 +3,8 @@ import { Bounce, type ToastOptions } from "react-toastify";
 export const ROUTES = {
   HOME: "/",
   LOGIN: "/login",
+  PRIVACY_POLICY: "/privacy-policy",
+  TERMS_OF_SERVICE: "/terms-of-service",
   DASHBOARD: "/dashboard",
   DASHBOARD_SUBSCRIPTION: "/dashboard/subscription",
   DASHBOARD_SUBSCRIPTION_CHECKOUT: "/dashboard/subscription/checkout",

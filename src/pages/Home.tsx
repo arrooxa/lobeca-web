@@ -9,7 +9,7 @@ import HeroSection from "@/components/HeroSection";
 import Testimonials from "@/components/Testimonials";
 
 const Homepage = () => {
-  const isConstructing = true;
+  const isConstructing = false;
 
   return isConstructing ? (
     <UnderConstructionPage />

@@ -83,10 +83,7 @@ export default function UnderConstructionPage() {
               size="lg"
               className="bg-brand-primary hover:bg-brand-primary/90 text-foreground-on-secondary"
               onClick={() =>
-                window.open(
-                  "https://api.whatsapp.com/message/GDMC6R2MLTOHE1?autoload=1&app_absent=0",
-                  "_blank"
-                )
+                window.open("https://wa.me/message/737FGWRL5VVND1", "_blank")
               }
             >
               <MessageSquare className="mr-2" />

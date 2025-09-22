@@ -355,7 +355,7 @@ export default function SubscriptionPage() {
                     onClick={() =>
                       enterprisePlan?.id === plan.id
                         ? window.open(
-                            "https://api.whatsapp.com/message/GDMC6R2MLTOHE1?autoload=1&app_absent=0",
+                            "https://wa.me/message/737FGWRL5VVND1",
                             "_blank"
                           )
                         : handlePlanChange(plan.id)

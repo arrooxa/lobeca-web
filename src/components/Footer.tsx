@@ -1,15 +1,16 @@
-import { Scissors } from "lucide-react";
+import { ROUTES } from "@/constants";
 
 const Footer = () => {
   return (
     <footer className="bg-fill-color py-12 px-4" id="footer">
       <div className="container mx-auto">
-        <div className="grid md:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-5 gap-8">
           <div>
-            <div className="flex items-center space-x-2 mb-4">
-              <Scissors className="h-6 w-6 text-brand-primary" />
-              <span className="text-xl font-bold text-foreground">Lobeca</span>
-            </div>
+            <img
+              src="/lobeca-logo.svg"
+              alt="Lobeca Logo"
+              className="mb-4 w-32"
+            />
             <p className="text-foreground-muted text-sm text-pretty">
               Conectando clientes às melhores barbearias e oferecendo
               ferramentas de gestão para barbeiros.
@@ -55,8 +56,43 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-foreground transition-colors">
+                <a
+                  href="https://wa.me/message/737FGWRL5VVND1"
+                  target="_blank"
+                  className="hover:text-foreground transition-colors"
+                >
                   Suporte
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-semibold mb-4 text-foreground">Dúvidas</h4>
+            <ul className="space-y-2 text-sm text-foreground-muted">
+              <li>
+                <a
+                  href={ROUTES.PRIVACY_POLICY}
+                  className="hover:text-foreground transition-colors"
+                >
+                  Política de Privacidade
+                </a>
+              </li>
+              <li>
+                <a
+                  href={ROUTES.TERMS_OF_SERVICE}
+                  className="hover:text-foreground transition-colors"
+                >
+                  Termos de uso
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://wa.me/message/737FGWRL5VVND1"
+                  target="_blank"
+                  className="hover:text-foreground transition-colors"
+                >
+                  Fale conosco
                 </a>
               </li>
             </ul>
@@ -76,7 +112,7 @@ const Footer = () => {
               <li>
                 <a
                   className="hover:text-foreground transition-colors"
-                  href="https://api.whatsapp.com/send/?phone=5513974253636"
+                  href="https://wa.me/message/737FGWRL5VVND1"
                 >
                   (13) 97425-3636
                 </a>
