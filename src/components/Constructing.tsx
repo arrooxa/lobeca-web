@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { WHATSAPP_WEB_LINK } from "@/constants";
 import {
   Scissors,
   Radar as Razor,
@@ -82,9 +83,7 @@ export default function UnderConstructionPage() {
             <Button
               size="lg"
               className="bg-brand-primary hover:bg-brand-primary/90 text-foreground-on-secondary"
-              onClick={() =>
-                window.open("https://wa.me/message/737FGWRL5VVND1", "_blank")
-              }
+              onClick={() => window.open(WHATSAPP_WEB_LINK, "_blank")}
             >
               <MessageSquare className="mr-2" />
               Entre em Contato

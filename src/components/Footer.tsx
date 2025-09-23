@@ -1,4 +1,4 @@
-import { ROUTES } from "@/constants";
+import { ROUTES, WHATSAPP_WEB_LINK } from "@/constants";
 
 const Footer = () => {
   return (
@@ -57,7 +57,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="https://wa.me/message/737FGWRL5VVND1"
+                  href={WHATSAPP_WEB_LINK}
                   target="_blank"
                   className="hover:text-foreground transition-colors"
                 >
@@ -88,7 +88,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="https://wa.me/message/737FGWRL5VVND1"
+                  href={WHATSAPP_WEB_LINK}
                   target="_blank"
                   className="hover:text-foreground transition-colors"
                 >
@@ -112,7 +112,7 @@ const Footer = () => {
               <li>
                 <a
                   className="hover:text-foreground transition-colors"
-                  href="https://wa.me/message/737FGWRL5VVND1"
+                  href={WHATSAPP_WEB_LINK}
                 >
                   (13) 97425-3636
                 </a>

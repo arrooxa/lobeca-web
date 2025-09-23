@@ -1,11 +1,11 @@
 import { Footer, Header } from "@/components";
 
-const TermsOfService = () => {
+const TermsOfServicePage = () => {
   return (
     <>
       <Header />
       <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
-        <div className="text-center">
+        <div className="">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
             Termos de Uso – Lobeca
           </h1>
@@ -264,4 +264,4 @@ const TermsOfService = () => {
   );
 };
 
-export default TermsOfService;
+export default TermsOfServicePage;

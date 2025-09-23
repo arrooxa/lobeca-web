@@ -10,10 +10,12 @@ import PrivacyPolicy from "./pages/privacy-policy";
 import TermsOfService from "./pages/terms-of-service";
 import Homepage from "./pages/Home";
 import Loginpage from "./pages/Login";
+import ForBarbers from "./pages/for-barbers";
 
 function App() {
   return (
     <Routes>
+      <Route path={ROUTES.FOR_BARBERS} element={<ForBarbers />} />
       <Route path={ROUTES.HOME} element={<Homepage />} />
       <Route path={ROUTES.LOGIN} element={<Loginpage />} />
       <Route path={ROUTES.PRIVACY_POLICY} element={<PrivacyPolicy />} />

@@ -1,6 +1,6 @@
 import { Footer, Header } from "@/components";
 
-const PrivacyPolicy = () => {
+const PrivacyPolicyPage = () => {
   return (
     <>
       <Header />
@@ -246,4 +246,4 @@ const PrivacyPolicy = () => {
   );
 };
 
-export default PrivacyPolicy;
+export default PrivacyPolicyPage;

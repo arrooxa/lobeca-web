@@ -5,6 +5,7 @@ export const ROUTES = {
   LOGIN: "/login",
   PRIVACY_POLICY: "/privacy-policy",
   TERMS_OF_SERVICE: "/terms-of-service",
+  FOR_BARBERS: "/for-barbers",
   DASHBOARD: "/dashboard",
   DASHBOARD_SUBSCRIPTION: "/dashboard/subscription",
   DASHBOARD_SUBSCRIPTION_CHECKOUT: "/dashboard/subscription/checkout",
@@ -27,3 +28,5 @@ export const defaultToastProps: ToastOptions = {
   theme: "colored",
   transition: Bounce,
 };
+
+export const WHATSAPP_WEB_LINK = "https://wa.me/message/737FGWRL5VVND1";

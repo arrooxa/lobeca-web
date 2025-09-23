@@ -27,7 +27,7 @@ import {
 } from "@/services/subscriptions/queries";
 import { cn } from "@/utils/cn";
 import { useNavigate } from "react-router";
-import { defaultToastProps, ROUTES } from "@/constants";
+import { defaultToastProps, ROUTES, WHATSAPP_WEB_LINK } from "@/constants";
 import { intervalToDuration } from "date-fns";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -354,10 +354,7 @@ export default function SubscriptionPage() {
                     }
                     onClick={() =>
                       enterprisePlan?.id === plan.id
-                        ? window.open(
-                            "https://wa.me/message/737FGWRL5VVND1",
-                            "_blank"
-                          )
+                        ? window.open(WHATSAPP_WEB_LINK, "_blank")
                         : handlePlanChange(plan.id)
                     }
                   >
