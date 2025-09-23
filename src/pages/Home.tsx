@@ -1,19 +1,59 @@
 import { Button, Card, CardContent, Input } from "@/components";
 import UnderConstructionPage from "@/components/Constructing";
-import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { ROUTES } from "@/constants";
 import { Calendar, Crosshair, MapPin, Search, Star } from "lucide-react";
 
 const Homepage = () => {
   const isConstructing = false;
+
+  const testimonials = [
+    {
+      name: "João Tsukamoto",
+      rating: 5,
+      comment:
+        "Encontrei uma barbearia incrível perto de casa. O agendamento foi super fácil!",
+      avatar: "/joao-tsukamoto.jpg",
+    },
+    {
+      name: "Renan Antunes",
+      rating: 5,
+      comment:
+        "Excelente plataforma! As avaliações me ajudaram a escolher o melhor barbeiro.",
+      avatar: "/renan-antunes.jpg",
+    },
+    {
+      name: "Lucas Reis",
+      rating: 5,
+      comment: "Praticidade total. Agora sempre marco meu corte pelo app.",
+      avatar: "/lucas-reis.jpg",
+    },
+    {
+      name: "Murilo Parma",
+      rating: 5,
+      comment:
+        "Não sei como vivia sem o Lobeca. Encontrei meu barbeiro ideal e nunca mais troquei!",
+      avatar: "/murilo-parma.jpg",
+    },
+  ];
 
   return isConstructing ? (
     <UnderConstructionPage />
   ) : (
     <>
       <Header />
-      <section className="py-20 px-4 bg-gradient-to-br from-fill-color to-white">
+      <section
+        className="py-20 px-4 bg-gradient-to-br from-fill-color to-white"
+        id="hero-section"
+      >
         <div className="container mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-bold text-balance mb-6 text-foreground">
             Conectando você ao melhor da{" "}
@@ -162,72 +202,90 @@ const Homepage = () => {
           </div>
         </div>
       </section>
-      <section className="py-16 px-4">
+      <section className="py-16 px-4" id="testimonials">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
             O que nossos clientes dizem
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                name: "João Tsukamoto",
-                rating: 5,
-                comment:
-                  "Encontrei uma barbearia incrível perto de casa. O agendamento foi super fácil!",
-                avatar:
-                  "https://scontent.cdninstagram.com/v/t51.75761-15/480765801_18490497022009746_1367201398027017295_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=103&cb=30a688f7-8c7f5fbb&ig_cache_key=MzU3MTAxNTAyNjM3NjgxNTMxNg%3D%3D.3-ccb1-7-cb30a688f7-8c7f5fbb&ccb=1-7&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjE0NDB4MTgwMC5zZHIuQzMifQ%3D%3D&_nc_ohc=RRjbpVDqZ00Q7kNvwHY0mCT&_nc_oc=Admiy3-P5VjXlXSYmUUkR-RoP55Szzp80OmOYfP1y3lxjIwIgUH7CHuSd72pwCjnfqnB5e6EEOGkEVAmZHlBzXVh&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&_nc_gid=LXyGxeWsvaFgDFyU9ZbNgQ&oh=00_AfYzMctoD624drsu1wocgDciR4gKgguh0KuYCrPm_WuAVQ&oe=68D7B388",
-              },
-              {
-                name: "Renan Antunes",
-                rating: 5,
-                comment:
-                  "Excelente plataforma! As avaliações me ajudaram a escolher o melhor barbeiro.",
-                avatar: "/renan-antunes.jpg",
-              },
-              {
-                name: "Lucas Reis",
-                rating: 5,
-                comment:
-                  "Praticidade total. Agora sempre marco meu corte pelo app.",
-                avatar: "lucas-reis.jpg",
-              },
-            ].map((testimonial, index) => (
-              <Card
-                key={index}
-                className="hover:shadow-lg hover:-translate-y-1 transition-all duration-300 animate-fade-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-center mb-4">
-                    <img
-                      src={testimonial.avatar || "/placeholder.svg"}
-                      alt={testimonial.name}
-                      className="w-12 h-12 rounded-full mr-3 object-cover"
-                    />
-                    <div>
-                      <h4 className="font-semibold text-foreground">
-                        {testimonial.name}
-                      </h4>
-                      <div className="flex">
-                        {[...Array(testimonial.rating)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className="h-4 w-4 fill-foreground-warning text-foreground-warning"
+
+          <div className="max-w-6xl mx-auto">
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+                slidesToScroll: 1,
+              }}
+              className="w-full"
+            >
+              <CarouselContent className="-ml-2 md:-ml-4">
+                {testimonials.map((testimonial, index) => (
+                  <CarouselItem
+                    key={index}
+                    className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3"
+                  >
+                    <Card className="hover:shadow-lg transition-shadow h-full">
+                      <CardContent className="p-6 text-center h-full flex flex-col">
+                        <div className="flex flex-col items-center mb-4">
+                          <img
+                            src={testimonial.avatar || "/placeholder.svg"}
+                            alt={testimonial.name}
+                            className="w-12 h-12 rounded-full mb-3 object-cover"
                           />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-foreground-muted text-pretty">
-                    "{testimonial.comment}"
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
+                          <div>
+                            <h4 className="font-semibold text-base text-foreground mb-2">
+                              {testimonial.name}
+                            </h4>
+                            <div className="flex justify-center">
+                              {[...Array(testimonial.rating)].map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className="h-4 w-4 fill-foreground-warning text-foreground-warning"
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        <p className="text-foreground-muted text-sm flex-grow">
+                          "{testimonial.comment}"
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="bg-white shadow-lg hover:bg-fill-color border-color-border" />
+              <CarouselNext className="bg-white shadow-lg hover:bg-fill-color border-color-border" />
+            </Carousel>
           </div>
         </div>
       </section>
-      <CTA />
+      <section className="py-16 px-4 bg-brand-primary ">
+        <div className="container mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-4 text-foreground-on-primary">
+            Pronto para começar?
+          </h2>
+          <p className="text-xl mb-8 max-w-xl mx-auto text-pretty text-foreground-on-secondary">
+            Junte-se a milhares de clientes satisfeitos e encontre sua barbearia
+            ideal hoje mesmo
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="#hero-section">
+              <Button variant="outline" size="lg" className="text-lg px-8 py-3">
+                Encontrar Barbearias
+              </Button>
+            </a>
+            <a href={ROUTES.FOR_BARBERS}>
+              <Button
+                variant="secondary-outline"
+                size="lg"
+                className="text-lg px-8 py-3"
+              >
+                Sou Barbeiro
+              </Button>
+            </a>
+          </div>
+        </div>
+      </section>
       <Footer />
     </>
   );
