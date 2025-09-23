@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/carousel";
 import { ROUTES } from "@/constants";
 import { Calendar, Crosshair, MapPin, Search, Star } from "lucide-react";
+import { NavLink } from "react-router";
 
 const Homepage = () => {
   const isConstructing = false;
@@ -269,20 +270,20 @@ const Homepage = () => {
             ideal hoje mesmo
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="#hero-section">
+            <NavLink to="#hero-section">
               <Button variant="outline" size="lg" className="text-lg px-8 py-3">
                 Encontrar Barbearias
               </Button>
-            </a>
-            <a href={ROUTES.FOR_BARBERS}>
-              <Button
-                variant="secondary-outline"
-                size="lg"
-                className="text-lg px-8 py-3"
-              >
-                Sou Barbeiro
-              </Button>
-            </a>
+            </NavLink>
+
+            <Button
+              variant="secondary-outline"
+              size="lg"
+              className="text-lg px-8 py-3"
+              asChild
+            >
+              <NavLink to={ROUTES.FOR_BARBERS}>Sou Barbeiro</NavLink>
+            </Button>
           </div>
         </div>
       </section>

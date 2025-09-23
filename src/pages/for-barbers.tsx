@@ -13,6 +13,7 @@ import {
   Smartphone,
   CheckCircle,
 } from "lucide-react";
+import { NavLink } from "react-router";
 
 export default function ForBarbersPage() {
   const {
@@ -413,15 +414,17 @@ export default function ForBarbersPage() {
             >
               Começar Teste Grátis
             </Button>
-            <a href={WHATSAPP_WEB_LINK} target="_blank">
-              <Button
-                variant="outline"
-                size="lg"
-                className="text-lg px-8 py-3 border-white text-white hover:bg-white hover:text-brand-primary bg-transparent"
-              >
+
+            <Button
+              variant="outline"
+              size="lg"
+              className="text-lg px-8 py-3 border-white text-white hover:bg-white hover:text-brand-primary bg-transparent"
+              asChild
+            >
+              <NavLink to={WHATSAPP_WEB_LINK} target="_blank">
                 Falar com Especialista
-              </Button>
-            </a>
+              </NavLink>
+            </Button>
           </div>
           <div className="text-sm opacity-80">
             <Clock className="inline h-4 w-4 mr-1" />

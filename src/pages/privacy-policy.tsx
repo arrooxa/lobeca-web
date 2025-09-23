@@ -1,4 +1,5 @@
 import { Footer, Header } from "@/components";
+import { NavLink } from "react-router";
 
 const PrivacyPolicyPage = () => {
   return (
@@ -183,12 +184,12 @@ const PrivacyPolicyPage = () => {
           </ul>
           <p className="text-gray-700 mt-4">
             Para exercer seus direitos, entre em contato pelo e-mail:
-            <a
-              href="mailto:contato@lobeca.com.br"
+            <NavLink
+              to="mailto:contato@lobeca.com.br"
               className="text-blue-600 hover:text-blue-800 ml-1"
             >
               contato@lobeca.com.br
-            </a>
+            </NavLink>
           </p>
         </section>
 
@@ -232,12 +233,12 @@ const PrivacyPolicyPage = () => {
           </p>
           <p className="text-gray-700 mt-2">
             📧{" "}
-            <a
-              href="mailto:contato@lobeca.com.br"
+            <NavLink
+              to="mailto:contato@lobeca.com.br"
               className="text-blue-600 hover:text-blue-800"
             >
               contato@lobeca.com.br
-            </a>
+            </NavLink>
           </p>
         </section>
       </div>

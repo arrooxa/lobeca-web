@@ -15,11 +15,11 @@ import ForBarbers from "./pages/for-barbers";
 function App() {
   return (
     <Routes>
-      <Route path={ROUTES.FOR_BARBERS} element={<ForBarbers />} />
       <Route path={ROUTES.HOME} element={<Homepage />} />
       <Route path={ROUTES.LOGIN} element={<Loginpage />} />
-      <Route path={ROUTES.PRIVACY_POLICY} element={<PrivacyPolicy />} />
+      <Route path={ROUTES.FOR_BARBERS} element={<ForBarbers />} />
       <Route path={ROUTES.TERMS_OF_SERVICE} element={<TermsOfService />} />
+      <Route path={ROUTES.PRIVACY_POLICY} element={<PrivacyPolicy />} />
 
       <Route element={<ProtectedRoute />}>
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />

@@ -1,4 +1,5 @@
 import { ROUTES, WHATSAPP_WEB_LINK } from "@/constants";
+import { NavLink } from "react-router";
 
 const Footer = () => {
   return (
@@ -87,13 +88,13 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a
-                  href={WHATSAPP_WEB_LINK}
+                <NavLink
+                  to={WHATSAPP_WEB_LINK}
                   target="_blank"
                   className="hover:text-foreground transition-colors"
                 >
                   Fale conosco
-                </a>
+                </NavLink>
               </li>
             </ul>
           </div>
@@ -102,20 +103,21 @@ const Footer = () => {
             <h4 className="font-semibold mb-4 text-foreground">Contato</h4>
             <ul className="space-y-2 text-sm text-foreground-muted">
               <li>
-                <a
+                <NavLink
                   className="hover:text-foreground transition-colors"
-                  href="mailto:contato@lobeca.com.br"
+                  to="mailto:contato@lobeca.com.br"
                 >
                   contato@lobeca.com.br
-                </a>
+                </NavLink>
               </li>
               <li>
-                <a
+                <NavLink
                   className="hover:text-foreground transition-colors"
-                  href={WHATSAPP_WEB_LINK}
+                  target="_blank"
+                  to={WHATSAPP_WEB_LINK}
                 >
                   (13) 97425-3636
-                </a>
+                </NavLink>
               </li>
               <li>Santos, SP</li>
             </ul>

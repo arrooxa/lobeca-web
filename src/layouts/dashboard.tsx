@@ -11,7 +11,7 @@ import {
   Scissors,
 } from "lucide-react";
 import { useUser } from "@/context/UserContext";
-import { useNavigate } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import { ROUTES } from "@/constants";
 
 interface DashboardLayoutProps {
@@ -80,9 +80,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             const isActive = window.location.pathname === item.href;
 
             return (
-              <a
+              <NavLink
                 key={item.name}
-                href={item.href}
+                to={item.href}
                 className={`
                   flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200
                   ${
@@ -98,7 +98,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   }`}
                 />
                 {item.name}
-              </a>
+              </NavLink>
             );
           })}
         </nav>

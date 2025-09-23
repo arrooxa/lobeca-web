@@ -1,4 +1,5 @@
 import { Footer, Header } from "@/components";
+import { NavLink } from "react-router";
 
 const TermsOfServicePage = () => {
   return (
@@ -250,12 +251,12 @@ const TermsOfServicePage = () => {
           </p>
           <p className="text-gray-700 mt-2">
             📧{" "}
-            <a
-              href="mailto:contato@lobeca.com.br"
+            <NavLink
+              to="mailto:contato@lobeca.com.br"
               className="text-blue-600 hover:text-blue-800"
             >
               contato@lobeca.com.br
-            </a>
+            </NavLink>
           </p>
         </section>
       </div>

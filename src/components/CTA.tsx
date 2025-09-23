@@ -1,5 +1,6 @@
 import { ROUTES } from "@/constants";
 import { Button } from "./ui/button";
+import { NavLink } from "react-router";
 
 const CTA = () => {
   return (
@@ -16,15 +17,15 @@ const CTA = () => {
           <Button variant="outline" size="lg" className="text-lg px-8 py-3">
             Encontrar Barbearias
           </Button>
-          <a href={ROUTES.FOR_BARBERS}>
-            <Button
-              variant="secondary-outline"
-              size="lg"
-              className="text-lg px-8 py-3"
-            >
-              Sou Barbeiro
-            </Button>
-          </a>
+
+          <Button
+            variant="secondary-outline"
+            size="lg"
+            className="text-lg px-8 py-3"
+            asChild
+          >
+            <NavLink to={ROUTES.FOR_BARBERS}>Sou barbeiro</NavLink>
+          </Button>
         </div>
       </div>
     </section>
