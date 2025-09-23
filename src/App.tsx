@@ -1,15 +1,15 @@
 import "./App.css";
 import { Route, Routes } from "react-router";
 import { ROUTES } from "./constants";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/dashboard";
 import { ProtectedRoute } from "./components";
-import SubscriptionPage from "./pages/Dashboard/subscription";
-import SubscriptionCheckout from "./pages/Dashboard/subscription-checkout";
-import SubscriptionSuccess from "./pages/Dashboard/subscription-success";
+import SubscriptionPage from "./pages/dashboard/subscription";
+import SubscriptionCheckout from "./pages/dashboard/subscription-checkout";
+import SubscriptionSuccess from "./pages/dashboard/subscription-success";
 import PrivacyPolicy from "./pages/privacy-policy";
 import TermsOfService from "./pages/terms-of-service";
-import Homepage from "./pages/Home";
-import Loginpage from "./pages/Login";
+import Homepage from "./pages/home";
+import Loginpage from "./pages/login";
 import ForBarbers from "./pages/for-barbers";
 
 function App() {
