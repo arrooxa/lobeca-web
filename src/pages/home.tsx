@@ -44,6 +44,20 @@ const Homepage = () => {
         "Não sei como vivia sem o Lobeca. Encontrei meu barbeiro ideal e nunca mais troquei!",
       avatar: "/murilo-parma.jpg",
     },
+    {
+      name: "Gabriel Macchione",
+      rating: 5,
+      comment:
+        "Amei a facilidade de encontrar barbearias com boas avaliações. Recomendo!",
+      avatar: "/gabriel-macchione.jpg",
+    },
+    {
+      name: "Gabriel Alberto",
+      rating: 5,
+      comment:
+        "Ferramenta indispensável para quem valoriza um bom corte e atendimento.",
+      avatar: "/gabriel-alberto.jpg",
+    },
   ];
 
   return isConstructing ? (
