@@ -66,7 +66,6 @@ const Homepage = () => {
             gestão.
           </p>
 
-          {/* Search Bar */}
           <div className="max-w-md mx-auto mb-8">
             <div className="relative">
               <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground-subtle h-5 w-5" />
@@ -90,11 +89,12 @@ const Homepage = () => {
                   if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
                       (position) => {
+                        console.log(position);
+
                         console.log(
                           "[v0] Localização obtida:",
                           position.coords
                         );
-                        // Aqui você implementaria a lógica para usar a localização
                       },
                       (error) => {
                         console.log("[v0] Erro ao obter localização:", error);
