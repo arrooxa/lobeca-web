@@ -11,11 +11,13 @@ import TermsOfService from "./pages/terms-of-service";
 import Homepage from "./pages/home";
 import Loginpage from "./pages/login";
 import ForBarbers from "./pages/for-barbers";
+import EstablishmentsPage from "./pages/establishments";
 
 function App() {
   return (
     <Routes>
       <Route path={ROUTES.HOME} element={<Homepage />} />
+      <Route path={ROUTES.ESTABLISHMENTS} element={<EstablishmentsPage />} />
       <Route path={ROUTES.LOGIN} element={<Loginpage />} />
       <Route path={ROUTES.FOR_BARBERS} element={<ForBarbers />} />
       <Route path={ROUTES.TERMS_OF_SERVICE} element={<TermsOfService />} />

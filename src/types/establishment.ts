@@ -1,4 +1,5 @@
 import z from "zod";
+
 import {
   type BaseApiResponse,
   type BaseEntity,
@@ -7,9 +8,9 @@ import {
   withApiTransform,
 } from "./base";
 import {
-  mapWorkerServiceFromApi,
-  type WorkerService,
-  type WorkerServiceResponseAPI,
+  type EstablishmentServiceWithDetails,
+  type EstablishmentServiceWithDetailsResponseAPI,
+  mapEstablishmentServiceWithDetailsFromApi,
 } from "./service";
 import {
   mapPublicWorkerFromApi,
@@ -31,24 +32,6 @@ export interface Establishment extends BaseEntity {
   totalRecommendations: number;
 }
 
-export interface EstablishmentWithSubscriptions extends Establishment {
-  planID: number;
-  externalCustomerId?: string;
-  externalSubscriptionId?: string;
-  status: string;
-  trialStartedAt?: Date;
-  trialEndsAt?: Date;
-  lastPaymentDate?: Date;
-  nextBillingDate?: Date;
-}
-
-export interface EstablishmentInvite extends BaseEntity {
-  establishmentID: number;
-  inviterUUID: string;
-  inviteeUUID: string;
-  status: InviteStatus;
-}
-
 export interface EstablishmentInviteWithDetails extends EstablishmentInvite {
   inviteeName: string;
   inviteePhotoURL?: string;
@@ -61,17 +44,34 @@ export interface EstablishmentInviteWithDetails extends EstablishmentInvite {
   establishmentAddress: string;
 }
 
-export interface EstablishmentWithDetails {
-  establishment: EstablishmentWithSubscriptions;
+export interface EstablishmentWithDetails
+  extends EstablishmentWithSubscription {
   users: PublicWorker[];
-  services: WorkerService[];
+  services: EstablishmentServiceWithDetails[];
   invites: EstablishmentInviteWithDetails[];
 }
 
-export interface PublicEstablishmentDetails extends Establishment {
+export interface PublicEstablishmentDetails {
   establishment: Establishment;
-  users: PublicWorker[];
-  services: WorkerService[];
+  servicesDetails: EstablishmentServiceWithDetails[];
+}
+
+export interface EstablishmentInvite extends BaseEntity {
+  establishmentID: number;
+  inviterUUID: string;
+  inviteeUUID: string;
+  status: InviteStatus;
+}
+
+export interface EstablishmentWithSubscription extends Establishment {
+  planID: number;
+  status: string;
+  externalCustomerID?: string;
+  externalSubscriptionID?: string;
+  trialStartedAt?: Date;
+  trialEndsAt?: Date;
+  lastPaymentDate?: Date;
+  nextBillingDate?: Date;
 }
 
 // ========== API RESPONSE INTERFACES ==========
@@ -86,7 +86,7 @@ export interface EstablishmentResponseAPI extends BaseApiResponse {
   total_recommendations: number;
 }
 
-export interface EstablishmentWithSubscriptionsResponseAPI
+export interface EstablishmentWithSubscriptionResponseAPI
   extends EstablishmentResponseAPI {
   plan_id: number;
   status: string;
@@ -94,7 +94,7 @@ export interface EstablishmentWithSubscriptionsResponseAPI
   external_subscription_id?: string;
   trial_started_at?: string;
   trial_ends_at?: string;
-  subscription_started_at?: string;
+  last_payment_date?: string;
   next_billing_date?: string;
 }
 
@@ -116,17 +116,21 @@ export interface EstablishmentInviteWithDetailsResponseAPI
   establishment_address: string;
 }
 
-export interface EstablishmentDetailsResponseAPI {
-  establishment: EstablishmentWithSubscriptionsResponseAPI;
+export interface EstablishmentWithDetailsResponseAPI
+  extends EstablishmentWithSubscriptionResponseAPI {
   users: PublicWorkerResponseAPI[];
-  services: WorkerServiceResponseAPI[];
+  services: EstablishmentServiceWithDetailsResponseAPI[];
   invites: EstablishmentInviteWithDetailsResponseAPI[];
 }
 
-export interface PublicEstablishmentDetailsResponseAPI {
-  establishment: EstablishmentResponseAPI;
-  users: PublicWorkerResponseAPI[];
-  services: WorkerServiceResponseAPI[];
+export interface PublicEstablishmentListItemResponseAPI
+  extends EstablishmentResponseAPI {
+  distance?: number;
+}
+
+export interface PublicEstablishmentDetailsResponseAPI
+  extends EstablishmentResponseAPI {
+  services_details: EstablishmentServiceWithDetailsResponseAPI[];
 }
 
 // ========== REQUEST INTERFACES ==========
@@ -156,6 +160,7 @@ export interface GetAllEstablishmentParams {
   name?: string;
   latitude?: number;
   longitude?: number;
+  category?: number;
 }
 
 // ========== VALIDATION SCHEMAS ==========
@@ -200,46 +205,44 @@ export const mapEstablishmentFromApi = withApiTransform<
   totalRecommendations: apiResponse.total_recommendations,
 }));
 
-export const mapEstablishmentWithSubscriptionsFromApi = withApiTransform<
-  EstablishmentWithSubscriptionsResponseAPI,
-  EstablishmentWithSubscriptions
+export const mapEstablishmentWithSubscriptionFromApi = withApiTransform<
+  EstablishmentWithSubscriptionResponseAPI,
+  EstablishmentWithSubscription
 >((apiResponse) => ({
   ...mapEstablishmentFromApi(apiResponse),
   planID: apiResponse.plan_id,
   status: apiResponse.status,
-  externalCustomerId: apiResponse.external_customer_id,
-  externalSubscriptionId: apiResponse.external_subscription_id,
   trialStartedAt: apiResponse.trial_started_at
     ? new Date(apiResponse.trial_started_at)
     : undefined,
   trialEndsAt: apiResponse.trial_ends_at
     ? new Date(apiResponse.trial_ends_at)
     : undefined,
-  subscriptionStartedAt: apiResponse.subscription_started_at
-    ? new Date(apiResponse.subscription_started_at)
+  lastPaymentDate: apiResponse.last_payment_date
+    ? new Date(apiResponse.last_payment_date)
     : undefined,
   nextBillingDate: apiResponse.next_billing_date
     ? new Date(apiResponse.next_billing_date)
     : undefined,
 }));
 
-export const mapEstablishmentDetailsFromApi = (
-  apiResponse: EstablishmentDetailsResponseAPI
-) => ({
-  establishment: mapEstablishmentWithSubscriptionsFromApi(
-    apiResponse.establishment
-  ),
+export const mapEstablishmentWithDetailsFromApi = withApiTransform<
+  EstablishmentWithDetailsResponseAPI,
+  EstablishmentWithDetails
+>((apiResponse) => ({
+  ...mapEstablishmentWithSubscriptionFromApi(apiResponse),
   users: apiResponse.users.map(mapPublicWorkerFromApi),
-  services: apiResponse.services.map(mapWorkerServiceFromApi),
+  services: apiResponse.services.map(mapEstablishmentServiceWithDetailsFromApi),
   invites: apiResponse.invites.map(mapEstablishmentInviteWithDetailsFromApi),
-});
+}));
 
 export const mapPublicEstablishmentDetailsFromApi = (
   apiResponse: PublicEstablishmentDetailsResponseAPI
 ) => ({
-  establishment: mapEstablishmentFromApi(apiResponse.establishment),
-  users: apiResponse.users.map(mapPublicWorkerFromApi),
-  services: apiResponse.services.map(mapWorkerServiceFromApi),
+  ...mapEstablishmentFromApi(apiResponse),
+  services: apiResponse.services_details.map(
+    mapEstablishmentServiceWithDetailsFromApi
+  ),
 });
 
 export const mapEstablishmentInviteFromApi = withApiTransform<

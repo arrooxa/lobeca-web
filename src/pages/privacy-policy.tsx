@@ -1,10 +1,9 @@
-import { Footer, Header } from "@/components";
+import PublicLayout from "@/layouts/public";
 import { NavLink } from "react-router";
 
 const PrivacyPolicyPage = () => {
   return (
-    <>
-      <Header />
+    <PublicLayout>
       <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
         <div className="">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
@@ -242,8 +241,7 @@ const PrivacyPolicyPage = () => {
           </p>
         </section>
       </div>
-      <Footer />
-    </>
+    </PublicLayout>
   );
 };
 

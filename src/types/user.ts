@@ -1,14 +1,16 @@
 import { z } from "zod";
+
 import {
-  withApiTransformUUID,
   type BaseApiResponseWithUUID,
   type BaseEntityWithUUID,
   type CreateRequest,
+  type Location,
+  withApiTransformUUID,
 } from "./base";
 import {
-  mapWorkerServiceFromApi,
-  type WorkerService,
-  type WorkerServiceResponseAPI,
+  mapWorkerEstablishmentServiceWithDetailsFromApi,
+  type WorkerEstablishmentServiceWithDetails,
+  type WorkerEstablishmentServiceWithDetailsResponseAPI,
 } from "./service";
 
 // ========== DOMAIN INTERFACES ==========
@@ -29,15 +31,17 @@ export interface User extends BaseEntityWithUUID {
 }
 
 export interface PublicWorker extends BaseEntityWithUUID {
-  uuid: string;
   name: string;
   nickname?: string;
   phone: string;
   photoURL?: string;
   recommendations: number;
-  establishmentID?: number;
-  role?: string;
-  services: WorkerService[];
+  establishmentID: number;
+  role: string;
+}
+
+export interface PublicWorkerWithDetails extends PublicWorker {
+  services: WorkerEstablishmentServiceWithDetails[];
 }
 
 // ========== VALIDATION SCHEMAS ==========
@@ -103,9 +107,13 @@ export interface PublicWorkerResponseAPI extends BaseApiResponseWithUUID {
   phone: string;
   photo_url?: string;
   recommendations: number;
-  establishment_id?: number;
-  role?: string;
-  services?: WorkerServiceResponseAPI[];
+  establishment_id: number;
+  role: string;
+}
+
+export interface PublicWorkerWithDetailsResponseAPI
+  extends PublicWorkerResponseAPI {
+  services: WorkerEstablishmentServiceWithDetailsResponseAPI[];
 }
 
 // ========== REQUEST INTERFACES ==========
@@ -129,7 +137,7 @@ export interface GetWorkersParams {
   limit?: number;
   offset?: number;
   name?: string;
-  service?: number;
+  category?: number;
   has_establishment?: boolean;
 }
 
@@ -164,7 +172,14 @@ export const mapPublicWorkerFromApi = withApiTransformUUID<
   recommendations: apiResponse.recommendations,
   establishmentID: apiResponse.establishment_id,
   role: apiResponse.role,
+}));
+
+export const mapPublicWorkerWithDetailsFromApi = withApiTransformUUID<
+  PublicWorkerWithDetailsResponseAPI,
+  PublicWorkerWithDetails
+>((apiResponse) => ({
+  ...mapPublicWorkerFromApi(apiResponse),
   services: apiResponse.services
-    ? apiResponse.services.map(mapWorkerServiceFromApi)
+    ? apiResponse.services.map(mapWorkerEstablishmentServiceWithDetailsFromApi)
     : [],
 }));

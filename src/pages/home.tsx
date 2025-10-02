@@ -1,7 +1,5 @@
 import { Button, Card, CardContent, Input } from "@/components";
 import UnderConstructionPage from "@/components/Constructing";
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
 import {
   Carousel,
   CarouselContent,
@@ -10,11 +8,14 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { ROUTES } from "@/constants";
+import PublicLayout from "@/layouts/public";
 import { Calendar, Crosshair, MapPin, Search, Star } from "lucide-react";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 
 const Homepage = () => {
   const isConstructing = false;
+
+  const navigate = useNavigate();
 
   const testimonials = [
     {
@@ -63,8 +64,7 @@ const Homepage = () => {
   return isConstructing ? (
     <UnderConstructionPage />
   ) : (
-    <>
-      <Header />
+    <PublicLayout>
       <section
         className="py-20 px-4 bg-gradient-to-br from-fill-color to-white"
         id="hero-section"
@@ -103,11 +103,8 @@ const Homepage = () => {
                   if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
                       (position) => {
-                        console.log(position);
-
-                        console.log(
-                          "[v0] Localização obtida:",
-                          position.coords
+                        navigate(
+                          `/establishments?lat=${position.coords.latitude}&lng=${position.coords.longitude}`
                         );
                       },
                       (error) => {
@@ -301,8 +298,7 @@ const Homepage = () => {
           </div>
         </div>
       </section>
-      <Footer />
-    </>
+    </PublicLayout>
   );
 };
 

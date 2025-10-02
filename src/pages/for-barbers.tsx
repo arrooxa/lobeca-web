@@ -1,7 +1,7 @@
-import { Footer, Header } from "@/components";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { WHATSAPP_WEB_LINK } from "@/constants";
+import PublicLayout from "@/layouts/public";
 import { useGetSubscriptionsPlans } from "@/services/subscriptions/queries";
 import {
   Calendar,
@@ -91,9 +91,7 @@ export default function ForBarbersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-
+    <PublicLayout>
       <section className="py-20 px-4 bg-gradient-to-br from-fill-color to-white">
         <div className="container mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-bold text-balance mb-6 text-foreground">
@@ -432,8 +430,6 @@ export default function ForBarbersPage() {
           </div>
         </div>
       </section>
-
-      <Footer />
-    </div>
+    </PublicLayout>
   );
 }
