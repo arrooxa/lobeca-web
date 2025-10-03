@@ -25,6 +25,8 @@ export default function EstablishmentsPage() {
     limit: 20,
     latitude: lat ? parseFloat(lat) : undefined,
     longitude: lng ? parseFloat(lng) : undefined,
+    category: undefined,
+    name: undefined,
   });
 
   if (isLoading) {
@@ -86,14 +88,13 @@ export default function EstablishmentsPage() {
               Encontramos {establishments.length} estabelecimentos na sua região
             </p>
           </div>
-
           {establishments.length === 0 ? (
             <Card>
               <CardHeader>
                 <CardTitle>Nenhum estabelecimento encontrado</CardTitle>
                 <CardDescription>
-                  Não encontramos barbearias próximas à sua localização. Tente
-                  buscar em outra região.
+                  "Não encontramos barbearias próximas à sua localização. Tente
+                  buscar em outra região."
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -145,10 +146,7 @@ export default function EstablishmentsPage() {
                       <span>{establishment.address}</span>
                     </div>
 
-                    {/* <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Phone className="h-4 w-4" />
-                    <span>{establishment.phone}</span>
-                  </div>
+                    {/*
 
                   <div className="flex flex-wrap gap-2">
                     {establishment.services.slice(0, 3).map((service, idx) => (

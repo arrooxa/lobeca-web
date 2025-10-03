@@ -32,12 +32,6 @@ const Header = () => {
           >
             Contato
           </NavLink>
-          <NavLink
-            to="#footer"
-            className="text-font-secondary hover:text-brand-secondary transition-colors"
-          >
-            Contato
-          </NavLink>
         </nav>
         <div className="flex items-center">
           <Button variant="default" asChild>
