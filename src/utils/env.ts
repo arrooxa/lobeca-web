@@ -10,6 +10,8 @@ export const config = {
   encryptionKey:
     import.meta.env.VITE_ENCRYPTION_KEY || "lobeca-default-key-2024",
 
+  googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+
   isDev: import.meta.env.VITE_IS_DEV === "true",
   devOtpCode: import.meta.env.VITE_DEV_OTP_CODE || "123456",
 } as const;

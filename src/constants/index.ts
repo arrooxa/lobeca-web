@@ -7,6 +7,7 @@ export const ROUTES = {
   TERMS_OF_SERVICE: "/terms-of-service",
   FOR_BARBERS: "/for-barbers",
   ESTABLISHMENTS: "/establishments",
+  ESTABLISHMENTS_DETAILS: "/estabelecimentos/:id",
   DASHBOARD: "/dashboard",
   DASHBOARD_SUBSCRIPTION: "/dashboard/subscription",
   DASHBOARD_SUBSCRIPTION_CHECKOUT: "/dashboard/subscription/checkout",

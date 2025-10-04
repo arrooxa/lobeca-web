@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Navigation, Heart } from "lucide-react";
-import { useNavigate, useSearchParams } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import { useGetEstablishments } from "@/services/establishments/queries";
 import PublicLayout from "@/layouts/public";
 
@@ -157,8 +157,10 @@ export default function EstablishmentsPage() {
                   </div> */}
 
                     <div className="flex gap-2 pt-2">
-                      <Button className="flex-1" size="sm">
-                        Ver detalhes
+                      <Button className="flex-1" size="sm" asChild>
+                        <Link to={`/estabelecimentos/${establishment.id}`}>
+                          Ver detalhes
+                        </Link>
                       </Button>
                       <Button variant="outline" size="sm">
                         <Navigation className="h-4 w-4" />
