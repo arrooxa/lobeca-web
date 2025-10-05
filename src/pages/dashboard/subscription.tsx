@@ -31,6 +31,7 @@ import { defaultToastProps, ROUTES, WHATSAPP_WEB_LINK } from "@/constants";
 import { intervalToDuration } from "date-fns";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { formatMoney } from "@/utils/money";
 
 export default function SubscriptionPage() {
   const navigate = useNavigate();
@@ -76,25 +77,21 @@ export default function SubscriptionPage() {
   }
 
   const isEstablishmentTrialing =
-    establishment.establishment.status === "trial" &&
-    !establishment.establishment.lastPaymentDate;
+    establishment.status === "trial" && !establishment.lastPaymentDate;
 
-  const isEstablishmentCanceled =
-    establishment.establishment.status === "canceled";
+  const isEstablishmentCanceled = establishment.status === "canceled";
 
   const trialDaysLeft =
-    isEstablishmentTrialing && establishment.establishment.trialEndsAt
+    isEstablishmentTrialing && establishment.trialEndsAt
       ? intervalToDuration({
           start: new Date(),
-          end: new Date(establishment.establishment.trialEndsAt),
+          end: new Date(establishment.trialEndsAt),
         }).days || 0
       : 0;
 
   const trialProgress = ((30 - trialDaysLeft) / 30) * 100;
 
-  const currentPlan = plans.find(
-    (p) => p.id === establishment.establishment.planID
-  );
+  const currentPlan = plans.find((p) => p.id === establishment.planID);
 
   const popularPlan = plans.find((p) => p.id === 2);
 
@@ -103,7 +100,7 @@ export default function SubscriptionPage() {
   const handlePlanChange = async (planID: number) => {
     const searchParams = new URLSearchParams({
       plan: planID.toString(),
-      establishment: establishment.establishment.id.toString(),
+      establishment: establishment.id.toString(),
     });
 
     navigate(`${ROUTES.DASHBOARD_SUBSCRIPTION_CHECKOUT}?${searchParams}`);
@@ -114,7 +111,7 @@ export default function SubscriptionPage() {
       setIsCancellingSubscription(true);
 
       await cancelSubscriptionMutation.mutateAsync({
-        establishmentId: establishment.establishment.id,
+        establishmentId: establishment.id,
       });
 
       toast.success("Assinatura cancelada com sucesso.", defaultToastProps);
@@ -158,7 +155,7 @@ export default function SubscriptionPage() {
             <div className="flex items-center justify-center gap-2 mb-4">
               <Scissors className="h-8 w-8 text-brand-primary" />
               <h1 className="text-3xl font-bold text-foreground">
-                Gerenciar Assinatura - {establishment.establishment.name}
+                Gerenciar Assinatura - {establishment.name}
               </h1>
             </div>
             <p className="text-foreground-muted text-lg">
@@ -239,7 +236,7 @@ export default function SubscriptionPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-2xl font-bold text-foreground">
-                    R$ {currentPlan?.price.toFixed(2).replace(".", ",")}
+                    R$ {formatMoney(currentPlan?.price || 0)}
                     <span className="text-sm font-normal text-foreground-muted">
                       /mês
                     </span>
@@ -250,9 +247,7 @@ export default function SubscriptionPage() {
                       {
                         intervalToDuration({
                           start: new Date(),
-                          end: new Date(
-                            establishment.establishment.nextBillingDate || ""
-                          ),
+                          end: new Date(establishment.nextBillingDate || ""),
                         }).days
                       }{" "}
                       dias
@@ -314,7 +309,7 @@ export default function SubscriptionPage() {
                     ) : (
                       <div>
                         <p className="text-3xl font-bold text-foreground">
-                          R$ {plan.price.toFixed(2).replace(".", ",")}
+                          R$ {formatMoney(plan.price)}
                         </p>
                         <p className="text-sm text-foreground-muted">por mês</p>
                       </div>

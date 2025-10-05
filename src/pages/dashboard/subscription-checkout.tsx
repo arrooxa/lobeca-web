@@ -77,7 +77,7 @@ const SubscriptionCheckout = () => {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-foreground">
-              Finalizar Assinatura - {establishment.establishment.name}
+              Finalizar Assinatura - {establishment.name}
             </h1>
             <p className="text-foreground-muted mt-2">
               Complete o pagamento para ativar seu plano da sua barbearia
@@ -85,12 +85,10 @@ const SubscriptionCheckout = () => {
           </div>
 
           <PaymentForm
-            establishment={establishment.establishment}
+            establishment={establishment}
             plan={currentPlan}
-            externalSubscriptionId={
-              establishment.establishment.externalSubscriptionId
-            }
-            externalCustomerId={establishment.establishment.externalCustomerId}
+            externalSubscriptionId={establishment.externalSubscriptionID}
+            externalCustomerId={establishment.externalCustomerID}
           />
         </div>
       </div>

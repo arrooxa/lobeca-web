@@ -65,7 +65,7 @@ export const useCreateWorkerEstablishmentService = () => {
   return useMutation({
     mutationFn: (data: CreateWorkerEstablishmentServiceRequest) =>
       serviceService.createWorkerEstablishmentService(data),
-    onSuccess: (variables, data) => {
+    onSuccess: (_, data) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.services.all,
       });

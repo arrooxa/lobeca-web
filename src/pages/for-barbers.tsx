@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { WHATSAPP_WEB_LINK } from "@/constants";
 import PublicLayout from "@/layouts/public";
 import { useGetSubscriptionsPlans } from "@/services/subscriptions/queries";
+import { formatMoney } from "@/utils/money";
 import {
   Calendar,
   Users,
@@ -222,7 +223,7 @@ export default function ForBarbersPage() {
                     {enterprisePlan?.id !== plan.id && (
                       <div className="flex items-baseline justify-center">
                         <span className="text-4xl font-bold text-foreground">
-                          R${plan.price.toFixed(2)}
+                          R${formatMoney(plan.price)}
                         </span>
                         <span className="text-foreground-muted ml-1">/mês</span>
                       </div>

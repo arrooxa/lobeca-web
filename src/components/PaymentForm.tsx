@@ -17,7 +17,7 @@ import { Separator } from "./ui/separator";
 import { Label } from "./ui/label";
 import {
   paymentFormSchema,
-  type EstablishmentWithSubscriptions,
+  type EstablishmentWithSubscription,
   type PaymentFormData,
   type SubscriptionPlan,
 } from "@/types";
@@ -33,9 +33,10 @@ import {
   tokenizeFormData,
 } from "@/utils/pagarme";
 import { defaultToastProps, ROUTES } from "@/constants";
+import { formatMoney } from "@/utils/money";
 
 interface PaymentFormProps {
-  establishment: EstablishmentWithSubscriptions;
+  establishment: EstablishmentWithSubscription;
   plan: SubscriptionPlan;
   externalCustomerId?: string;
   externalSubscriptionId?: string;
@@ -308,14 +309,14 @@ const PaymentForm = ({
               <div className="flex justify-between items-center">
                 <span className="text-foreground">Plano {plan.name}</span>
                 <span className="font-semibold">
-                  R$ {plan.price.toFixed(2)}
+                  R$ {formatMoney(plan.price)}
                 </span>
               </div>
 
               <Separator />
               <div className="flex justify-between items-center text-lg font-bold">
                 <span>Total</span>
-                <span>R$ {plan.price.toFixed(2)}</span>
+                <span>R$ {formatMoney(plan.price)}</span>
               </div>
               <Badge variant="outline" className="w-full justify-center py-4">
                 Cobrança mensal recorrente

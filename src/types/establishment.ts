@@ -212,6 +212,8 @@ export const mapEstablishmentWithSubscriptionFromApi = withApiTransform<
   ...mapEstablishmentFromApi(apiResponse),
   planID: apiResponse.plan_id,
   status: apiResponse.status,
+  externalCustomerID: apiResponse.external_customer_id,
+  externalSubscriptionID: apiResponse.external_subscription_id,
   trialStartedAt: apiResponse.trial_started_at
     ? new Date(apiResponse.trial_started_at)
     : undefined,
