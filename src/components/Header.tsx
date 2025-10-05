@@ -1,8 +1,11 @@
 import { Button } from "./ui/button";
 import { NavLink } from "react-router";
 import { ROUTES } from "@/constants";
+import { useUser } from "@/context/UserContext";
 
 const Header = () => {
+  const { user } = useUser();
+
   return (
     <header className="border-b border-color-border bg-fill-color/95 backdrop-blur supports-[backdrop-filter]:bg-fill-color/60 sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -35,7 +38,9 @@ const Header = () => {
         </nav>
         <div className="flex items-center">
           <Button variant="default" asChild>
-            <NavLink to={ROUTES.LOGIN}>Já sou barbeiro</NavLink>
+            <NavLink to={ROUTES.LOGIN}>
+              {user ? "Dashboard" : "Faça o login"}
+            </NavLink>
           </Button>
         </div>
       </div>
