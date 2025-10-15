@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, Input } from "@/components";
+import { Button, Card, CardContent } from "@/components";
 import UnderConstructionPage from "@/components/Constructing";
 import {
   Carousel,
@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/carousel";
 import { ROUTES } from "@/constants";
 import PublicLayout from "@/layouts/public";
-import { Calendar, Crosshair, MapPin, Search, Star } from "lucide-react";
+import { Calendar, Crosshair, MapPin, Star } from "lucide-react";
 import { NavLink, useNavigate } from "react-router";
 
 const Homepage = () => {
@@ -81,7 +81,7 @@ const Homepage = () => {
           </p>
 
           <div className="max-w-md mx-auto mb-8">
-            <div className="relative">
+            {/* <div className="relative">
               <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground-subtle h-5 w-5" />
               <Input
                 placeholder="Digite seu CEP ou endereço"
@@ -93,7 +93,7 @@ const Homepage = () => {
               >
                 <Search className="h-4 w-4" />
               </Button>
-            </div>
+            </div> */}
             <div className="mt-3 flex justify-center">
               <Button
                 variant="ghost"
@@ -108,7 +108,7 @@ const Homepage = () => {
                         );
                       },
                       (error) => {
-                        console.log("[v0] Erro ao obter localização:", error);
+                        console.log("Erro ao obter localização:", error);
                       }
                     );
                   }

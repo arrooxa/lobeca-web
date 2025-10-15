@@ -1,4 +1,8 @@
-import { mapUserFromApi, type UserResponseAPI } from "@/types";
+import {
+  mapUserFromApi,
+  type UserResponseAPI,
+  type RegisterUserData,
+} from "@/types";
 import api from "../instance";
 
 export const userService = {
@@ -36,6 +40,21 @@ export const userService = {
         error instanceof Error
           ? error.message
           : "Error trying get user by supabase ID"
+      );
+    }
+  },
+
+  create: async (userData: RegisterUserData) => {
+    try {
+      const response = await api.post<UserResponseAPI>("/user", {
+        name: userData.name,
+        phone: userData.phone,
+        type_id: userData.typeID,
+      });
+      return mapUserFromApi(response.data);
+    } catch (error) {
+      throw new Error(
+        error instanceof Error ? error.message : "Error trying to create user"
       );
     }
   },

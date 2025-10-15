@@ -25,6 +25,12 @@ interface UserContextData {
   isCustomer: boolean;
   loginWithOtp: (phone: string) => Promise<void>;
   verifyOtp: (phone: string, otp: string) => Promise<void>;
+  verifyOtpAndCreateProfile: (
+    phone: string,
+    otp: string,
+    userData: { name: string; typeID: number }
+  ) => Promise<void>;
+  register: (name: string, phone: string, typeID: number) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (userData: Partial<User>) => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -158,6 +164,62 @@ export function UserProvider({ children }: UserProviderProps) {
     }
   };
 
+  const verifyOtpAndCreateProfile = async (
+    phone: string,
+    otp: string,
+    userData: { name: string; typeID: number }
+  ) => {
+    try {
+      setIsLoading(true);
+
+      const { data, error } = await supabase.auth.verifyOtp({
+        phone,
+        token: otp,
+        type: "sms",
+      });
+
+      if (error) throw error;
+
+      if (!data.user) throw new Error("Usuário não autenticado");
+
+      const newUser = await userService.create({
+        name: userData.name,
+        phone: phone,
+        typeID: userData.typeID,
+      });
+
+      setUser(newUser);
+      await setItemAsync(USER_PROFILE_KEY, JSON.stringify(newUser));
+    } catch (error) {
+      console.error("Erro ao verificar OTP e criar perfil:", error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const register = async (_name: string, phone: string, _typeID: number) => {
+    try {
+      setIsLoading(true);
+
+      const { error } = await supabase.auth.signInWithOtp({
+        phone,
+        options: {
+          channel: "sms",
+          shouldCreateUser: true,
+        },
+      });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error("Erro ao registrar usuário:", error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const logout = async () => {
     const { error } = await supabase.auth.signOut();
 
@@ -219,6 +281,8 @@ export function UserProvider({ children }: UserProviderProps) {
     isCustomer,
     loginWithOtp,
     verifyOtp,
+    verifyOtpAndCreateProfile,
+    register,
     logout,
     updateUser,
     refreshUser,

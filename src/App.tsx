@@ -10,6 +10,7 @@ import PrivacyPolicy from "./pages/privacy-policy";
 import TermsOfService from "./pages/terms-of-service";
 import Homepage from "./pages/home";
 import Loginpage from "./pages/login";
+import RegisterPage from "./pages/register";
 import ForBarbers from "./pages/for-barbers";
 import EstablishmentsPage from "./pages/establishments";
 import EstablishmentsDetails from "./pages/establishments-details";
@@ -24,6 +25,7 @@ function App() {
         element={<EstablishmentsDetails />}
       />
       <Route path={ROUTES.LOGIN} element={<Loginpage />} />
+      <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
       <Route path={ROUTES.FOR_BARBERS} element={<ForBarbers />} />
       <Route path={ROUTES.TERMS_OF_SERVICE} element={<TermsOfService />} />
       <Route path={ROUTES.PRIVACY_POLICY} element={<PrivacyPolicy />} />

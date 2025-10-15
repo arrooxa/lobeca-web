@@ -4,11 +4,11 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   codeSchema,
-  loginSchema,
+  registerUserSchema,
   type CodeFormData,
-  type LoginFormData,
+  type RegisterFormData,
 } from "@/types/user";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, UserPlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useCallback, useState } from "react";
 import { formatToE164 } from "@/utils/formatter";
@@ -18,9 +18,13 @@ import { useNavigate } from "react-router";
 import { ROUTES } from "@/constants";
 import { useAuthRedirect } from "@/hooks/useAuth";
 
-const Loginpage = () => {
+const RegisterPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [selectedPhone, setSelectedPhone] = useState("");
+  const [registrationData, setRegistrationData] = useState<{
+    name: string;
+    phone: string;
+    typeID: number;
+  } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const { isAuthenticated, isLoading: authLoading } = useAuthRedirect();
@@ -46,18 +50,17 @@ const Loginpage = () => {
   }
 
   const STEPS = [
-    <PhoneInput
-      key="phone"
+    <RegisterForm
+      key="register"
       nextStep={nextStep}
-      setSelectedPhone={setSelectedPhone}
+      setRegistrationData={setRegistrationData}
       isLoading={isLoading}
       setIsLoading={setIsLoading}
     />,
     <CodeInput
       key="code"
       prevStep={prevStep}
-      selectedPhone={selectedPhone}
-      setSelectedPhone={setSelectedPhone}
+      registrationData={registrationData}
       isLoading={isLoading}
       setIsLoading={setIsLoading}
     />,
@@ -65,11 +68,7 @@ const Loginpage = () => {
 
   return (
     <div className="max-h-screen flex">
-      <img
-        src="/haircut-and-beard-combo-barber.jpg"
-        alt="Image"
-        className="hidden md:block"
-      />
+      <img src="/haircut-and-beard-combo-barber.jpg" alt="Image" className="" />
       {authLoading ? (
         <div className="flex flex-1 items-center justify-center p-6">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -83,51 +82,63 @@ const Loginpage = () => {
   );
 };
 
-export default Loginpage;
+export default RegisterPage;
 
-interface PhoneInputProps {
+interface RegisterFormProps {
   nextStep: () => void;
-  setSelectedPhone: (phone: string) => void;
+  setRegistrationData: (data: {
+    name: string;
+    phone: string;
+    typeID: number;
+  }) => void;
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
 }
 
-const PhoneInput = ({
+const RegisterForm = ({
   nextStep,
-  setSelectedPhone,
+  setRegistrationData,
   isLoading,
   setIsLoading,
-}: PhoneInputProps) => {
-  const { control, handleSubmit, setError } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+}: RegisterFormProps) => {
+  const { control, handleSubmit, setError } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerUserSchema),
   });
 
-  const { loginWithOtp } = useUser();
+  const { register } = useUser();
   const navigate = useNavigate();
 
-  async function onSubmit(data: LoginFormData) {
+  async function onSubmit(data: RegisterFormData) {
     try {
       setIsLoading(true);
       const formattedPhone = formatToE164(data.phone);
 
+      // Verificar se o telefone já está cadastrado
       const phoneExists = await checkPhoneExists(formattedPhone);
-      if (!phoneExists) {
+      if (phoneExists) {
         setError("phone", {
           type: "manual",
-          message: "Telefone não cadastrado no sistema",
+          message: "Telefone já cadastrado. Faça login.",
         });
         return;
       }
 
-      await loginWithOtp(formattedPhone);
+      // Enviar OTP para o telefone
+      await register(data.name, formattedPhone, 1); // typeID 1 = customer
 
-      setSelectedPhone(data.phone);
+      // Salvar dados do registro para usar após verificação
+      setRegistrationData({
+        name: data.name,
+        phone: formattedPhone,
+        typeID: 1,
+      });
+
       nextStep();
     } catch (error) {
-      console.error("Erro no envio do OTP:", error);
+      console.error("Erro ao registrar:", error);
       setError("phone", {
         type: "manual",
-        message: "Erro inesperado. Tente novamente.",
+        message: "Erro ao enviar código. Tente novamente.",
       });
     } finally {
       setIsLoading(false);
@@ -138,14 +149,37 @@ const PhoneInput = ({
     <Card>
       <CardContent>
         <div className="mb-6 space-y-1.5 text-center">
-          <h2 className="text-2xl font-bold  text-foreground">
-            Entre com seu telefone
-          </h2>
+          <h2 className="text-2xl font-bold text-foreground">Crie sua conta</h2>
           <p className="text-sm text-font-secondary">
-            Enviaremos um código de verificação via SMS
+            Preencha seus dados para começar
           </p>
         </div>
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+          <div>
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-foreground"
+            >
+              Nome completo
+            </label>
+            <Controller
+              name="name"
+              control={control}
+              render={({ field, fieldState }) => (
+                <>
+                  <Input
+                    {...field}
+                    placeholder="João Silva"
+                    id="name"
+                    error={fieldState.invalid}
+                    disabled={isLoading}
+                  />
+                  <ErrorMessage>{fieldState.error?.message}</ErrorMessage>
+                </>
+              )}
+            />
+          </div>
+
           <div>
             <label
               htmlFor="phone"
@@ -173,20 +207,21 @@ const PhoneInput = ({
               )}
             />
           </div>
+
           <Button className="w-full" type="submit" disabled={isLoading}>
-            <MessageSquare />
-            {isLoading ? "Enviando..." : "Enviar código SMS"}
+            <UserPlus />
+            {isLoading ? "Criando conta..." : "Criar conta"}
           </Button>
 
           <div className="text-center text-sm text-font-secondary">
-            Não tem uma conta?{" "}
+            Já tem uma conta?{" "}
             <button
               type="button"
-              onClick={() => navigate(ROUTES.REGISTER)}
+              onClick={() => navigate(ROUTES.LOGIN)}
               className="text-primary hover:underline"
               disabled={isLoading}
             >
-              Registre-se
+              Faça login
             </button>
           </div>
         </form>
@@ -197,14 +232,17 @@ const PhoneInput = ({
 
 interface CodeInputProps {
   prevStep: () => void;
-  selectedPhone: string;
-  setSelectedPhone: (phone: string) => void;
+  registrationData: {
+    name: string;
+    phone: string;
+    typeID: number;
+  } | null;
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
 }
 
 const CodeInput = ({
-  selectedPhone,
+  registrationData,
   isLoading,
   setIsLoading,
 }: CodeInputProps) => {
@@ -213,18 +251,21 @@ const CodeInput = ({
   });
 
   const navigate = useNavigate();
-  const { verifyOtp } = useUser();
+  const { verifyOtpAndCreateProfile } = useUser();
 
   async function onSubmit(data: CodeFormData) {
     try {
+      if (!registrationData) {
+        throw new Error("Dados de registro não encontrados");
+      }
+
       setIsLoading(true);
-      const formattedPhone = formatToE164(selectedPhone);
 
-      // Verificar OTP usando o contexto
-      await verifyOtp(formattedPhone, data.code);
-
-      // Após verificação bem-sucedida, o onAuthStateChange do contexto
-      // já vai carregar o perfil automaticamente
+      // Verificar OTP e criar perfil do usuário na API
+      await verifyOtpAndCreateProfile(registrationData.phone, data.code, {
+        name: registrationData.name,
+        typeID: registrationData.typeID,
+      });
 
       // Navegar para dashboard
       navigate(ROUTES.DASHBOARD, { replace: true });
@@ -243,11 +284,12 @@ const CodeInput = ({
     <Card>
       <CardContent>
         <div className="mb-6 space-y-1.5 text-center">
-          <h2 className="text-2xl font-bold  text-foreground">
+          <h2 className="text-2xl font-bold text-foreground">
             Digite o código de verificação
           </h2>
           <p className="text-sm text-font-secondary">
-            Insira o código enviado via SMS para o número {selectedPhone}
+            Insira o código enviado via SMS para o número{" "}
+            {registrationData?.phone || ""}
           </p>
         </div>
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
