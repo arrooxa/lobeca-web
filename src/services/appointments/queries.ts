@@ -58,12 +58,11 @@ export const useCreateAppointmentByWorker = () => {
 
   return useMutation({
     mutationFn: ({
-      workerUUID,
       data,
     }: {
       workerUUID: string;
       data: CreateAppointmentByWorkerRequest;
-    }) => appointmentService.createByWorker(workerUUID, data),
+    }) => appointmentService.createByWorker(data),
     onSuccess: (
       data: Appointment,
       variables: { workerUUID: string; data: CreateAppointmentByWorkerRequest }

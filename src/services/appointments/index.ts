@@ -30,10 +30,7 @@ export const appointmentService = {
     }
   },
 
-  createByWorker: async (
-    workerUUID: string,
-    data: CreateAppointmentByWorkerRequest
-  ) => {
+  createByWorker: async (data: CreateAppointmentByWorkerRequest) => {
     try {
       const response = await api.post<AppointmentResponseAPI>(
         `/appointment/by-worker`,
