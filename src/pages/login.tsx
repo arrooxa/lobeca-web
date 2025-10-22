@@ -14,7 +14,7 @@ import { useCallback, useState } from "react";
 import { formatToE164 } from "@/utils/formatter";
 import { checkPhoneExists } from "@/utils/auth";
 import { useUser } from "@/context/UserContext";
-import { useNavigate } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import { ROUTES } from "@/constants";
 import { useAuthRedirect } from "@/hooks/useAuth";
 
@@ -64,7 +64,7 @@ const Loginpage = () => {
   ];
 
   return (
-    <div className="max-h-screen flex">
+    <div className="h-screen grid md:grid-cols-2 grid-cols-1">
       <img
         src="/haircut-and-beard-combo-barber.jpg"
         alt="Image"
@@ -103,7 +103,6 @@ const PhoneInput = ({
   });
 
   const { loginWithOtp } = useUser();
-  const navigate = useNavigate();
 
   async function onSubmit(data: LoginFormData) {
     try {
@@ -180,14 +179,12 @@ const PhoneInput = ({
 
           <div className="text-center text-sm text-font-secondary">
             Não tem uma conta?{" "}
-            <button
-              type="button"
-              onClick={() => navigate(ROUTES.REGISTER)}
+            <NavLink
+              to={ROUTES.REGISTER}
               className="text-primary hover:underline"
-              disabled={isLoading}
             >
               Registre-se
-            </button>
+            </NavLink>
           </div>
         </form>
       </CardContent>
