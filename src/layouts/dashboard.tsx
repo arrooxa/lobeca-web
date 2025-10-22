@@ -9,7 +9,6 @@ import {
   LogOut,
   Calendar,
   Scissors,
-  Heart,
 } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { NavLink, useNavigate } from "react-router";
@@ -20,7 +19,7 @@ interface DashboardLayoutProps {
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
-  const { user, logout, isWorker, isCustomer } = useUser();
+  const { user, logout, isWorker } = useUser();
   const navigate = useNavigate();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -51,20 +50,20 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           },
         ]
       : []),
-    ...(isCustomer
-      ? [
-          {
-            name: "Favoritos",
-            href: "/dashboard/favoritos",
-            icon: Heart,
-          },
-          {
-            name: "Agendamentos",
-            href: "/dashboard/agendamentos",
-            icon: Calendar,
-          },
-        ]
-      : []),
+    // ...(isCustomer
+    //   ? [
+    //       {
+    //         name: "Favoritos",
+    //         href: "/dashboard/favoritos",
+    //         icon: Heart,
+    //       },
+    //       {
+    //         name: "Agendamentos",
+    //         href: "/dashboard/agendamentos",
+    //         icon: Calendar,
+    //       },
+    //     ]
+    //   : []),
     {
       name: "Configurações",
       href: "/dashboard/configuracoes",

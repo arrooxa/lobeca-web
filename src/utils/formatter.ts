@@ -11,3 +11,26 @@ export function formatFromE164ToBrazilian(e164Number: string): string {
 
   return `(${areaCode}) ${firstPart}-${secondPart}`;
 }
+
+export function getNameInitials(name: string): string {
+  if (!name) return "";
+
+  const parts = name
+    .trim()
+    .split(" ")
+    .filter((part) => part.length > 0);
+
+  if (parts.length === 0) return "";
+
+  if (parts.length === 1) {
+    const singleName = parts[0];
+    return singleName.length >= 2
+      ? singleName.substring(0, 2).toUpperCase()
+      : singleName.toUpperCase();
+  }
+
+  const firstInitial = parts[0].charAt(0).toUpperCase();
+  const secondInitial = parts[1].charAt(0).toUpperCase();
+
+  return `${firstInitial}${secondInitial}`;
+}
