@@ -3,16 +3,16 @@ import { Bounce, type ToastOptions } from "react-toastify";
 export const ROUTES = {
   HOME: "/",
   LOGIN: "/login",
-  REGISTER: "/register",
+  REGISTER: "/registro",
   PRIVACY_POLICY: "/privacy-policy",
   TERMS_OF_SERVICE: "/terms-of-service",
-  FOR_BARBERS: "/for-barbers",
-  ESTABLISHMENTS: "/establishments",
+  FOR_BARBERS: "/para-barbeiros",
+  ESTABLISHMENTS: "/estabelecimentos",
   ESTABLISHMENTS_DETAILS: "/estabelecimentos/:id",
   DASHBOARD: "/dashboard",
-  DASHBOARD_SUBSCRIPTION: "/dashboard/subscription",
-  DASHBOARD_SUBSCRIPTION_CHECKOUT: "/dashboard/subscription/checkout",
-  DASHBOARD_SUBSCRIPTION_SUCCESS: "/dashboard/subscription/success",
+  DASHBOARD_SUBSCRIPTION: "/dashboard/assinatura",
+  DASHBOARD_SUBSCRIPTION_CHECKOUT: "/dashboard/assinatura/checkout",
+  DASHBOARD_SUBSCRIPTION_SUCCESS: "/dashboard/assinatura/success",
 } as const;
 
 export const TIMES = {

@@ -17,6 +17,7 @@ import { useUser } from "@/context/UserContext";
 import { NavLink, useNavigate } from "react-router";
 import { ROUTES } from "@/constants";
 import { useAuthRedirect } from "@/hooks/useAuth";
+import { cn } from "@/utils/cn";
 
 const Loginpage = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -36,7 +37,7 @@ const Loginpage = () => {
   if (authLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary"></div>
       </div>
     );
   }
@@ -64,21 +65,44 @@ const Loginpage = () => {
   ];
 
   return (
-    <div className="h-screen grid md:grid-cols-2 grid-cols-1">
-      <img
-        src="/haircut-and-beard-combo-barber.jpg"
-        alt="Image"
-        className="hidden md:block"
-      />
-      {authLoading ? (
-        <div className="flex flex-1 items-center justify-center p-6">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    <div className="min-h-screen grid md:grid-cols-2 grid-cols-1">
+      <div className="relative hidden md:block">
+        <img
+          src="/haircut-and-beard-combo-barber.jpg"
+          alt="Barber Shop"
+          className="h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        <div className="absolute bottom-8 left-8 text-white">
+          <h1 className="text-4xl font-bold mb-2 text-balance">
+            Bem-vindo de volta!
+          </h1>
+          <p className="text-lg text-white/90">Entre para acessar sua conta</p>
         </div>
-      ) : (
-        <div className="flex flex-1 items-center justify-center p-6">
+      </div>
+
+      <div className="flex flex-1 items-center justify-center p-6 bg-fill-color/30">
+        <div className="w-full max-w-md">
+          {/* Progress indicator */}
+          <div className="mb-8">
+            <div className="flex items-center justify-center gap-2">
+              {[0, 1].map((step) => (
+                <div
+                  key={step}
+                  className={cn(
+                    "h-2 rounded-full transition-all duration-300",
+                    step === currentStep
+                      ? "w-12 bg-brand-primary"
+                      : "w-2 bg-brand-secondary"
+                  )}
+                />
+              ))}
+            </div>
+          </div>
+
           {STEPS[currentStep]}
         </div>
-      )}
+      </div>
     </div>
   );
 };
@@ -134,18 +158,21 @@ const PhoneInput = ({
   }
 
   return (
-    <Card>
-      <CardContent>
-        <div className="mb-6 space-y-1.5 text-center">
-          <h2 className="text-2xl font-bold  text-foreground">
+    <Card className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <CardContent className="pt-6">
+        <div className="mb-6 space-y-2 text-center">
+          <div className="mx-auto w-12 h-12 rounded-full bg-brand-primary/10 flex items-center justify-center mb-3">
+            <MessageSquare className="h-6 w-6 text-brand-primary" />
+          </div>
+          <h2 className="text-2xl font-bold text-foreground">
             Entre com seu telefone
           </h2>
-          <p className="text-sm text-font-secondary">
+          <p className="text-sm text-foreground-muted">
             Enviaremos um código de verificação via SMS
           </p>
         </div>
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-          <div>
+          <div className="space-y-2">
             <label
               htmlFor="phone"
               className="block text-sm font-medium text-foreground"
@@ -166,6 +193,7 @@ const PhoneInput = ({
                     id="phone"
                     error={fieldState.invalid}
                     disabled={isLoading}
+                    className="h-11"
                   />
                   <ErrorMessage>{fieldState.error?.message}</ErrorMessage>
                 </>
@@ -173,15 +201,24 @@ const PhoneInput = ({
             />
           </div>
           <Button className="w-full" type="submit" disabled={isLoading}>
-            <MessageSquare />
-            {isLoading ? "Enviando..." : "Enviar código SMS"}
+            {isLoading ? (
+              <>
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                Enviando...
+              </>
+            ) : (
+              <>
+                <MessageSquare className="h-4 w-4" />
+                Enviar código SMS
+              </>
+            )}
           </Button>
 
-          <div className="text-center text-sm text-font-secondary">
+          <div className="text-center text-sm text-foreground-muted pt-2">
             Não tem uma conta?{" "}
             <NavLink
               to={ROUTES.REGISTER}
-              className="text-primary hover:underline"
+              className="text-brand-primary hover:underline font-medium"
             >
               Registre-se
             </NavLink>
@@ -201,6 +238,7 @@ interface CodeInputProps {
 }
 
 const CodeInput = ({
+  prevStep,
   selectedPhone,
   isLoading,
   setIsLoading,
@@ -217,13 +255,8 @@ const CodeInput = ({
       setIsLoading(true);
       const formattedPhone = formatToE164(selectedPhone);
 
-      // Verificar OTP usando o contexto
       await verifyOtp(formattedPhone, data.code);
 
-      // Após verificação bem-sucedida, o onAuthStateChange do contexto
-      // já vai carregar o perfil automaticamente
-
-      // Navegar para dashboard
       navigate(ROUTES.DASHBOARD, { replace: true });
     } catch (error) {
       console.error("Erro ao verificar código:", error);
@@ -237,18 +270,22 @@ const CodeInput = ({
   }
 
   return (
-    <Card>
-      <CardContent>
-        <div className="mb-6 space-y-1.5 text-center">
-          <h2 className="text-2xl font-bold  text-foreground">
+    <Card className="animate-in fade-in slide-in-from-right-4 duration-500">
+      <CardContent className="pt-6">
+        <div className="mb-6 space-y-2 text-center">
+          <div className="mx-auto w-12 h-12 rounded-full bg-brand-primary/10 flex items-center justify-center mb-3">
+            <MessageSquare className="h-6 w-6 text-brand-primary" />
+          </div>
+          <h2 className="text-2xl font-bold text-foreground">
             Digite o código de verificação
           </h2>
-          <p className="text-sm text-font-secondary">
-            Insira o código enviado via SMS para o número {selectedPhone}
+          <p className="text-sm text-foreground-muted">
+            Enviamos um código para{" "}
+            <span className="font-medium text-foreground">{selectedPhone}</span>
           </p>
         </div>
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-          <div>
+          <div className="space-y-2">
             <label
               htmlFor="code"
               className="block text-sm font-medium text-foreground"
@@ -262,21 +299,43 @@ const CodeInput = ({
                 <>
                   <Input
                     {...field}
-                    placeholder="123456"
+                    placeholder="000000"
                     id="code"
                     error={fieldState.invalid}
                     maxLength={6}
                     disabled={isLoading}
+                    className="h-11 text-center text-2xl tracking-widest font-mono"
                   />
                   <ErrorMessage>{fieldState.error?.message}</ErrorMessage>
                 </>
               )}
             />
           </div>
-          <Button className="w-full" type="submit" disabled={isLoading}>
-            <MessageSquare />
-            {isLoading ? "Verificando..." : "Verificar código"}
-          </Button>
+
+          <div className="flex gap-3 pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={prevStep}
+              disabled={isLoading}
+              className="flex-1 bg-transparent"
+            >
+              Voltar
+            </Button>
+            <Button className="flex-1" type="submit" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  Verificando...
+                </>
+              ) : (
+                <>
+                  <MessageSquare className="h-4 w-4" />
+                  Verificar
+                </>
+              )}
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>

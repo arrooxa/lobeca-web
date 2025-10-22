@@ -104,7 +104,7 @@ const Homepage = () => {
                     navigator.geolocation.getCurrentPosition(
                       (position) => {
                         navigate(
-                          `/establishments?lat=${position.coords.latitude}&lng=${position.coords.longitude}`
+                          `/estabelecimentos?lat=${position.coords.latitude}&lng=${position.coords.longitude}`
                         );
                       },
                       (error) => {

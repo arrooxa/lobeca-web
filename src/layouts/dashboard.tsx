@@ -9,6 +9,7 @@ import {
   LogOut,
   Calendar,
   Scissors,
+  Heart,
 } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { NavLink, useNavigate } from "react-router";
@@ -19,22 +20,56 @@ interface DashboardLayoutProps {
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
-  const { user, logout } = useUser();
+  const { user, logout, isWorker, isCustomer } = useUser();
   const navigate = useNavigate();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navigation = [
     { name: "Dashboard", href: ROUTES.DASHBOARD, icon: Home },
+    ...(isWorker && user?.establishmentID
+      ? [
+          {
+            name: "Assinatura",
+            href: ROUTES.DASHBOARD_SUBSCRIPTION,
+            icon: Calendar,
+          },
+        ]
+      : []),
+    ...(isWorker
+      ? [
+          {
+            name: "Serviços",
+            href: "/dashboard/servicos",
+            icon: Scissors,
+          },
+          { name: "Clientes", href: "/dashboard/clientes", icon: Users },
+          {
+            name: "Relatórios",
+            href: "/dashboard/relatorios",
+            icon: BarChart3,
+          },
+        ]
+      : []),
+    ...(isCustomer
+      ? [
+          {
+            name: "Favoritos",
+            href: "/dashboard/favoritos",
+            icon: Heart,
+          },
+          {
+            name: "Agendamentos",
+            href: "/dashboard/agendamentos",
+            icon: Calendar,
+          },
+        ]
+      : []),
     {
-      name: "Assinatura",
-      href: ROUTES.DASHBOARD_SUBSCRIPTION,
-      icon: Calendar,
+      name: "Configurações",
+      href: "/dashboard/configuracoes",
+      icon: Settings,
     },
-    { name: "Serviços", href: "/dashboard/services", icon: Scissors },
-    { name: "Clientes", href: "/dashboard/clients", icon: Users },
-    { name: "Relatórios", href: "/dashboard/reports", icon: BarChart3 },
-    { name: "Configurações", href: "/dashboard/settings", icon: Settings },
   ];
 
   const handleLogout = async () => {
@@ -138,10 +173,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
               <div className="lg:ml-0 ml-2">
                 <h2 className="text-lg font-semibold text-gray-900">
-                  Dashboard
+                  Bem-vindo, {user?.name}!
                 </h2>
                 <p className="text-sm text-gray-500">
-                  Bem-vindo ao seu painel de controle
+                  Acesse suas informações e funcionalidades aqui.
                 </p>
               </div>
             </div>
