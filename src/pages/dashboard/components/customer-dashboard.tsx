@@ -43,8 +43,8 @@ const CustomerDashboard = () => {
           <h1 className="text-foreground-muted">Agendamentos</h1>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-          <Card>
+        <div className="grid grid-cols-1 md:grid-cols-8 gap-6 mb-4">
+          <Card className="col-span-6">
             <CardContent className="flex flex-col justify-between h-full">
               <div>
                 <h2 className="text-3xl font-semibold mb-2">
@@ -61,7 +61,7 @@ const CustomerDashboard = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="col-span-2">
             <CardContent className="flex flex-col justify-between h-full">
               <div>
                 <h2 className="text-3xl font-semibold mb-2">Total</h2>
