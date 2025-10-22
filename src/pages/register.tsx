@@ -5,6 +5,14 @@ import { Controller, useForm } from "react-hook-form";
 import { MessageSquare, UserPlus, Scissors, User, Check } from "lucide-react";
 import { useCallback, useState } from "react";
 import { cn } from "@/utils/cn";
+import { ErrorMessage, MaskedInput } from "@/components";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { codeSchema, registerUserSchema } from "@/types";
+import { NavLink, useNavigate } from "react-router";
+import { ROUTES } from "@/constants";
+import { formatToE164 } from "@/utils/formatter";
+import { checkPhoneExists } from "@/utils/auth";
+import { useUser } from "@/context/UserContext";
 
 type RegisterFormData = {
   name: string;
@@ -89,7 +97,7 @@ const RegisterPage = () => {
                     "h-2 rounded-full transition-all duration-300",
                     step === currentStep
                       ? "w-12 bg-brand-primary"
-                      : "w-2 bg-foreground-on-primary/30"
+                      : "w-2 bg-brand-secondary"
                   )}
                 />
               ))}
@@ -267,19 +275,34 @@ const RegisterForm = ({
   setIsLoading,
   userType,
 }: RegisterFormProps) => {
-  const { control, handleSubmit } = useForm<RegisterFormData>();
+  const { control, handleSubmit, setError } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerUserSchema),
+  });
+  const { register } = useUser();
 
   async function onSubmit(data: RegisterFormData) {
+    if (!userType) return;
+
     try {
       setIsLoading(true);
 
-      // Mock API call - replace with your actual implementation
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const formattedPhone = formatToE164(data.phone);
+
+      const phoneExists = await checkPhoneExists(formattedPhone);
+      if (phoneExists) {
+        setError("phone", {
+          type: "manual",
+          message: "Telefone já cadastrado. Faça login.",
+        });
+        return;
+      }
+
+      await register(data.name, formattedPhone, userType);
 
       setRegistrationData({
         name: data.name,
-        phone: data.phone,
-        typeID: userType || 1,
+        phone: formattedPhone,
+        typeID: userType,
       });
 
       nextStep();
@@ -294,15 +317,15 @@ const RegisterForm = ({
     <Card className="animate-in fade-in slide-in-from-right-4 duration-500">
       <CardContent className="pt-6">
         <div className="mb-6 space-y-2 text-center">
-          <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
+          <div className="mx-auto w-12 h-12 rounded-full bg-brand-primary/10 flex items-center justify-center mb-3">
             {userType === 2 ? (
-              <Scissors className="h-6 w-6 text-primary" />
+              <Scissors className="h-6 w-6 text-brand-primary" />
             ) : (
-              <User className="h-6 w-6 text-primary" />
+              <User className="h-6 w-6 text-brand-primary" />
             )}
           </div>
           <h2 className="text-2xl font-bold text-foreground">Crie sua conta</h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-foreground-muted">
             {userType === 2
               ? "Cadastro como Barbeiro"
               : "Cadastro como Cliente"}
@@ -320,14 +343,18 @@ const RegisterForm = ({
             <Controller
               name="name"
               control={control}
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  placeholder="João Silva"
-                  id="name"
-                  disabled={isLoading}
-                  className="h-11"
-                />
+              render={({ field, fieldState }) => (
+                <>
+                  <Input
+                    {...field}
+                    placeholder="João Silva"
+                    id="name"
+                    disabled={isLoading}
+                    className="h-11"
+                    error={fieldState.invalid}
+                  />
+                  <ErrorMessage>{fieldState.error?.message}</ErrorMessage>
+                </>
               )}
             />
           </div>
@@ -342,14 +369,20 @@ const RegisterForm = ({
             <Controller
               name="phone"
               control={control}
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  placeholder="(11) 99999-9999"
-                  id="phone"
-                  disabled={isLoading}
-                  className="h-11"
-                />
+              render={({ field, fieldState }) => (
+                <>
+                  <MaskedInput
+                    {...field}
+                    mask="(00) 00000-0000"
+                    unmask={true}
+                    onAccept={(value: string) => field.onChange(value)}
+                    placeholder="(11) 99999-9999"
+                    id="phone"
+                    error={fieldState.invalid}
+                    disabled={isLoading}
+                  />
+                  <ErrorMessage>{fieldState.error?.message}</ErrorMessage>
+                </>
               )}
             />
           </div>
@@ -381,13 +414,12 @@ const RegisterForm = ({
 
           <div className="text-center text-sm text-muted-foreground pt-2">
             Já tem uma conta?{" "}
-            <button
-              type="button"
+            <NavLink
+              to={ROUTES.LOGIN}
               className="text-primary hover:underline font-medium"
-              disabled={isLoading}
             >
               Faça login
-            </button>
+            </NavLink>
           </div>
         </form>
       </CardContent>
@@ -412,16 +444,27 @@ const CodeInput = ({
   isLoading,
   setIsLoading,
 }: CodeInputProps) => {
-  const { control, handleSubmit } = useForm<CodeFormData>();
+  const { control, handleSubmit } = useForm<CodeFormData>({
+    resolver: zodResolver(codeSchema),
+  });
+
+  const { verifyOtpAndCreateProfile } = useUser();
+  const navigate = useNavigate();
 
   async function onSubmit(data: CodeFormData) {
     try {
+      if (!registrationData) {
+        throw new Error("Dados de registro não encontrados");
+      }
+
       setIsLoading(true);
 
-      // Mock API call - replace with your actual implementation
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await verifyOtpAndCreateProfile(registrationData.phone, data.code, {
+        name: registrationData.name,
+        typeID: registrationData.typeID,
+      });
 
-      console.log("Verification successful", data);
+      navigate(ROUTES.DASHBOARD, { replace: true });
     } catch (error) {
       console.error("Erro ao verificar código:", error);
     } finally {
@@ -458,15 +501,19 @@ const CodeInput = ({
             <Controller
               name="code"
               control={control}
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  placeholder="000000"
-                  id="code"
-                  maxLength={6}
-                  disabled={isLoading}
-                  className="h-11 text-center text-2xl tracking-widest font-mono"
-                />
+              render={({ field, fieldState }) => (
+                <>
+                  <Input
+                    {...field}
+                    placeholder="000000"
+                    id="code"
+                    maxLength={6}
+                    disabled={isLoading}
+                    className="h-11 text-center text-2xl tracking-widest font-mono"
+                    error={fieldState.invalid}
+                  />
+                  <ErrorMessage>{fieldState.error?.message}</ErrorMessage>
+                </>
               )}
             />
           </div>
@@ -496,7 +543,7 @@ const CodeInput = ({
             </Button>
           </div>
 
-          <div className="text-center pt-2">
+          {/* <div className="text-center pt-2">
             <button
               type="button"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -505,7 +552,7 @@ const CodeInput = ({
               Não recebeu o código?{" "}
               <span className="text-primary font-medium">Reenviar</span>
             </button>
-          </div>
+          </div> */}
         </form>
       </CardContent>
     </Card>
