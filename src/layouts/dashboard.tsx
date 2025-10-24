@@ -26,6 +26,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   const navigation = [
     { name: "Dashboard", href: ROUTES.DASHBOARD, icon: Home },
+    {
+      name: "Agendamentos",
+      href: ROUTES.DASHBOARD_APPOINTMENTS,
+      icon: Calendar,
+    },
     ...(isWorker && user?.establishmentID
       ? [
           {
