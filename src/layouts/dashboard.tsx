@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import {
   Home,
-  Users,
   Settings,
-  BarChart3,
   Menu,
   X,
   LogOut,
   Calendar,
   Clock,
+  Building2,
 } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { NavLink, useNavigate } from "react-router";
@@ -47,28 +46,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             href: ROUTES.DASHBOARD_SCHEDULE,
             icon: Clock,
           },
-          { name: "Clientes", href: "/dashboard/clientes", icon: Users },
           {
-            name: "Relatórios",
-            href: "/dashboard/relatorios",
-            icon: BarChart3,
+            name: "Barbearia",
+            href: ROUTES.DASHBOARD_ESTABLISHMENT,
+            icon: Building2,
           },
         ]
       : []),
-    // ...(isCustomer
-    //   ? [
-    //       {
-    //         name: "Favoritos",
-    //         href: "/dashboard/favoritos",
-    //         icon: Heart,
-    //       },
-    //       {
-    //         name: "Agendamentos",
-    //         href: "/dashboard/agendamentos",
-    //         icon: Calendar,
-    //       },
-    //     ]
-    //   : []),
     {
       name: "Configurações",
       href: "/dashboard/configuracoes",
