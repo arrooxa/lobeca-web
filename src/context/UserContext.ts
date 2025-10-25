@@ -182,7 +182,7 @@ export function UserProvider({ children }: UserProviderProps) {
 
       if (!data.user) throw new Error("Usuário não autenticado");
 
-      const newUser = await userService.create({
+      const newUser = await userService.registerUser({
         name: userData.name,
         phone: phone,
         typeID: userData.typeID,
