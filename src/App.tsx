@@ -14,6 +14,7 @@ import RegisterPage from "./pages/register";
 import ForBarbers from "./pages/for-barbers";
 import EstablishmentsPage from "./pages/establishments";
 import EstablishmentsDetails from "./pages/establishments-details";
+import Schedule from "./pages/dashboard/schedule";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
 
       <Route element={<ProtectedRoute />}>
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
+        <Route path={ROUTES.DASHBOARD_SCHEDULE} element={<Schedule />} />
         <Route
           path={ROUTES.DASHBOARD_SUBSCRIPTION}
           element={<SubscriptionPage />}

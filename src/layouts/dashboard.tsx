@@ -8,7 +8,7 @@ import {
   X,
   LogOut,
   Calendar,
-  Scissors,
+  Clock,
 } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { NavLink, useNavigate } from "react-router";
@@ -43,9 +43,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     ...(isWorker
       ? [
           {
-            name: "Serviços",
-            href: "/dashboard/servicos",
-            icon: Scissors,
+            name: "Horários",
+            href: ROUTES.DASHBOARD_SCHEDULE,
+            icon: Clock,
           },
           { name: "Clientes", href: "/dashboard/clientes", icon: Users },
           {
