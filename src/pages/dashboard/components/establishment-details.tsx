@@ -19,11 +19,14 @@ interface EstablishmentDetailsProps {
 const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
   const { user } = useUser();
 
-  const [editEstablishmentModalOpen, setEditEstablishmentModalOpen] = useState(false);
+  const [editEstablishmentModalOpen, setEditEstablishmentModalOpen] =
+    useState(false);
   const [inviteWorkerModalOpen, setInviteWorkerModalOpen] = useState(false);
   const [createServiceModalOpen, setCreateServiceModalOpen] = useState(false);
   const [editServiceModalOpen, setEditServiceModalOpen] = useState(false);
-  const [selectedServiceId, setSelectedServiceId] = useState<number | null>(null);
+  const [selectedServiceId, setSelectedServiceId] = useState<number | null>(
+    null
+  );
 
   const formatRole = (role: string) => {
     switch (role) {

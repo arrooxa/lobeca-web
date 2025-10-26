@@ -30,7 +30,10 @@ interface ServiceCreateModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const ServiceCreateModal = ({ open, onOpenChange }: ServiceCreateModalProps) => {
+const ServiceCreateModal = ({
+  open,
+  onOpenChange,
+}: ServiceCreateModalProps) => {
   const createServiceMutation = useCreateEstablishmentService();
   const { data: categories = [], isLoading: loadingCategories } =
     useGetAllCategories();
@@ -125,7 +128,8 @@ const ServiceCreateModal = ({ open, onOpenChange }: ServiceCreateModalProps) => 
           {/* Name Field */}
           <div className="space-y-2">
             <Label htmlFor="name">
-              Nome do Serviço<span className="text-brand-secondary ml-1">*</span>
+              Nome do Serviço
+              <span className="text-brand-secondary ml-1">*</span>
             </Label>
             <Controller
               control={control}
@@ -149,7 +153,8 @@ const ServiceCreateModal = ({ open, onOpenChange }: ServiceCreateModalProps) => 
           {/* Duration Field */}
           <div className="space-y-2">
             <Label htmlFor="duration">
-              Duração (minutos)<span className="text-brand-secondary ml-1">*</span>
+              Duração (minutos)
+              <span className="text-brand-secondary ml-1">*</span>
             </Label>
             <Controller
               control={control}

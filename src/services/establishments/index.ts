@@ -91,15 +91,16 @@ export const establishmentService = {
 
   update: async (establishmentID: number, formData: FormData) => {
     try {
-      const response = await api.patch<EstablishmentWithSubscriptionResponseAPI>(
-        `/establishment/${establishmentID}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response =
+        await api.patch<EstablishmentWithSubscriptionResponseAPI>(
+          `/establishment/${establishmentID}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
 
       return mapEstablishmentWithSubscriptionFromApi(response.data);
     } catch (error) {

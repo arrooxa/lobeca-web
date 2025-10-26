@@ -139,14 +139,14 @@ const ServiceEditModal = ({
               <Edit className="w-5 h-5" />
               Editar Serviço
             </DialogTitle>
-            <DialogDescription>
-              Atualize os dados do serviço
-            </DialogDescription>
+            <DialogDescription>Atualize os dados do serviço</DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
-              <Label>Categoria<span className="text-brand-secondary ml-1">*</span></Label>
+              <Label>
+                Categoria<span className="text-brand-secondary ml-1">*</span>
+              </Label>
               <Controller
                 control={control}
                 name="categoryID"
@@ -156,7 +156,9 @@ const ServiceEditModal = ({
                     value={field.value?.toString()}
                     disabled={loadingCategories}
                   >
-                    <SelectTrigger className={errors.categoryID ? "border-red-500" : ""}>
+                    <SelectTrigger
+                      className={errors.categoryID ? "border-red-500" : ""}
+                    >
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
@@ -170,24 +172,39 @@ const ServiceEditModal = ({
                 )}
               />
               {errors.categoryID && (
-                <p className="text-sm text-brand-secondary">{errors.categoryID.message}</p>
+                <p className="text-sm text-brand-secondary">
+                  {errors.categoryID.message}
+                </p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label>Nome<span className="text-brand-secondary ml-1">*</span></Label>
+              <Label>
+                Nome<span className="text-brand-secondary ml-1">*</span>
+              </Label>
               <Controller
                 control={control}
                 name="name"
                 render={({ field }) => (
-                  <Input placeholder="Nome do serviço" error={!!errors.name} {...field} />
+                  <Input
+                    placeholder="Nome do serviço"
+                    error={!!errors.name}
+                    {...field}
+                  />
                 )}
               />
-              {errors.name && <p className="text-sm text-brand-secondary">{errors.name.message}</p>}
+              {errors.name && (
+                <p className="text-sm text-brand-secondary">
+                  {errors.name.message}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
-              <Label>Duração (min)<span className="text-brand-secondary ml-1">*</span></Label>
+              <Label>
+                Duração (min)
+                <span className="text-brand-secondary ml-1">*</span>
+              </Label>
               <Controller
                 control={control}
                 name="duration"
@@ -196,7 +213,9 @@ const ServiceEditModal = ({
                     onValueChange={(value) => field.onChange(Number(value))}
                     value={field.value?.toString()}
                   >
-                    <SelectTrigger className={errors.duration ? "border-red-500" : ""}>
+                    <SelectTrigger
+                      className={errors.duration ? "border-red-500" : ""}
+                    >
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -210,7 +229,9 @@ const ServiceEditModal = ({
             </div>
 
             <div className="space-y-2">
-              <Label>Preço<span className="text-brand-secondary ml-1">*</span></Label>
+              <Label>
+                Preço<span className="text-brand-secondary ml-1">*</span>
+              </Label>
               <Controller
                 control={control}
                 name="basePrice"
@@ -254,7 +275,11 @@ const ServiceEditModal = ({
               >
                 Cancelar
               </Button>
-              <Button type="submit" className="flex-1 gap-2" disabled={updateServiceMutation.isPending}>
+              <Button
+                type="submit"
+                className="flex-1 gap-2"
+                disabled={updateServiceMutation.isPending}
+              >
                 {updateServiceMutation.isPending ? "Salvando..." : "Salvar"}
               </Button>
             </div>
@@ -277,7 +302,8 @@ const ServiceEditModal = ({
           <AlertDialogHeader>
             <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta ação não pode ser desfeita. O serviço será permanentemente deletado.
+              Esta ação não pode ser desfeita. O serviço será permanentemente
+              deletado.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

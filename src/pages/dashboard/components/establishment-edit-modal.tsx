@@ -291,7 +291,9 @@ const EstablishmentEditModal = ({
                     <div className="flex flex-col items-center justify-center pt-4 pb-5">
                       <Upload className="w-10 h-10 text-gray-400 mb-2" />
                       <p className="mb-1 text-sm text-gray-500">
-                        <span className="font-semibold">Clique para upload</span>
+                        <span className="font-semibold">
+                          Clique para upload
+                        </span>
                       </p>
                       <p className="text-xs text-gray-500">
                         PNG, JPG (MAX. 5MB)
@@ -387,7 +389,9 @@ const EstablishmentEditModal = ({
               onClick={handleDelete}
               className="bg-red-600 hover:bg-red-700"
             >
-              {deleteEstablishmentMutation.isPending ? "Deletando..." : "Deletar"}
+              {deleteEstablishmentMutation.isPending
+                ? "Deletando..."
+                : "Deletar"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
