@@ -89,6 +89,28 @@ export const establishmentService = {
     }
   },
 
+  update: async (establishmentID: number, formData: FormData) => {
+    try {
+      const response = await api.patch<EstablishmentWithSubscriptionResponseAPI>(
+        `/establishment/${establishmentID}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      return mapEstablishmentWithSubscriptionFromApi(response.data);
+    } catch (error) {
+      throw new Error(
+        error instanceof Error
+          ? error.message
+          : "Error trying update establishment"
+      );
+    }
+  },
+
   createEstablishmentInvite: async (data: CreateEstablishmentInviteRequest) => {
     try {
       const response = await api.post<EstablishmentInviteResponseAPI>(

@@ -73,6 +73,37 @@ export const useCreateEstablishment = () => {
   });
 };
 
+export const useUpdateEstablishment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      establishmentID,
+      formData,
+    }: {
+      establishmentID: number;
+      formData: FormData;
+    }) => establishmentService.update(establishmentID, formData),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.establishments.all,
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.establishments.lists(),
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.establishments.detail(data.id),
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.users.me.establishment,
+      });
+    },
+  });
+};
+
 export const useCreateEstablishmentInvite = () => {
   const queryClient = useQueryClient();
 

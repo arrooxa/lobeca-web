@@ -6,6 +6,11 @@ import { Edit2, Plus, UserPlus } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useUser } from "@/context/UserContext";
+import { useState } from "react";
+import EstablishmentEditModal from "./establishment-edit-modal";
+import WorkerInviteModal from "./worker-invite-modal";
+import ServiceCreateModal from "./service-create-modal";
+import ServiceEditModal from "./service-edit-modal";
 
 interface EstablishmentDetailsProps {
   establishment: EstablishmentWithDetails;
@@ -13,6 +18,12 @@ interface EstablishmentDetailsProps {
 
 const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
   const { user } = useUser();
+
+  const [editEstablishmentModalOpen, setEditEstablishmentModalOpen] = useState(false);
+  const [inviteWorkerModalOpen, setInviteWorkerModalOpen] = useState(false);
+  const [createServiceModalOpen, setCreateServiceModalOpen] = useState(false);
+  const [editServiceModalOpen, setEditServiceModalOpen] = useState(false);
+  const [selectedServiceId, setSelectedServiceId] = useState<number | null>(null);
 
   const formatRole = (role: string) => {
     switch (role) {
@@ -73,23 +84,20 @@ const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
   ];
 
   const handleEditEstablishment = () => {
-    // TODO: Navigate to edit establishment page
-    console.log("Edit establishment");
+    setEditEstablishmentModalOpen(true);
   };
 
   const handleInviteWorker = () => {
-    // TODO: Open invite worker modal
-    console.log("Invite worker");
+    setInviteWorkerModalOpen(true);
   };
 
   const handleAddService = () => {
-    // TODO: Navigate to add service page
-    console.log("Add service");
+    setCreateServiceModalOpen(true);
   };
 
   const handleEditService = (serviceId: number) => {
-    // TODO: Navigate to edit service page
-    console.log("Edit service", serviceId);
+    setSelectedServiceId(serviceId);
+    setEditServiceModalOpen(true);
   };
 
   return (
@@ -248,6 +256,31 @@ const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
           )}
         </CardContent>
       </Card>
+
+      {/* Modals */}
+      <EstablishmentEditModal
+        open={editEstablishmentModalOpen}
+        onOpenChange={setEditEstablishmentModalOpen}
+        establishment={establishment}
+      />
+
+      <WorkerInviteModal
+        open={inviteWorkerModalOpen}
+        onOpenChange={setInviteWorkerModalOpen}
+      />
+
+      <ServiceCreateModal
+        open={createServiceModalOpen}
+        onOpenChange={setCreateServiceModalOpen}
+      />
+
+      {selectedServiceId && (
+        <ServiceEditModal
+          open={editServiceModalOpen}
+          onOpenChange={setEditServiceModalOpen}
+          serviceID={selectedServiceId}
+        />
+      )}
     </div>
   );
 };
