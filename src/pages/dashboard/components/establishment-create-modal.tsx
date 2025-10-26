@@ -139,7 +139,6 @@ const EstablishmentCreateModal = ({
 
         <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* Name Field */}
             <div className="space-y-2">
               <Label htmlFor="name">
                 Nome da Barbearia
@@ -164,7 +163,6 @@ const EstablishmentCreateModal = ({
               )}
             </div>
 
-            {/* Address Field with Autocomplete */}
             <div className="space-y-2">
               <Controller
                 control={control}
@@ -229,7 +227,6 @@ const EstablishmentCreateModal = ({
               )}
             </div>
 
-            {/* Submit Buttons */}
             <div className="flex gap-3 pt-2">
               <Button
                 type="button"
