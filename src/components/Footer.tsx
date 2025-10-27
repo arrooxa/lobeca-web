@@ -39,14 +39,6 @@ const Footer = () => {
                   Agendar Horário
                 </NavLink>
               </li>
-              <li>
-                <NavLink
-                  to={ROUTES.ESTABLISHMENTS}
-                  className="hover:text-foreground transition-colors"
-                >
-                  Avaliações
-                </NavLink>
-              </li>
             </ul>
           </div>
 

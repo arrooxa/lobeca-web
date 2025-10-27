@@ -93,7 +93,6 @@ const AppointmentDetailPage = () => {
         </div>
 
         <div className="space-y-6">
-          {/* Appointment Info Card */}
           <Card>
             <CardContent className="p-6 space-y-6">
               <div>
@@ -146,7 +145,6 @@ const AppointmentDetailPage = () => {
             </CardContent>
           </Card>
 
-          {/* Establishment Card */}
           <Card>
             <CardContent className="p-6">
               <h2 className="text-xl font-semibold mb-4">Barbearia</h2>
@@ -170,7 +168,6 @@ const AppointmentDetailPage = () => {
             </CardContent>
           </Card>
 
-          {/* User Card (Worker or Customer) */}
           <Card>
             <CardContent className="p-6">
               <h2 className="text-xl font-semibold mb-4">
@@ -208,19 +205,17 @@ const AppointmentDetailPage = () => {
             </CardContent>
           </Card>
 
-          {/* Actions */}
           <div className="flex gap-4">
-            <Button
+            {/* <Button
               variant="outline"
               size="lg"
               className="flex-1"
               onClick={() => {
-                // TODO: Implementar lógica de remarcar
                 toast.info("Funcionalidade em desenvolvimento");
               }}
             >
               Remarcar
-            </Button>
+            </Button> */}
             <Button
               variant="destructive"
               size="lg"

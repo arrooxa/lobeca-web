@@ -8,6 +8,8 @@ import { useGetCurrentUserRecommendations } from "@/services/recommendations/que
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar, CalendarX2, Heart, Sparkles } from "lucide-react";
+import { NavLink } from "react-router";
+import { ROUTES } from "@/constants";
 
 const CustomerDashboard = () => {
   const { user, isCustomer } = useUser();
@@ -60,8 +62,8 @@ const CustomerDashboard = () => {
                   um horário que se encaixe na sua agenda.
                 </p>
               </div>
-              <Button className="w-full mt-4" size="lg">
-                Agendar agora
+              <Button className="w-full mt-4" size="lg" asChild>
+                <NavLink to={ROUTES.ESTABLISHMENTS}>Agendar agora</NavLink>
               </Button>
             </CardContent>
           </Card>
@@ -104,9 +106,11 @@ const CustomerDashboard = () => {
                   Comece sua jornada agendando seu primeiro horário com um de
                   nossos profissionais.
                 </p>
-                <Button size="lg" className="gap-2">
-                  <Sparkles className="w-4 h-4" />
-                  Fazer primeiro agendamento
+                <Button size="lg" className="gap-2" asChild>
+                  <NavLink to={ROUTES.ESTABLISHMENTS}>
+                    <Sparkles className="w-4 h-4" />
+                    Fazer primeiro agendamento
+                  </NavLink>
                 </Button>
               </div>
             ) : (
