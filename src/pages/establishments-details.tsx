@@ -1,7 +1,6 @@
 import { MapPin, Share2, Heart, ChevronLeft, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { NavLink, useNavigate, useParams } from "react-router";
 import PublicLayout from "@/layouts/public";
@@ -19,6 +18,7 @@ import { formatMoney } from "@/utils/money";
 import { config } from "@/utils";
 import { LoadingBarber } from "@/components";
 import { toast } from "react-toastify";
+import AvatarIcon from "@/components/AvatarIcon";
 
 export default function EstablishmentDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -248,18 +248,13 @@ function ServiceItem({
                   className="flex items-center justify-between p-3 rounded-md bg-fill-color/50 hover:bg-fill-color transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage
-                        src={barberService.workerPhotoURL || "/placeholder.svg"}
-                        alt={
-                          barberService.workerNickname ??
-                          barberService.workerName
-                        }
-                      />
-                      <AvatarFallback>
-                        {barberService.workerName.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
+                    <AvatarIcon
+                      name={
+                        barberService.workerNickname ?? barberService.workerName
+                      }
+                      photoURL={barberService.workerPhotoURL}
+                      size="extra-small"
+                    />
                     <div>
                       <p className="font-medium text-sm">
                         {barberService.workerName}
