@@ -31,7 +31,7 @@ const LocationAutocomplete = ({
   required = false,
 }: LocationAutocompleteProps) => {
   const places = useMapsLibrary("places");
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState(value);
   const [suggestions, setSuggestions] = useState<
     google.maps.places.AutocompleteSuggestion[]
   >([]);
@@ -42,8 +42,8 @@ const LocationAutocomplete = ({
   const inputRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setInputValue(value);
     if (value === "") {
-      setInputValue("");
       setSuggestions([]);
     }
   }, [value]);
