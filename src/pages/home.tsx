@@ -120,8 +120,8 @@ const Homepage = () => {
             </div>
           </div>
 
-          <Button size="lg" className="text-lg px-8 py-3">
-            Encontrar Barbearias
+          <Button size="lg" className="text-lg px-8 py-3" asChild>
+            <NavLink to={ROUTES.ESTABLISHMENTS}>Encontrar Barbearias</NavLink>
           </Button>
         </div>
       </section>
@@ -168,8 +168,9 @@ const Homepage = () => {
                     variant="outline"
                     size="default"
                     className="w-full hover:bg-brand-primary hover:text-foreground-on-primary hover:border-brand-primary"
+                    asChild
                   >
-                    Ver Barbearias
+                    <NavLink to={ROUTES.ESTABLISHMENTS}>Ver Barbearias</NavLink>
                   </Button>
                 </CardContent>
               </Card>
@@ -282,8 +283,15 @@ const Homepage = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <NavLink to="#hero-section">
-              <Button variant="outline" size="lg" className="text-lg px-8 py-3">
-                Encontrar Barbearias
+              <Button
+                variant="outline"
+                size="lg"
+                className="text-lg px-8 py-3"
+                asChild
+              >
+                <NavLink to={ROUTES.ESTABLISHMENTS}>
+                  Encontrar Barbearias
+                </NavLink>
               </Button>
             </NavLink>
 

@@ -30,7 +30,9 @@ const Header = () => {
             Para Barbeiros
           </NavLink>
           <NavLink
-            to="#footer"
+            to="https://api.whatsapp.com/send?phone=5513974253636&text=Ol%C3%A1%2C%20gostaria%20de%20conhecer%20melhor%20o%20lobeca!"
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-font-secondary hover:text-brand-secondary transition-colors"
           >
             Contato

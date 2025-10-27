@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { WHATSAPP_WEB_LINK } from "@/constants";
+import { ROUTES, WHATSAPP_WEB_LINK } from "@/constants";
 import PublicLayout from "@/layouts/public";
 import { useGetSubscriptionsPlans } from "@/services/subscriptions/queries";
 import { formatMoney } from "@/utils/money";
@@ -105,8 +105,8 @@ export default function ForBarbersPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button size="lg" className="text-lg px-8 py-3">
-              Começar Teste Grátis
+            <Button size="lg" className="text-lg px-8 py-3" asChild>
+              <NavLink to={ROUTES.REGISTER}>Começar Teste Grátis</NavLink>
             </Button>
             <Button variant="outline" size="lg" className="text-lg px-8 py-3">
               Ver Demonstração
@@ -410,8 +410,9 @@ export default function ForBarbersPage() {
               variant="outline"
               size="lg"
               className="text-lg text-foreground px-8 py-3"
+              asChild
             >
-              Começar Teste Grátis
+              <NavLink to={ROUTES.REGISTER}>Começar Teste Grátis</NavLink>
             </Button>
 
             <Button

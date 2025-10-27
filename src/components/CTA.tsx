@@ -14,8 +14,13 @@ const CTA = () => {
           ideal hoje mesmo
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button variant="outline" size="lg" className="text-lg px-8 py-3">
-            Encontrar Barbearias
+          <Button
+            variant="outline"
+            size="lg"
+            className="text-lg px-8 py-3"
+            asChild
+          >
+            <NavLink to={ROUTES.ESTABLISHMENTS}>Encontrar Barbearias</NavLink>
           </Button>
 
           <Button

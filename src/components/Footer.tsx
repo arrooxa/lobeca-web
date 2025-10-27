@@ -24,19 +24,28 @@ const Footer = () => {
             </h4>
             <ul className="space-y-2 text-sm text-foreground-muted">
               <li>
-                <a href="#" className="hover:text-foreground transition-colors">
+                <NavLink
+                  to={ROUTES.ESTABLISHMENTS}
+                  className="hover:text-foreground transition-colors"
+                >
                   Encontrar Barbearias
-                </a>
+                </NavLink>
               </li>
               <li>
-                <a href="#" className="hover:text-foreground transition-colors">
+                <NavLink
+                  to={ROUTES.ESTABLISHMENTS}
+                  className="hover:text-foreground transition-colors"
+                >
                   Agendar Horário
-                </a>
+                </NavLink>
               </li>
               <li>
-                <a href="#" className="hover:text-foreground transition-colors">
+                <NavLink
+                  to={ROUTES.ESTABLISHMENTS}
+                  className="hover:text-foreground transition-colors"
+                >
                   Avaliações
-                </a>
+                </NavLink>
               </li>
             </ul>
           </div>
@@ -47,14 +56,20 @@ const Footer = () => {
             </h4>
             <ul className="space-y-2 text-sm text-foreground-muted">
               <li>
-                <a href="#" className="hover:text-foreground transition-colors">
+                <NavLink
+                  to={ROUTES.REGISTER}
+                  className="hover:text-foreground transition-colors"
+                >
                   Cadastrar Barbearia
-                </a>
+                </NavLink>
               </li>
               <li>
-                <a href="#" className="hover:text-foreground transition-colors">
+                <NavLink
+                  to={ROUTES.REGISTER}
+                  className="hover:text-foreground transition-colors"
+                >
                   Ferramentas de Gestão
-                </a>
+                </NavLink>
               </li>
               <li>
                 <a
