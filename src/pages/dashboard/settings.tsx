@@ -6,7 +6,7 @@ import { Button, Card, CardContent, Input } from "@/components";
 import DashboardLayout from "@/layouts/dashboard";
 import { useUser } from "@/context/UserContext";
 import { updateUserProfileSchema, type UpdateUserProfileData } from "@/types";
-import { useUpdateUser } from "@/services";
+import { useUpdateUser, useDeleteUser } from "@/services";
 import { defaultToastProps } from "@/constants";
 import {
   Camera,
@@ -15,19 +15,26 @@ import {
   User as UserIcon,
   Upload,
   X,
+  Trash2,
+  AlertTriangle,
 } from "lucide-react";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { Label } from "@/components/ui/label";
+import { useNavigate } from "react-router";
 
 const SettingsPage = () => {
   const { user, refreshUser } = useUser();
+  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(
     user?.photoURL || null
   );
   const updateUserMutation = useUpdateUser();
+  const deleteUserMutation = useDeleteUser();
 
   const {
     control,
@@ -149,6 +156,27 @@ const SettingsPage = () => {
       );
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+
+    setIsDeleting(true);
+    try {
+      await deleteUserMutation.mutateAsync();
+
+      toast.success("Conta deletada com sucesso!", defaultToastProps);
+
+      // Limpar dados do usuário e redirecionar
+      localStorage.removeItem("token");
+      navigate("/");
+    } catch (error) {
+      console.error("Erro ao deletar conta:", error);
+      toast.error("Erro ao deletar conta. Tente novamente.", defaultToastProps);
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteModal(false);
     }
   };
 
@@ -375,6 +403,42 @@ const SettingsPage = () => {
               </CardContent>
             </Card>
 
+            {/* Zona de Perigo */}
+            <Card className="border-red-200">
+              <CardContent>
+                <div className="py-6">
+                  <h2 className="text-xl font-semibold mb-2 text-red-600 flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5" />
+                    Zona de Perigo
+                  </h2>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Ações irreversíveis que afetarão permanentemente sua conta.
+                  </p>
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <h3 className="font-semibold text-red-900 mb-1">
+                          Deletar Conta
+                        </h3>
+                        <p className="text-sm text-red-700">
+                          Uma vez deletada, sua conta não poderá ser recuperada.
+                          Todos os seus dados serão permanentemente removidos.
+                        </p>
+                      </div>
+                      <Button
+                        type="button"
+                        onClick={() => setShowDeleteModal(true)}
+                        className="bg-red-600 hover:bg-red-700 text-white gap-2 whitespace-nowrap"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        Deletar Conta
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Botões de ação */}
             <div className="flex justify-end gap-3">
               <Button
@@ -397,6 +461,62 @@ const SettingsPage = () => {
             </div>
           </div>
         </form>
+
+        {/* Modal de Confirmação de Exclusão */}
+        {showDeleteModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg max-w-md w-full p-6 shadow-xl">
+              <div className="flex items-start gap-4 mb-4">
+                <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                  <AlertTriangle className="w-6 h-6 text-red-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Deletar Conta
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-2">
+                    Tem certeza que deseja deletar sua conta? Esta ação é
+                    <span className="font-semibold"> permanente</span> e não
+                    pode ser desfeita.
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Todos os seus dados, agendamentos e histórico serão
+                    permanentemente removidos.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 justify-end">
+                <Button
+                  type="button"
+                  onClick={() => setShowDeleteModal(false)}
+                  disabled={isDeleting}
+                  className="bg-gray-200 hover:bg-gray-300 text-gray-800"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  type="button"
+                  onClick={handleDeleteAccount}
+                  disabled={isDeleting}
+                  className="bg-red-600 hover:bg-red-700 text-white gap-2"
+                >
+                  {isDeleting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Deletando...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="w-4 h-4" />
+                      Sim, deletar conta
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );
