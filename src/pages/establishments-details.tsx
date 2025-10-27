@@ -17,6 +17,7 @@ import type {
 } from "@/types";
 import { formatMoney } from "@/utils/money";
 import { config } from "@/utils";
+import { LoadingBarber } from "@/components";
 
 export default function EstablishmentDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -34,12 +35,8 @@ export default function EstablishmentDetailsPage() {
   if (isLoading) {
     return (
       <PublicLayout>
-        <div className="min-h-screen bg-background">
-          <div className="bg-card">
-            <div className="container mx-auto px-4 py-4">
-              <h1 className="text-3xl font-bold">Carregando...</h1>
-            </div>
-          </div>
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center">
+          <LoadingBarber size="lg" />
         </div>
       </PublicLayout>
     );

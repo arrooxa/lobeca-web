@@ -1,5 +1,6 @@
 import PaymentForm from "@/components/PaymentForm";
 import DashboardLayout from "@/layouts/dashboard";
+import { LoadingBarber } from "@/components/ui";
 import { useGetCurrentUserEstablishment } from "@/services/establishments/queries";
 import { useGetSubscriptionsPlans } from "@/services/subscriptions/queries";
 import { checkoutParamsSchema } from "@/types";
@@ -50,7 +51,13 @@ const SubscriptionCheckout = () => {
   const currentPlan = plans?.find((plan) => plan.id === Number(params?.plan));
 
   if (!params || isLoadingEstablishment || isLoadingPlans) {
-    return <DashboardLayout>Loading...</DashboardLayout>;
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <LoadingBarber size="lg" />
+        </div>
+      </DashboardLayout>
+    );
   }
 
   if (

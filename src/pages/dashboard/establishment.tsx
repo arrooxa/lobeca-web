@@ -4,6 +4,7 @@ import { useGetCurrentUserEstablishment } from "@/services/establishments/querie
 import EstablishmentEmptyState from "./components/establishment-empty-state";
 import EstablishmentDetails from "./components/establishment-details";
 import { Card, CardContent } from "@/components";
+import { LoadingBarber } from "@/components/ui";
 import { NavLink } from "react-router";
 import { ROUTES } from "@/constants";
 import type { PublicWorker } from "@/types/user";
@@ -20,7 +21,9 @@ const Establishment = () => {
   if (loadingEstablishment) {
     return (
       <DashboardLayout>
-        <div>Loading...</div>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <LoadingBarber size="lg" />
+        </div>
       </DashboardLayout>
     );
   }

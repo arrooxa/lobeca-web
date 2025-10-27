@@ -1,6 +1,7 @@
 import { Button, Card, CardContent } from "@/components";
 import AvatarIcon from "@/components/AvatarIcon";
 import { Separator } from "@/components/ui/separator";
+import { LoadingBarber } from "@/components/ui";
 import { useUser } from "@/context/UserContext";
 import { useGetCurrentUserAppointments } from "@/services/appointments/queries";
 import { useGetCurrentUserRecommendations } from "@/services/recommendations/queries";
@@ -24,7 +25,11 @@ const CustomerDashboard = () => {
   } = useGetCurrentUserAppointments(Boolean(user && isCustomer));
 
   if (loadingAppointments || loadingFavoritesBarbers) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <LoadingBarber size="lg" />
+      </div>
+    );
   }
 
   if (

@@ -32,3 +32,9 @@ export {
   CollapsibleTrigger,
 } from "./collapsible";
 export { Checkbox } from "./checkbox";
+export {
+  LoadingBarber,
+  LoadingBarberInline,
+  LoadingBarberFullPage,
+  LoadingBarberSkeleton,
+} from "./loading-barber";

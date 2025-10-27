@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { LoadingBarber } from "@/components/ui";
 import { ROUTES, WHATSAPP_WEB_LINK } from "@/constants";
 import PublicLayout from "@/layouts/public";
 import { useGetSubscriptionsPlans } from "@/services/subscriptions/queries";
@@ -24,7 +25,13 @@ export default function ForBarbersPage() {
   } = useGetSubscriptionsPlans();
 
   if (isLoadingPlans) {
-    return <div>Loading...</div>;
+    return (
+      <PublicLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <LoadingBarber size="lg" />
+        </div>
+      </PublicLayout>
+    );
   }
 
   if (plansError || !plans) {

@@ -8,6 +8,7 @@ export default {
         "fade-in": "fadeIn 0.7s ease-out",
         "slide-in-from-bottom-4": "slideInFromBottom4 0.5s ease-out",
         "slide-in-from-bottom-8": "slideInFromBottom8 0.7s ease-out",
+        "spin-slow": "spin 3s linear infinite",
       },
       keyframes: {
         fadeIn: {
