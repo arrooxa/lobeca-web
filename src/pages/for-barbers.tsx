@@ -247,12 +247,21 @@ export default function ForBarbersPage() {
                       enterprisePlan?.id === plan.id ? "outline" : "default"
                     }
                     size="lg"
+                    asChild
                   >
-                    {enterprisePlan?.id === plan.id
-                      ? "Entrar em contato"
-                      : popularPlan?.id === plan.id
-                      ? "Começar teste gratuíto"
-                      : "Começar agora"}
+                    <NavLink
+                      to={
+                        enterprisePlan?.id === plan.id
+                          ? WHATSAPP_WEB_LINK
+                          : ROUTES.REGISTER
+                      }
+                    >
+                      {enterprisePlan?.id === plan.id
+                        ? "Entrar em contato"
+                        : popularPlan?.id === plan.id
+                        ? "Começar teste gratuíto"
+                        : "Começar agora"}
+                    </NavLink>
                   </Button>
                 </CardContent>
               </Card>

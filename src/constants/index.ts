@@ -37,4 +37,5 @@ export const defaultToastProps: ToastOptions = {
   transition: Bounce,
 };
 
-export const WHATSAPP_WEB_LINK = "https://wa.me/message/737FGWRL5VVND1";
+export const WHATSAPP_WEB_LINK =
+  "https://api.whatsapp.com/send?phone=5513974253636&text=Ol%C3%A1%2C%20gostaria%20de%20conhecer%20melhor%20o%20Lobeca!";

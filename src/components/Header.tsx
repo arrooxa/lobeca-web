@@ -1,6 +1,6 @@
 import { Button } from "./ui/button";
 import { NavLink } from "react-router";
-import { ROUTES } from "@/constants";
+import { ROUTES, WHATSAPP_WEB_LINK } from "@/constants";
 import { useUser } from "@/context/UserContext";
 
 const Header = () => {
@@ -30,7 +30,7 @@ const Header = () => {
             Para Barbeiros
           </NavLink>
           <NavLink
-            to="https://api.whatsapp.com/send?phone=5513974253636&text=Ol%C3%A1%2C%20gostaria%20de%20conhecer%20melhor%20o%20lobeca!"
+            to={WHATSAPP_WEB_LINK}
             target="_blank"
             rel="noopener noreferrer"
             className="text-font-secondary hover:text-brand-secondary transition-colors"
