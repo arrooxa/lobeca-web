@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { useNavigate, useParams } from "react-router";
+import { NavLink, useNavigate, useParams } from "react-router";
 import PublicLayout from "@/layouts/public";
 import {
   Collapsible,
@@ -265,7 +265,11 @@ function ServiceItem({
                       </p>
                     </div>
                   </div>
-                  <Button size="default">Agendar</Button>
+                  <Button size="default" asChild>
+                    <NavLink to={`/agendar/${barberService.workerUUID}`}>
+                      Agendar
+                    </NavLink>
+                  </Button>
                 </div>
               )
             )}

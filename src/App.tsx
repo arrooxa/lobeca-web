@@ -18,6 +18,7 @@ import Schedule from "./pages/dashboard/schedule";
 import Establishment from "./pages/dashboard/establishment";
 import AppointmentsPage from "./pages/dashboard/appointments";
 import AppointmentDetailPage from "./pages/dashboard/appointment-detail";
+import BookingPage from "./pages/booking";
 
 function App() {
   return (
@@ -33,6 +34,8 @@ function App() {
       <Route path={ROUTES.FOR_BARBERS} element={<ForBarbers />} />
       <Route path={ROUTES.TERMS_OF_SERVICE} element={<TermsOfService />} />
       <Route path={ROUTES.PRIVACY_POLICY} element={<PrivacyPolicy />} />
+
+      <Route path="/agendar/:workerUUID" element={<BookingPage />} />
 
       <Route element={<ProtectedRoute />}>
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
