@@ -11,6 +11,7 @@ import {
 
 import { userService } from ".";
 import { queryKeys } from "../queryClient";
+import { TIMES } from "@/constants";
 
 // ========== QUERIES BASEADAS EM JWT (USUÁRIO LOGADO) ==========
 
@@ -19,7 +20,7 @@ export const useGetCurrentUser = (enabled: boolean = true) => {
     queryKey: queryKeys.users.me.profile,
     queryFn: () => userService.get(),
     enabled,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: TIMES.DEFAULT_STALE,
   });
 };
 
@@ -46,7 +47,7 @@ export const useGetAllCurrentUserSchedules = (enabled: boolean = true) => {
     queryKey: queryKeys.users.me.schedule.all,
     queryFn: () => userService.getAllWorkerSchedules(),
     enabled,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: TIMES.DEFAULT_STALE,
   });
 };
 
@@ -60,7 +61,7 @@ export const useGetUserAvailability = (
     queryKey: queryKeys.users.availability(workerUUID, dayOfWeek, date),
     queryFn: () => userService.getUserAvailability(workerUUID, dayOfWeek, date),
     enabled: enabled && Boolean(date),
-    staleTime: 1000 * 60 * 5,
+    staleTime: TIMES.DEFAULT_STALE,
   });
 };
 
@@ -138,7 +139,7 @@ export const useGetAllWorkers = (
       : queryKeys.users.all,
     queryFn: () => userService.getWorkers(params),
     enabled,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: TIMES.DEFAULT_STALE,
   });
 };
 
@@ -147,7 +148,7 @@ export const useGetWorkerInfo = (uuid: string, enabled: boolean = true) => {
     queryKey: queryKeys.users.detail(uuid),
     queryFn: () => userService.getWorkerInfo(uuid),
     enabled: enabled && Boolean(uuid),
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: TIMES.DEFAULT_STALE,
   });
 };
 

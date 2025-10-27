@@ -357,7 +357,7 @@ export const testPagarMeLoad = async (): Promise<boolean> => {
       console.log("init function:", typeof window.PagarmeCheckout.init);
     }
 
-    return !!window.PagarmeCheckout;
+    return Boolean(window.PagarmeCheckout);
   } catch (error) {
     console.error("Erro ao testar tokenizecard.js:", error);
     return false;

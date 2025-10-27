@@ -45,13 +45,6 @@ const ServiceCreateModal = ({
     reset,
   } = useForm<EstablishmentServiceFormData>({
     resolver: zodResolver(establishmentServiceSchema),
-    defaultValues: {
-      categoryID: undefined,
-      name: "",
-      basePrice: 0,
-      duration: 30,
-      description: "",
-    },
   });
 
   const handleClose = () => {
@@ -86,7 +79,6 @@ const ServiceCreateModal = ({
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Category Field */}
           <div className="space-y-2">
             <Label htmlFor="category">
               Categoria<span className="text-brand-secondary ml-1">*</span>
@@ -125,7 +117,6 @@ const ServiceCreateModal = ({
             )}
           </div>
 
-          {/* Name Field */}
           <div className="space-y-2">
             <Label htmlFor="name">
               Nome do Serviço
@@ -138,7 +129,7 @@ const ServiceCreateModal = ({
                 <Input
                   id="name"
                   placeholder="Corte masculino clássico"
-                  error={!!errors.name}
+                  error={Boolean(errors.name)}
                   {...field}
                 />
               )}
@@ -150,7 +141,6 @@ const ServiceCreateModal = ({
             )}
           </div>
 
-          {/* Duration Field */}
           <div className="space-y-2">
             <Label htmlFor="duration">
               Duração (minutos)
@@ -184,7 +174,6 @@ const ServiceCreateModal = ({
             )}
           </div>
 
-          {/* Base Price Field */}
           <div className="space-y-2">
             <Label htmlFor="basePrice">
               Preço Base<span className="text-brand-secondary ml-1">*</span>
@@ -194,9 +183,9 @@ const ServiceCreateModal = ({
               name="basePrice"
               render={({ field }) => (
                 <CurrencyInput
-                  value={field.value / 100} // Converte de centavos para reais
+                  value={field.value / 100}
                   onValueChange={field.onChange}
-                  error={!!errors.basePrice}
+                  error={Boolean(errors.basePrice)}
                   placeholder="R$ 0,00"
                 />
               )}
@@ -208,7 +197,6 @@ const ServiceCreateModal = ({
             )}
           </div>
 
-          {/* Description Field */}
           <div className="space-y-2">
             <Label htmlFor="description">Descrição (Opcional)</Label>
             <Controller
@@ -226,7 +214,6 @@ const ServiceCreateModal = ({
             />
           </div>
 
-          {/* Submit Buttons */}
           <div className="flex gap-3 pt-2">
             <Button
               type="button"

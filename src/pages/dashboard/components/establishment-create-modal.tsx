@@ -151,7 +151,7 @@ const EstablishmentCreateModal = ({
                   <Input
                     id="name"
                     placeholder="Digite o nome da barbearia"
-                    error={!!errors.name}
+                    error={Boolean(errors.name)}
                     {...field}
                   />
                 )}
@@ -176,7 +176,7 @@ const EstablishmentCreateModal = ({
                       setValue("location.latitude", place.latitude);
                       setValue("location.longitude", place.longitude);
                     }}
-                    error={!!errors.address}
+                    error={Boolean(errors.address)}
                     errorMessage={errors.address?.message}
                     label="Endereço"
                     placeholder="Digite o endereço da barbearia"

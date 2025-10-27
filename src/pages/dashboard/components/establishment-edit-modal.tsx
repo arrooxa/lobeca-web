@@ -189,7 +189,6 @@ const EstablishmentEditModal = ({
 
           <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* Name Field */}
               <div className="space-y-2">
                 <Label htmlFor="name">
                   Nome da Barbearia
@@ -202,7 +201,7 @@ const EstablishmentEditModal = ({
                     <Input
                       id="name"
                       placeholder="Digite o nome da barbearia"
-                      error={!!errors.name}
+                      error={Boolean(errors.name)}
                       {...field}
                     />
                   )}
@@ -214,7 +213,6 @@ const EstablishmentEditModal = ({
                 )}
               </div>
 
-              {/* Address Field with Autocomplete */}
               <div className="space-y-2">
                 <Controller
                   control={control}
@@ -228,7 +226,7 @@ const EstablishmentEditModal = ({
                         setValue("location.latitude", place.latitude);
                         setValue("location.longitude", place.longitude);
                       }}
-                      error={!!errors.address}
+                      error={Boolean(errors.address)}
                       errorMessage={errors.address?.message}
                       label="Endereço"
                       placeholder="Digite o endereço da barbearia"
@@ -238,48 +236,6 @@ const EstablishmentEditModal = ({
                 />
               </div>
 
-              {/* Latitude and Longitude - Read Only */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="latitude">Latitude</Label>
-                  <Controller
-                    control={control}
-                    name="location.latitude"
-                    render={({ field }) => (
-                      <Input
-                        id="latitude"
-                        type="number"
-                        step="any"
-                        placeholder="-23.5505"
-                        readOnly
-                        className="bg-gray-50"
-                        {...field}
-                      />
-                    )}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="longitude">Longitude</Label>
-                  <Controller
-                    control={control}
-                    name="location.longitude"
-                    render={({ field }) => (
-                      <Input
-                        id="longitude"
-                        type="number"
-                        step="any"
-                        placeholder="-46.6333"
-                        readOnly
-                        className="bg-gray-50"
-                        {...field}
-                      />
-                    )}
-                  />
-                </div>
-              </div>
-
-              {/* Image Upload */}
               <div className="space-y-2">
                 <Label>Logo/Foto da Barbearia (Opcional)</Label>
 
@@ -325,7 +281,6 @@ const EstablishmentEditModal = ({
                 )}
               </div>
 
-              {/* Submit Buttons */}
               <div className="flex gap-3 pt-2">
                 <Button
                   type="button"
@@ -355,7 +310,6 @@ const EstablishmentEditModal = ({
                 </Button>
               </div>
 
-              {/* Delete Button (Owner Only) */}
               {isUserOwner && (
                 <Button
                   type="button"
@@ -373,7 +327,6 @@ const EstablishmentEditModal = ({
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>

@@ -123,7 +123,6 @@ const WorkerInviteModal = ({ open, onOpenChange }: WorkerInviteModalProps) => {
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Selected Worker Display */}
           {selectedWorker && (
             <div className="p-4 bg-brand-tertiary/20 rounded-lg border border-brand-primary/20">
               <p className="text-sm text-foreground-subtle mb-2">
@@ -162,7 +161,6 @@ const WorkerInviteModal = ({ open, onOpenChange }: WorkerInviteModalProps) => {
             </div>
           )}
 
-          {/* Search Input */}
           {!selectedWorker && (
             <div className="space-y-2">
               <Label htmlFor="worker-search">
@@ -177,7 +175,7 @@ const WorkerInviteModal = ({ open, onOpenChange }: WorkerInviteModalProps) => {
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
                   className="pl-10"
-                  error={!!errors.inviteeUUID}
+                  error={Boolean(errors.inviteeUUID)}
                 />
               </div>
               {errors.inviteeUUID && (
@@ -186,7 +184,6 @@ const WorkerInviteModal = ({ open, onOpenChange }: WorkerInviteModalProps) => {
                 </p>
               )}
 
-              {/* Workers List */}
               {searchText && (
                 <ScrollArea className="h-[300px] border border-color-border rounded-md">
                   {isLoading ? (
@@ -244,7 +241,6 @@ const WorkerInviteModal = ({ open, onOpenChange }: WorkerInviteModalProps) => {
             </p>
           </div>
 
-          {/* Submit Buttons */}
           <div className="flex gap-3 pt-2">
             <Button
               type="button"

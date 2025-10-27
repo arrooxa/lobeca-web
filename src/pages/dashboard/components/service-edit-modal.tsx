@@ -55,7 +55,7 @@ const ServiceEditModal = ({
 
   const { data: service, isLoading: loadingService } = useGetServiceByID(
     { serviceID },
-    Boolean(serviceID && open)
+    Boolean(serviceID)
   );
   const { data: categories = [], isLoading: loadingCategories } =
     useGetAllCategories();
@@ -69,6 +69,13 @@ const ServiceEditModal = ({
     reset,
   } = useForm<EstablishmentServiceFormData>({
     resolver: zodResolver(establishmentServiceSchema),
+    defaultValues: {
+      categoryID: undefined,
+      name: "",
+      basePrice: 0,
+      duration: 30,
+      description: "",
+    },
   });
 
   useEffect(() => {
@@ -78,13 +85,24 @@ const ServiceEditModal = ({
         name: service.name,
         basePrice: service.basePrice,
         duration: service.duration,
-        description: service.description,
+        description: service.description || "",
       });
     }
   }, [service, open, reset]);
 
+  useEffect(() => {
+    if (!open) {
+      reset({
+        categoryID: undefined,
+        name: "",
+        basePrice: 0,
+        duration: 30,
+        description: "",
+      });
+    }
+  }, [open, reset]);
+
   const handleClose = () => {
-    reset();
     onOpenChange(false);
   };
 
@@ -132,7 +150,7 @@ const ServiceEditModal = ({
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
+      <Dialog open={open} onOpenChange={onOpenChange} key={serviceID}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -188,7 +206,7 @@ const ServiceEditModal = ({
                 render={({ field }) => (
                   <Input
                     placeholder="Nome do serviço"
-                    error={!!errors.name}
+                    error={Boolean(errors.name)}
                     {...field}
                   />
                 )}
@@ -237,9 +255,9 @@ const ServiceEditModal = ({
                 name="basePrice"
                 render={({ field }) => (
                   <CurrencyInput
-                    value={field.value / 100} // Converte de centavos para reais
+                    value={field.value / 100}
                     onValueChange={field.onChange}
-                    error={!!errors.basePrice}
+                    error={Boolean(errors.basePrice)}
                     placeholder="R$ 0,00"
                   />
                 )}

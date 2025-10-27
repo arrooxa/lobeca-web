@@ -8,6 +8,7 @@ import {
 
 import { establishmentService } from ".";
 import { queryKeys } from "../queryClient";
+import { TIMES } from "@/constants";
 
 export const useGetEstablishments = (
   params?: GetAllEstablishmentParams,
@@ -18,7 +19,7 @@ export const useGetEstablishments = (
       ? queryKeys.establishments.list({ ...params })
       : queryKeys.establishments.all,
     queryFn: () => establishmentService.getAll(params),
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: TIMES.DEFAULT_STALE,
     enabled,
   });
 };
@@ -27,7 +28,7 @@ export const useGetCurrentUserEstablishment = (enabled: boolean = true) => {
   return useQuery({
     queryKey: queryKeys.users.me.establishment,
     queryFn: () => establishmentService.getCurrentUserEstablishment(),
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: TIMES.DEFAULT_STALE,
     enabled,
   });
 };
@@ -39,7 +40,7 @@ export const useGetEstablishmentByID = (
   return useQuery({
     queryKey: queryKeys.establishments.detail(establishmentID),
     queryFn: () => establishmentService.getByID({ establishmentID }),
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: TIMES.DEFAULT_STALE,
     enabled: enabled && Boolean(establishmentID),
   });
 };
@@ -134,7 +135,7 @@ export const useGetCurrentUserInvites = (enabled: boolean = true) => {
   return useQuery({
     queryKey: queryKeys.users.me.invites,
     queryFn: () => establishmentService.getCurrentUserInvites(),
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: TIMES.DEFAULT_STALE,
     enabled,
   });
 };

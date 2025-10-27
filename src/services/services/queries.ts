@@ -9,12 +9,13 @@ import {
 
 import { serviceService } from ".";
 import { queryKeys } from "../queryClient";
+import { TIMES } from "@/constants";
 
 export const useGetAllCategories = () => {
   return useQuery({
     queryKey: queryKeys.services.all,
     queryFn: () => serviceService.getAllServicesCategories(),
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: TIMES.DEFAULT_STALE,
   });
 };
 
@@ -25,8 +26,8 @@ export const useGetServiceByID = (
   return useQuery({
     queryKey: queryKeys.services.detail(serviceID),
     queryFn: () => serviceService.getServiceByID({ serviceID }),
-    enabled: enabled && !!serviceID,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    enabled: enabled && Boolean(serviceID),
+    staleTime: TIMES.DEFAULT_STALE,
     retry: (failureCount, error: AxiosError) => {
       if (error?.response?.status === 404) {
         return false;

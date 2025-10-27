@@ -11,6 +11,8 @@ import EstablishmentEditModal from "./establishment-edit-modal";
 import WorkerInviteModal from "./worker-invite-modal";
 import ServiceCreateModal from "./service-create-modal";
 import ServiceEditModal from "./service-edit-modal";
+import WorkerRoleModal from "./worker-role-modal";
+import WorkerServiceAssignModal from "./worker-service-assign-modal";
 
 interface EstablishmentDetailsProps {
   establishment: EstablishmentWithDetails;
@@ -24,7 +26,13 @@ const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
   const [inviteWorkerModalOpen, setInviteWorkerModalOpen] = useState(false);
   const [createServiceModalOpen, setCreateServiceModalOpen] = useState(false);
   const [editServiceModalOpen, setEditServiceModalOpen] = useState(false);
+  const [workerRoleModalOpen, setWorkerRoleModalOpen] = useState(false);
+  const [workerServiceAssignModalOpen, setWorkerServiceAssignModalOpen] =
+    useState(false);
   const [selectedServiceId, setSelectedServiceId] = useState<number | null>(
+    null
+  );
+  const [selectedWorker, setSelectedWorker] = useState<PublicWorker | null>(
     null
   );
 
@@ -103,6 +111,21 @@ const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
     setEditServiceModalOpen(true);
   };
 
+  const handleWorkerClick = (workerUUID: string) => {
+    if (!isUserOwnerOrManager) return;
+
+    const worker = establishment.users.find((w) => w.uuid === workerUUID);
+    if (worker) {
+      setSelectedWorker(worker);
+      setWorkerRoleModalOpen(true);
+    }
+  };
+
+  const handleAssignServiceToWorker = (serviceId: number) => {
+    setSelectedServiceId(serviceId);
+    setWorkerServiceAssignModalOpen(true);
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -173,8 +196,15 @@ const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
             {allPeople.map((person) => (
               <div
                 key={person.uuid}
+                onClick={() =>
+                  !person.isPending && handleWorkerClick(person.uuid)
+                }
                 className={`flex flex-col items-center text-center p-4 rounded-lg border border-color-border hover:border-brand-primary/20 transition-colors ${
                   person.isPending ? "opacity-60" : ""
+                } ${
+                  !person.isPending && isUserOwnerOrManager
+                    ? "cursor-pointer"
+                    : ""
                 }`}
               >
                 <AvatarIcon
@@ -222,30 +252,103 @@ const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
             <div className="space-y-3">
               {establishment.services.map((service, index) => (
                 <div key={service.id}>
-                  <div className="flex items-center justify-between p-4 rounded-lg bg-fill-color hover:bg-fill-color/60 transition-colors">
-                    <div className="flex items-center gap-3 flex-1">
-                      <div>
-                        <h4 className="font-bold text-lg">{service.name}</h4>
-                        <p className="text-sm text-foreground-subtle">
-                          {service.duration} minutos
-                        </p>
+                  <div className="p-4 rounded-lg bg-fill-color hover:bg-fill-color/60 transition-colors">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3 flex-1">
+                        <div>
+                          <h4 className="font-bold text-lg">{service.name}</h4>
+                          <p className="text-sm text-foreground-subtle">
+                            {service.duration} minutos
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg font-semibold">
+                          R${" "}
+                          {(service.basePrice / 100)
+                            .toFixed(2)
+                            .replace(".", ",")}
+                        </span>
+                        {isUserOwnerOrManager && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleEditService(service.id)}
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </Button>
+                        )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg font-semibold">
-                        R${" "}
-                        {(service.basePrice / 100).toFixed(2).replace(".", ",")}
-                      </span>
-                      {isUserOwnerOrManager && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEditService(service.id)}
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </Button>
+
+                    {/* Workers assigned to this service */}
+                    {service.workers && service.workers.length > 0 && (
+                      <div className="mt-3 pt-3 border-t border-color-border">
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="text-sm font-semibold text-foreground-subtle">
+                            Profissionais:
+                          </p>
+                          {isUserOwnerOrManager && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                handleAssignServiceToWorker(service.id)
+                              }
+                              className="text-xs h-7"
+                            >
+                              <Plus className="w-3 h-3 mr-1" />
+                              Atribuir
+                            </Button>
+                          )}
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {service.workers.map((worker) => (
+                            <div
+                              key={worker.id}
+                              className="flex items-center gap-2 bg-white rounded-md px-3 py-1.5 border border-color-border"
+                            >
+                              <AvatarIcon
+                                name={worker.workerName}
+                                photoURL={worker.workerPhotoURL}
+                                size="extra-small"
+                              />
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-medium">
+                                  {worker.workerNickname || worker.workerName}
+                                </span>
+                                {worker.customPrice && (
+                                  <span className="text-xs text-foreground-subtle">
+                                    R${" "}
+                                    {(worker.customPrice / 100)
+                                      .toFixed(2)
+                                      .replace(".", ",")}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* No workers assigned */}
+                    {(!service.workers || service.workers.length === 0) &&
+                      isUserOwnerOrManager && (
+                        <div className="mt-3 pt-3 border-t border-color-border">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              handleAssignServiceToWorker(service.id)
+                            }
+                            className="w-full"
+                          >
+                            <Plus className="w-4 h-4 mr-2" />
+                            Atribuir profissional
+                          </Button>
+                        </div>
                       )}
-                    </div>
                   </div>
                   {index < establishment.services.length - 1 && (
                     <Separator className="my-2" />
@@ -278,6 +381,26 @@ const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
           open={editServiceModalOpen}
           onOpenChange={setEditServiceModalOpen}
           serviceID={selectedServiceId}
+        />
+      )}
+
+      <WorkerRoleModal
+        open={workerRoleModalOpen}
+        onOpenChange={setWorkerRoleModalOpen}
+        worker={selectedWorker}
+      />
+
+      {selectedServiceId && (
+        <WorkerServiceAssignModal
+          open={workerServiceAssignModalOpen}
+          onOpenChange={setWorkerServiceAssignModalOpen}
+          serviceID={selectedServiceId}
+          availableWorkers={establishment.users.filter((worker) => {
+            const service = establishment.services.find(
+              (s) => s.id === selectedServiceId
+            );
+            return !service?.workers.some((w) => w.workerUUID === worker.uuid);
+          })}
         />
       )}
     </div>
