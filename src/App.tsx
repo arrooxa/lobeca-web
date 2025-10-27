@@ -16,6 +16,8 @@ import EstablishmentsPage from "./pages/establishments";
 import EstablishmentsDetails from "./pages/establishments-details";
 import Schedule from "./pages/dashboard/schedule";
 import Establishment from "./pages/dashboard/establishment";
+import AppointmentsPage from "./pages/dashboard/appointments";
+import AppointmentDetailPage from "./pages/dashboard/appointment-detail";
 
 function App() {
   return (
@@ -34,6 +36,14 @@ function App() {
 
       <Route element={<ProtectedRoute />}>
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
+        <Route
+          path={ROUTES.DASHBOARD_APPOINTMENTS}
+          element={<AppointmentsPage />}
+        />
+        <Route
+          path={ROUTES.DASHBOARD_APPOINTMENT_DETAILS}
+          element={<AppointmentDetailPage />}
+        />
         <Route path={ROUTES.DASHBOARD_SCHEDULE} element={<Schedule />} />
         <Route
           path={ROUTES.DASHBOARD_ESTABLISHMENT}

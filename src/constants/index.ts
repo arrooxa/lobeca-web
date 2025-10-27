@@ -11,6 +11,7 @@ export const ROUTES = {
   ESTABLISHMENTS_DETAILS: "/estabelecimentos/:id",
   DASHBOARD: "/dashboard",
   DASHBOARD_APPOINTMENTS: "/dashboard/agendamentos",
+  DASHBOARD_APPOINTMENT_DETAILS: "/dashboard/agendamentos/:id",
   DASHBOARD_SCHEDULE: "/dashboard/horarios",
   DASHBOARD_ESTABLISHMENT: "/dashboard/barbearia",
   DASHBOARD_SUBSCRIPTION: "/dashboard/barbearia/assinatura",
