@@ -247,7 +247,13 @@ export function UserProvider({ children }: UserProviderProps) {
   const refreshUser = async () => {
     try {
       if (!session?.user) return;
-      await loadUserProfile(session.user.id);
+
+      const userProfile = await userService.get();
+
+      if (userProfile) {
+        setUser(userProfile);
+        await setItemAsync(USER_PROFILE_KEY, JSON.stringify(userProfile));
+      }
     } catch (error) {
       console.error("Erro ao atualizar dados do usuário:", error);
       throw error;

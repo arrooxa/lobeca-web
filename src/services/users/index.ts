@@ -15,7 +15,6 @@ import {
   type PublicWorkerResponseAPI,
   type PublicWorkerWithDetailsResponseAPI,
   type RegisterUserData,
-  type UpdateUserRequest,
   type UserResponseAPI,
 } from "@/types";
 
@@ -178,15 +177,10 @@ export const userService = {
     }
   },
 
-  updateUser: async (data: UpdateUserRequest) => {
+  updateUser: async (data: FormData) => {
     try {
-      const response = await api.patch<{ id: number }>(`/user`, {
-        address: data.address,
-        latitude: data.location?.latitude,
-        longitude: data.location?.longitude,
-      });
-
-      return response.data;
+      const response = await api.patch<UserResponseAPI>(`/user`, data);
+      return mapUserFromApi(response.data);
     } catch (error) {
       throw new Error(
         error instanceof Error ? error.message : "Error trying update user"

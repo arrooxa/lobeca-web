@@ -100,13 +100,13 @@ const BarberDashboard = () => {
                     <div className="p-4 rounded-lg hover:bg-gray-50 transition-all duration-200 cursor-pointer border border-transparent hover:border-brand-primary/20 group">
                       <div className="flex gap-3">
                         <AvatarIcon
-                          name={appointment.workerName}
-                          photoURL={appointment.workerPhotoURL}
+                          name={appointment.customerName}
+                          photoURL={appointment.customerPhotoURL}
                           size="small"
                         />
                         <div className="flex-1">
                           <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-brand-primary transition-colors">
-                            {appointment.workerName}
+                            {appointment.customerName}
                           </h3>
                           <div className="flex items-center gap-2 text-sm">
                             <Calendar className="w-4 h-4 text-brand-primary" />

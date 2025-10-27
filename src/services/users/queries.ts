@@ -5,7 +5,6 @@ import { type InsertWorkerScheduleRequest } from "@/types";
 import {
   type GetWorkersParams,
   type RegisterUserData,
-  type UpdateUserRequest,
   type User,
 } from "@/types";
 
@@ -21,6 +20,19 @@ export const useGetCurrentUser = (enabled: boolean = true) => {
     queryFn: () => userService.get(),
     enabled,
     staleTime: TIMES.DEFAULT_STALE,
+  });
+};
+
+export const useUpdateUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (formData: FormData) => userService.updateUser(formData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.users.me.profile,
+      });
+    },
   });
 };
 
@@ -90,20 +102,6 @@ export const useUpsertCurrentUserSchedule = () => {
 
 // Alias for backward compatibility
 export const useInsertCurrentUserSchedule = useUpsertCurrentUserSchedule;
-
-export const useUpdateCurrentUser = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (updateData: UpdateUserRequest) =>
-      userService.updateUser(updateData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.users.me.profile,
-      });
-    },
-  });
-};
 
 export const useUpdateUserRole = () => {
   const queryClient = useQueryClient();

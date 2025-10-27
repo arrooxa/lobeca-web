@@ -19,6 +19,7 @@ import Establishment from "./pages/dashboard/establishment";
 import AppointmentsPage from "./pages/dashboard/appointments";
 import AppointmentDetailPage from "./pages/dashboard/appointment-detail";
 import BookingPage from "./pages/booking";
+import SettingsPage from "./pages/dashboard/settings";
 
 function App() {
   return (
@@ -64,6 +65,7 @@ function App() {
           path={ROUTES.DASHBOARD_SUBSCRIPTION_SUCCESS}
           element={<SubscriptionSuccess />}
         />
+        <Route path={ROUTES.DASHBOARD_SETTINGS} element={<SettingsPage />} />
       </Route>
 
       {/* <Route path="*" element={<NotFound />} /> */}

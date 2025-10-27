@@ -66,6 +66,18 @@ export const updateUserAddressSchema = z.object({
 
 export type UpdateUserAddressData = z.infer<typeof updateUserAddressSchema>;
 
+export const updateUserProfileSchema = z.object({
+  nickname: z.string().optional(),
+  address: z.string().min(1, "Endereço é obrigatório"),
+  location: z.object({
+    latitude: z.number().min(-90).max(90),
+    longitude: z.number().min(-180).max(180),
+  }),
+  image: z.instanceof(File).optional(),
+});
+
+export type UpdateUserProfileData = z.infer<typeof updateUserProfileSchema>;
+
 export const loginSchema = z.object({
   phone: z
     .string()
@@ -121,17 +133,6 @@ export interface PublicWorkerWithDetailsResponseAPI
 export type CreateUserRequest = CreateRequest<User>;
 
 export type RegisterUserData = Pick<User, "name" | "phone" | "typeID">;
-
-export interface UpdateUserRequest {
-  name?: string;
-  phone?: string;
-  nickname?: string;
-  address?: string;
-  location?: Location;
-  photoURL?: string;
-  isActive?: boolean;
-  role?: string;
-}
 
 export interface GetWorkersParams {
   limit?: number;

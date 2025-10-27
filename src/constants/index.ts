@@ -17,6 +17,7 @@ export const ROUTES = {
   DASHBOARD_SUBSCRIPTION: "/dashboard/barbearia/assinatura",
   DASHBOARD_SUBSCRIPTION_CHECKOUT: "/dashboard/barbearia/assinatura/checkout",
   DASHBOARD_SUBSCRIPTION_SUCCESS: "/dashboard/barbearia/assinatura/success",
+  DASHBOARD_SETTINGS: "/dashboard/configuracoes",
 } as const;
 
 export const TIMES = {

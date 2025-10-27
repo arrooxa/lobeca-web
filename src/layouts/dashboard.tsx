@@ -46,7 +46,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       : []),
     {
       name: "Configurações",
-      href: "/dashboard/configuracoes",
+      href: ROUTES.DASHBOARD_SETTINGS,
       icon: Settings,
     },
   ];
@@ -93,7 +93,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <nav className="flex-1 px-4 py-4 space-y-1">
           {navigation.map((item) => {
             const Icon = item.icon;
-            const isActive = window.location.pathname === item.href;
+            const isActive =
+              window.location.pathname === item.href ||
+              (window.location.pathname.startsWith(item.href + "/") &&
+                item.href !== ROUTES.DASHBOARD);
 
             return (
               <NavLink

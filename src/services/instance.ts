@@ -23,6 +23,10 @@ api.interceptors.request.use(
       if (session?.access_token) {
         config.headers.Authorization = `Bearer ${session.access_token}`;
       }
+
+      if (config.data instanceof FormData) {
+        delete config.headers["Content-Type"];
+      }
     } catch (error) {
       console.error("Erro ao obter token do Supabase:", error);
     }
