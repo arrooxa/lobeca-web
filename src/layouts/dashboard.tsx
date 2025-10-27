@@ -12,6 +12,7 @@ import {
 import { useUser } from "@/context/UserContext";
 import { NavLink, useNavigate } from "react-router";
 import { ROUTES } from "@/constants";
+import AvatarIcon from "@/components/AvatarIcon";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -124,11 +125,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
         <div className="border-t border-gray-200 p-4">
           <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <div className="h-10 w-10 rounded-full bg-gradient-to-r from-brand-primary to-brand-secondary flex items-center justify-center">
-                <span className="text-sm font-medium text-white">U</span>
-              </div>
-            </div>
+            <AvatarIcon
+              name={user?.name || user?.nickname || "Usuário"}
+              photoURL={user?.photoURL}
+              size="extra-small"
+            />
             <div className="ml-3 flex-1">
               <p className="text-sm font-medium text-gray-900">{user?.name}</p>
               <p className="text-xs text-gray-500">{user?.phone}</p>
