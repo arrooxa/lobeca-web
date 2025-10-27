@@ -1,7 +1,7 @@
 import { Clock, AlertCircle } from "lucide-react";
 import { useNavigate, useParams } from "react-router";
 import { useState } from "react";
-import { format, parse } from "date-fns";
+import { format, parse, isAfter, set } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/utils/cn";
 import type { PublicWorkerWithDetails } from "@/types";
@@ -54,7 +54,6 @@ const TimeSelectionStep = ({
     params.append("time", time);
     if (appointmentUUID) params.append("appointmentUUID", appointmentUUID);
 
-    // Pequeno delay para feedback visual
     setTimeout(() => {
       navigate(`/agendar/${workerUUID}?${params.toString()}`, {
         replace: true,
@@ -98,9 +97,23 @@ const TimeSelectionStep = ({
     availability.availableSlots &&
     availability.availableSlots.length > 0;
 
+  // Filter out time slots that are in the past
+  const filteredSlots =
+    availability?.availableSlots?.filter((slot) => {
+      const [hours, minutes] = slot.startTime.split(":").map(Number);
+      const slotDateTime = set(selectedDate, {
+        hours,
+        minutes,
+        seconds: 0,
+        milliseconds: 0,
+      });
+      return isAfter(slotDateTime, new Date());
+    }) || [];
+
+  const hasAvailableSlots = isWorkerAvailable && filteredSlots.length > 0;
+
   return (
     <div className="space-y-8">
-      {/* Título do step */}
       <div className="text-center space-y-3">
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-primary/10 mb-4">
           <Clock className="w-8 h-8 text-brand-primary" />
@@ -111,7 +124,6 @@ const TimeSelectionStep = ({
         </p>
       </div>
 
-      {/* Resumo da seleção */}
       <div className="max-w-lg mx-auto p-4 bg-brand-primary/5 rounded-xl border border-brand-primary/20">
         <div className="flex items-center justify-between text-sm">
           <div>
@@ -127,10 +139,9 @@ const TimeSelectionStep = ({
         </div>
       </div>
 
-      {/* Grid de horários */}
-      {isWorkerAvailable ? (
+      {hasAvailableSlots ? (
         <div className="max-w-lg mx-auto grid grid-cols-3 gap-3">
-          {availability.availableSlots.map((slot) => {
+          {filteredSlots.map((slot) => {
             const isSelected = selectedTime === slot.startTime;
 
             return (
