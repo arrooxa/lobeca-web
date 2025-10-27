@@ -30,15 +30,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       href: ROUTES.DASHBOARD_APPOINTMENTS,
       icon: Calendar,
     },
-    ...(isWorker && user?.establishmentID
-      ? [
-          {
-            name: "Assinatura",
-            href: ROUTES.DASHBOARD_SUBSCRIPTION,
-            icon: Calendar,
-          },
-        ]
-      : []),
     ...(isWorker
       ? [
           {

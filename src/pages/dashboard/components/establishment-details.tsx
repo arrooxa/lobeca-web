@@ -105,7 +105,6 @@ const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
 
   return (
     <div className="space-y-6">
-      {/* Header with establishment info */}
       <Card>
         <CardContent>
           <div className="flex gap-4 items-start justify-between">
@@ -153,7 +152,6 @@ const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
         </CardContent>
       </Card>
 
-      {/* Professionals Section */}
       <Card>
         <CardContent>
           <div className="flex items-center justify-between mb-6">
@@ -197,7 +195,6 @@ const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
         </CardContent>
       </Card>
 
-      {/* Services Section */}
       <Card>
         <CardContent>
           <div className="flex items-center justify-between mb-6">
@@ -260,7 +257,6 @@ const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
         </CardContent>
       </Card>
 
-      {/* Modals */}
       <EstablishmentEditModal
         open={editEstablishmentModalOpen}
         onOpenChange={setEditEstablishmentModalOpen}
