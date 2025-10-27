@@ -75,11 +75,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         `}
       >
         <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
-          <img
-            src="/lobeca-logo.svg"
-            alt="Lobeca Logo"
-            className="h-8 w-auto"
-          />
+          <NavLink to={ROUTES.HOME}>
+            <img
+              src="/lobeca-logo.svg"
+              alt="Lobeca Logo"
+              className="h-8 w-auto"
+            />
+          </NavLink>
           <button
             onClick={() => setSidebarOpen(false)}
             className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
