@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Navigation, Heart } from "lucide-react";
+import { MapPin, Heart } from "lucide-react";
 import { Link, useNavigate, useSearchParams } from "react-router";
 import { useGetEstablishments } from "@/services/establishments/queries";
 import PublicLayout from "@/layouts/public";
@@ -161,9 +161,6 @@ export default function EstablishmentsPage() {
                         <Link to={`/estabelecimentos/${establishment.id}`}>
                           Ver detalhes
                         </Link>
-                      </Button>
-                      <Button variant="outline" size="sm">
-                        <Navigation className="h-4 w-4" />
                       </Button>
                     </div>
                   </CardContent>

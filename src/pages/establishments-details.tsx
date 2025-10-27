@@ -18,10 +18,19 @@ import type {
 import { formatMoney } from "@/utils/money";
 import { config } from "@/utils";
 import { LoadingBarber } from "@/components";
+import { toast } from "react-toastify";
 
 export default function EstablishmentDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+
+  const handleShareEstablishment = async () => {
+    const currentUrl = window.location.href;
+
+    await navigator.clipboard.writeText(currentUrl);
+
+    toast.success("Link copiado para a área de transferência!");
+  };
 
   const {
     data: establishment,
@@ -108,11 +117,12 @@ export default function EstablishmentDetailsPage() {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="icon">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={handleShareEstablishment}
+                    >
                       <Share2 className="h-4 w-4" />
-                    </Button>
-                    <Button variant="outline" size="icon">
-                      <Heart className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
