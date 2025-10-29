@@ -147,6 +147,78 @@ const AppointmentDetailPage = () => {
 
           <Card>
             <CardContent className="p-6">
+              <h2 className="text-xl font-semibold mb-4">
+                {isWorker ? "Cliente" : "Profissional"}
+              </h2>
+
+              {isWorker && appointment.customerIdentification ? (
+                <div className="space-y-4">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <p className="text-sm font-medium text-blue-800 mb-2">
+                      Agendamento Personalizado
+                    </p>
+                    <p className="text-xs text-blue-700">
+                      Este é um agendamento criado para um cliente não
+                      registrado na plataforma.
+                    </p>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
+                    <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 flex items-center justify-center">
+                      <span className="text-xl font-bold text-brand-primary">
+                        {appointment.customerIdentification
+                          .charAt(0)
+                          .toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm text-foreground-subtle mb-1">
+                        Identificação do Cliente
+                      </p>
+                      <p className="text-lg font-semibold">
+                        {appointment.customerIdentification}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex gap-4">
+                  <AvatarIcon
+                    name={
+                      isWorker
+                        ? appointment.customerName
+                        : appointment.workerName
+                    }
+                    photoURL={
+                      isWorker
+                        ? appointment.customerPhotoURL
+                        : appointment.workerPhotoURL
+                    }
+                    size="large"
+                    format="circle"
+                  />
+                  <div className="flex-1 space-y-3">
+                    <h3 className="text-lg font-bold">
+                      {isWorker
+                        ? appointment.customerName
+                        : appointment.workerName}
+                    </h3>
+                    <div className="flex items-center gap-2 text-foreground-subtle">
+                      <Phone className="w-4 h-4" />
+                      <p>
+                        {isWorker
+                          ? appointment.customerPhone
+                          : appointment.workerPhone}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
               <h2 className="text-xl font-semibold mb-4">Barbearia</h2>
               <div className="flex gap-4">
                 <AvatarIcon
@@ -162,43 +234,6 @@ const AppointmentDetailPage = () => {
                   <div className="flex items-center gap-2 text-foreground-subtle">
                     <MapPin className="w-4 h-4" />
                     <p>{appointment.establishmentAddress}</p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <h2 className="text-xl font-semibold mb-4">
-                {isWorker ? "Cliente" : "Profissional"}
-              </h2>
-              <div className="flex gap-4">
-                <AvatarIcon
-                  name={
-                    isWorker ? appointment.customerName : appointment.workerName
-                  }
-                  photoURL={
-                    isWorker
-                      ? appointment.customerPhotoURL
-                      : appointment.workerPhotoURL
-                  }
-                  size="large"
-                  format="circle"
-                />
-                <div className="flex-1 space-y-3">
-                  <h3 className="text-lg font-bold">
-                    {isWorker
-                      ? appointment.customerName
-                      : appointment.workerName}
-                  </h3>
-                  <div className="flex items-center gap-2 text-foreground-subtle">
-                    <Phone className="w-4 h-4" />
-                    <p>
-                      {isWorker
-                        ? appointment.customerPhone
-                        : appointment.workerPhone}
-                    </p>
                   </div>
                 </div>
               </div>

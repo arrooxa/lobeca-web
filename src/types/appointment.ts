@@ -25,6 +25,7 @@ export interface AppointmentWithDetails extends Appointment {
   customerName: string;
   customerPhone: string;
   customerPhotoURL?: string;
+  customerIdentification?: string;
 
   establishmentID: number;
   establishmentUUID: string;
@@ -57,6 +58,7 @@ export interface AppointmentWithDetailsResponseAPI
   customer_name: string;
   customer_phone: string;
   customer_photo_url?: string;
+  customer_identification?: string; // For custom appointments created by workers
 
   establishment_id: number;
   establishment_uuid: string;
@@ -117,6 +119,7 @@ export const mapAppointmentWithDetailsFromApi = withApiTransformUUID<
   customerName: apiResponse.customer_name,
   customerPhone: apiResponse.customer_phone,
   customerPhotoURL: apiResponse.customer_photo_url,
+  customerIdentification: apiResponse.customer_identification,
 
   establishmentID: apiResponse.establishment_id,
   establishmentUUID: apiResponse.establishment_uuid,
