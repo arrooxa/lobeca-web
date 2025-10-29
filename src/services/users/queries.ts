@@ -150,6 +150,18 @@ export const useGetWorkerInfo = (uuid: string, enabled: boolean = true) => {
   });
 };
 
+export const useGetWorkerInfoByPhone = (
+  phone: string,
+  enabled: boolean = true
+) => {
+  return useQuery({
+    queryKey: [...queryKeys.users.all, "by-phone", phone],
+    queryFn: () => userService.getWorkerInfoByPhone(phone),
+    enabled: enabled && Boolean(phone),
+    staleTime: TIMES.DEFAULT_STALE,
+  });
+};
+
 export const useRegisterUser = () => {
   const queryClient = useQueryClient();
 

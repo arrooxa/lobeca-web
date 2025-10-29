@@ -268,7 +268,7 @@ function ServiceItem({
                     </div>
                   </div>
                   <Button size="default" asChild>
-                    <NavLink to={`/agendar/${barberService.workerUUID}`}>
+                    <NavLink to={`/agendar/${barberService.workerPhone}`}>
                       Agendar
                     </NavLink>
                   </Button>

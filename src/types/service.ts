@@ -41,6 +41,7 @@ export interface WorkerEstablishmentServiceWithDetails
   workerName: string;
   workerNickname?: string;
   workerPhotoURL?: string;
+  workerPhone: string;
   serviceName: string;
   serviceDescription?: string;
   basePrice: number;
@@ -88,6 +89,7 @@ export interface WorkerEstablishmentServiceWithDetailsResponseAPI
   worker_name: string;
   worker_nickname?: string;
   worker_photo_url?: string;
+  worker_phone: string;
 
   service_name: string;
   service_description?: string;
@@ -201,6 +203,7 @@ export const mapWorkerEstablishmentServiceWithDetailsFromApi = withApiTransform<
   workerName: apiResponse.worker_name,
   workerNickname: apiResponse.worker_nickname,
   workerPhotoURL: apiResponse.worker_photo_url,
+  workerPhone: apiResponse.worker_phone,
   serviceName: apiResponse.service_name,
   serviceDescription: apiResponse.service_description,
   basePrice: apiResponse.base_price,

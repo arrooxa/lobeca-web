@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import AvatarIcon from "@/components/AvatarIcon";
 import { formatMoney } from "@/utils/money";
 import { Phone, Scissors, Info } from "lucide-react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import type { PublicWorkerWithDetails } from "@/types";
 
 interface ServiceSelectionStepProps {
@@ -15,14 +15,15 @@ const ServiceSelectionStep = ({
   appointmentUUID,
 }: ServiceSelectionStepProps) => {
   const navigate = useNavigate();
-  const { workerUUID } = useParams<{ workerUUID: string }>();
 
   const handleServiceSelect = (serviceID: number) => {
     const params = new URLSearchParams();
     params.append("serviceID", serviceID.toString());
     if (appointmentUUID) params.append("appointmentUUID", appointmentUUID);
 
-    navigate(`/agendar/${workerUUID}?${params.toString()}`, { replace: true });
+    navigate(`/agendar/${worker.phone}?${params.toString()}`, {
+      replace: true,
+    });
   };
 
   return (

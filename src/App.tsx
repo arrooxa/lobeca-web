@@ -37,7 +37,7 @@ function App() {
       <Route path={ROUTES.TERMS_OF_SERVICE} element={<TermsOfService />} />
       <Route path={ROUTES.PRIVACY_POLICY} element={<PrivacyPolicy />} />
 
-      <Route path="/agendar/:workerUUID" element={<BookingPage />} />
+      <Route path="/agendar/:phone" element={<BookingPage />} />
 
       <Route element={<ProtectedRoute />}>
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />

@@ -4,14 +4,14 @@ import ServiceSelectionStep from "./components/service-selection-step";
 import DateSelectionStep from "./components/date-selection-step";
 import TimeSelectionStep from "./components/time-selection-step";
 import ConfirmationStep from "./components/confirmation-step";
-import { useGetWorkerInfo } from "@/services/users/queries";
+import { useGetWorkerInfoByPhone } from "@/services/users/queries";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useEffect, useRef } from "react";
 
 const BookingPage = () => {
-  const { workerUUID } = useParams<{ workerUUID: string }>();
+  const { phone } = useParams<{ phone: string }>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -24,7 +24,7 @@ const BookingPage = () => {
     data: worker,
     isLoading: isLoadingWorker,
     error: workerError,
-  } = useGetWorkerInfo(workerUUID || "", Boolean(workerUUID));
+  } = useGetWorkerInfoByPhone(phone || "", Boolean(phone));
 
   const getCurrentStep = () => {
     if (!serviceID) return "service";
@@ -135,18 +135,18 @@ const BookingPage = () => {
                   if (currentStep === "confirm") {
                     const newParams = new URLSearchParams(searchParams);
                     newParams.delete("time");
-                    navigate(`/agendar/${workerUUID}?${newParams.toString()}`, {
+                    navigate(`/agendar/${phone}?${newParams.toString()}`, {
                       replace: true,
                     });
                   } else if (currentStep === "time") {
                     const newParams = new URLSearchParams(searchParams);
                     newParams.delete("date");
-                    navigate(`/agendar/${workerUUID}?${newParams.toString()}`, {
+                    navigate(`/agendar/${phone}?${newParams.toString()}`, {
                       replace: true,
                     });
                   } else if (currentStep === "date") {
                     navigate(
-                      `/agendar/${workerUUID}${
+                      `/agendar/${phone}${
                         appointmentUUID
                           ? `?appointmentUUID=${appointmentUUID}`
                           : ""

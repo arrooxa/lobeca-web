@@ -48,6 +48,22 @@ export const userService = {
     }
   },
 
+  getWorkerInfoByPhone: async (phone: string) => {
+    try {
+      const response = await api.get<PublicWorkerWithDetailsResponseAPI>(
+        `/worker/by-phone/${phone}`
+      );
+
+      return mapPublicWorkerWithDetailsFromApi(response.data);
+    } catch (error) {
+      throw new Error(
+        error instanceof Error
+          ? error.message
+          : "Error trying get worker info by phone"
+      );
+    }
+  },
+
   get: async () => {
     try {
       const response = await api.get<UserResponseAPI>(`/user`);

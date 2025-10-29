@@ -7,7 +7,7 @@ import {
 } from "@/services/appointments/queries";
 import { formatMoney } from "@/utils/money";
 import { CheckCircle2, User as UserIcon, Lock } from "lucide-react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { useState } from "react";
 import { format, parse } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -39,7 +39,6 @@ const ConfirmationStep = ({
   time,
   appointmentUUID,
 }: ConfirmationStepProps) => {
-  const { workerUUID } = useParams<{ workerUUID: string }>();
   const navigate = useNavigate();
 
   const { user, isAuthenticated, register, verifyOtpAndCreateProfile } =
@@ -90,7 +89,7 @@ const ConfirmationStep = ({
       if (appointmentUUID) {
         await updateAppointmentMutation.mutateAsync({
           appointmentUUID,
-          workerUUID: workerUUID || "",
+          workerUUID: worker.uuid || "",
           data: {
             workerEstablishmentServiceID: Number(serviceID),
             scheduledAt: appointmentDateTime,
@@ -99,7 +98,7 @@ const ConfirmationStep = ({
         toast.success("Agendamento atualizado com sucesso!");
       } else {
         await createAppointmentMutation.mutateAsync({
-          workerUUID: workerUUID || "",
+          workerUUID: worker.uuid || "",
           data: {
             customerUUID: user.uuid,
             workerEstablishmentServiceID: Number(serviceID),

@@ -1,5 +1,5 @@
 import { Clock, AlertCircle } from "lucide-react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { useState } from "react";
 import { format, parse, isAfter, set } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -21,7 +21,6 @@ const TimeSelectionStep = ({
   date,
   appointmentUUID,
 }: TimeSelectionStepProps) => {
-  const { workerUUID } = useParams<{ workerUUID: string }>();
   const navigate = useNavigate();
   const [selectedTime, setSelectedTime] = useState<string>("");
 
@@ -35,10 +34,10 @@ const TimeSelectionStep = ({
     isLoading: isLoadingAvailability,
     error: availabilityError,
   } = useGetUserAvailability(
-    workerUUID || "",
+    worker.uuid || "",
     dayOfWeek,
     date || "",
-    Boolean(workerUUID && date)
+    Boolean(worker.uuid && date)
   );
 
   const selectedService = worker.services?.find(
@@ -55,7 +54,7 @@ const TimeSelectionStep = ({
     if (appointmentUUID) params.append("appointmentUUID", appointmentUUID);
 
     setTimeout(() => {
-      navigate(`/agendar/${workerUUID}?${params.toString()}`, {
+      navigate(`/agendar/${worker.phone}?${params.toString()}`, {
         replace: true,
       });
     }, 300);

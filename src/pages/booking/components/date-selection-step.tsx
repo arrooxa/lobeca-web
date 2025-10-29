@@ -1,5 +1,5 @@
 import { Calendar } from "lucide-react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { useState } from "react";
 import { format, addDays, startOfToday } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -17,7 +17,6 @@ const DateSelectionStep = ({
   serviceID,
   appointmentUUID,
 }: DateSelectionStepProps) => {
-  const { workerUUID } = useParams<{ workerUUID: string }>();
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
@@ -41,7 +40,7 @@ const DateSelectionStep = ({
 
     // Pequeno delay para mostrar o feedback visual
     setTimeout(() => {
-      navigate(`/agendar/${workerUUID}?${params.toString()}`, {
+      navigate(`/agendar/${worker.phone}?${params.toString()}`, {
         replace: true,
       });
     }, 300);
