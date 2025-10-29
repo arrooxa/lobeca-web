@@ -4,7 +4,12 @@ import DashboardLayout from "@/layouts/dashboard";
 import { useUser } from "@/context/UserContext";
 import { useGetWorkerInfo } from "@/services/users/queries";
 import { Button, Card, CardContent } from "@/components";
-import { ChevronLeft, Clock, Calendar as CalendarIcon, Scissors } from "lucide-react";
+import {
+  ChevronLeft,
+  Clock,
+  Calendar as CalendarIcon,
+  Scissors,
+} from "lucide-react";
 import { ROUTES } from "@/constants";
 import type { WorkerEstablishmentServiceWithDetails } from "@/types";
 import { format, parse, isAfter, set, addDays, startOfToday } from "date-fns";
@@ -149,14 +154,18 @@ const CreateCustomAppointmentPage = () => {
                 const newParams = new URLSearchParams(searchParams);
                 newParams.delete("time");
                 navigate(
-                  `${ROUTES.DASHBOARD_CREATE_CUSTOM_APPOINTMENT}?${newParams.toString()}`,
+                  `${
+                    ROUTES.DASHBOARD_CREATE_CUSTOM_APPOINTMENT
+                  }?${newParams.toString()}`,
                   { replace: true }
                 );
               } else if (currentStep === "time") {
                 const newParams = new URLSearchParams(searchParams);
                 newParams.delete("date");
                 navigate(
-                  `${ROUTES.DASHBOARD_CREATE_CUSTOM_APPOINTMENT}?${newParams.toString()}`,
+                  `${
+                    ROUTES.DASHBOARD_CREATE_CUSTOM_APPOINTMENT
+                  }?${newParams.toString()}`,
                   { replace: true }
                 );
               } else if (currentStep === "date") {
@@ -222,13 +231,18 @@ const ServiceSelectionStep = ({
 }: ServiceSelectionStepProps) => {
   const navigate = useNavigate();
 
-  const handleServiceSelect = (service: WorkerEstablishmentServiceWithDetails) => {
+  const handleServiceSelect = (
+    service: WorkerEstablishmentServiceWithDetails
+  ) => {
     const params = new URLSearchParams();
     params.append("serviceID", service.id.toString());
 
-    navigate(`${ROUTES.DASHBOARD_CREATE_CUSTOM_APPOINTMENT}?${params.toString()}`, {
-      replace: true,
-    });
+    navigate(
+      `${ROUTES.DASHBOARD_CREATE_CUSTOM_APPOINTMENT}?${params.toString()}`,
+      {
+        replace: true,
+      }
+    );
   };
 
   return (
@@ -269,43 +283,45 @@ const ServiceSelectionStep = ({
           <div className="space-y-3">
             <h3 className="font-semibold text-lg mb-4">Selecione o Serviço</h3>
             {worker.services && worker.services.length > 0 ? (
-              worker.services.map((service: WorkerEstablishmentServiceWithDetails) => (
-                <Card
-                  key={service.id}
-                  className={cn(
-                    "cursor-pointer transition-all hover:shadow-lg hover:border-brand-primary",
-                    !customerIdentification &&
-                      "opacity-50 cursor-not-allowed pointer-events-none"
-                  )}
-                  onClick={() =>
-                    customerIdentification && handleServiceSelect(service)
-                  }
-                >
-                  <CardContent className="p-4 flex items-center justify-between">
-                    <div>
-                      <h4 className="font-semibold text-lg">
-                        {service.serviceName}
-                      </h4>
-                      {service.serviceDescription && (
-                        <p className="text-sm text-foreground-subtle">
-                          {service.serviceDescription}
+              worker.services.map(
+                (service: WorkerEstablishmentServiceWithDetails) => (
+                  <Card
+                    key={service.id}
+                    className={cn(
+                      "cursor-pointer transition-all hover:shadow-lg hover:border-brand-primary",
+                      !customerIdentification &&
+                        "opacity-50 cursor-not-allowed pointer-events-none"
+                    )}
+                    onClick={() =>
+                      customerIdentification && handleServiceSelect(service)
+                    }
+                  >
+                    <CardContent className="p-4 flex items-center justify-between">
+                      <div>
+                        <h4 className="font-semibold text-lg">
+                          {service.serviceName}
+                        </h4>
+                        {service.serviceDescription && (
+                          <p className="text-sm text-foreground-subtle">
+                            {service.serviceDescription}
+                          </p>
+                        )}
+                        <p className="text-sm text-foreground-subtle mt-1">
+                          Duração: {service.duration} minutos
                         </p>
-                      )}
-                      <p className="text-sm text-foreground-subtle mt-1">
-                        Duração: {service.duration} minutos
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-brand-primary">
-                        R${" "}
-                        {(
-                          (service.customPrice ?? service.basePrice) / 100
-                        ).toFixed(2)}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
+                      </div>
+                      <div className="text-right">
+                        <p className="text-2xl font-bold text-brand-primary">
+                          R${" "}
+                          {(
+                            (service.customPrice ?? service.basePrice) / 100
+                          ).toFixed(2)}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              )
             ) : (
               <Card>
                 <CardContent className="p-8 text-center">
@@ -710,8 +726,8 @@ const ConfirmationStep = ({
                 R${" "}
                 {selectedService
                   ? (
-                      (selectedService.customPrice ?? selectedService.basePrice) /
-                      100
+                      (selectedService.customPrice ??
+                        selectedService.basePrice) / 100
                     ).toFixed(2)
                   : "0.00"}
               </p>

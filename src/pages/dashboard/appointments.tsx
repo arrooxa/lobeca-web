@@ -66,7 +66,9 @@ const AppointmentsPage = () => {
           {isWorker && (
             <Button
               className="gap-2"
-              onClick={() => navigate(ROUTES.DASHBOARD_CREATE_CUSTOM_APPOINTMENT)}
+              onClick={() =>
+                navigate(ROUTES.DASHBOARD_CREATE_CUSTOM_APPOINTMENT)
+              }
             >
               <Plus className="w-4 h-4" />
               Novo agendamento
