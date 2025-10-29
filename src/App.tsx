@@ -18,6 +18,7 @@ import Schedule from "./pages/dashboard/schedule";
 import Establishment from "./pages/dashboard/establishment";
 import AppointmentsPage from "./pages/dashboard/appointments";
 import AppointmentDetailPage from "./pages/dashboard/appointment-detail";
+import CreateCustomAppointmentPage from "./pages/dashboard/create-custom-appointment";
 import BookingPage from "./pages/booking";
 import SettingsPage from "./pages/dashboard/settings";
 
@@ -47,6 +48,10 @@ function App() {
         <Route
           path={ROUTES.DASHBOARD_APPOINTMENT_DETAILS}
           element={<AppointmentDetailPage />}
+        />
+        <Route
+          path={ROUTES.DASHBOARD_CREATE_CUSTOM_APPOINTMENT}
+          element={<CreateCustomAppointmentPage />}
         />
         <Route path={ROUTES.DASHBOARD_SCHEDULE} element={<Schedule />} />
         <Route

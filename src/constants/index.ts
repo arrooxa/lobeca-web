@@ -12,6 +12,7 @@ export const ROUTES = {
   DASHBOARD: "/dashboard",
   DASHBOARD_APPOINTMENTS: "/dashboard/agendamentos",
   DASHBOARD_APPOINTMENT_DETAILS: "/dashboard/agendamentos/:appointmentId",
+  DASHBOARD_CREATE_CUSTOM_APPOINTMENT: "/dashboard/agendamentos/criar",
   DASHBOARD_SCHEDULE: "/dashboard/horarios",
   DASHBOARD_ESTABLISHMENT: "/dashboard/barbearia",
   DASHBOARD_SUBSCRIPTION: "/dashboard/barbearia/assinatura",

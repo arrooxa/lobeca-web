@@ -64,7 +64,10 @@ const AppointmentsPage = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="font-bold text-3xl">Meus agendamentos</h1>
           {isWorker && (
-            <Button className="gap-2">
+            <Button
+              className="gap-2"
+              onClick={() => navigate(ROUTES.DASHBOARD_CREATE_CUSTOM_APPOINTMENT)}
+            >
               <Plus className="w-4 h-4" />
               Novo agendamento
             </Button>
