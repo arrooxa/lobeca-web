@@ -5,7 +5,7 @@ export const config = {
   supabaseUrl: import.meta.env.VITE_SUPABASE_URL,
   supabaseAnonKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
 
-  pagarmePublicKey: import.meta.env.VITE_PAGARME_PUBLIC_KEY,
+  mercadoPagoPublicKey: import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY,
 
   encryptionKey:
     import.meta.env.VITE_ENCRYPTION_KEY || "lobeca-default-key-2024",

@@ -8,7 +8,7 @@ import {
   isCardExpired,
   validateCardholderName,
   validateCardNumber,
-} from "@/utils/pagarme";
+} from "@/utils/mercadopago";
 
 // ========== DOMAIN INTERFACES ==========
 

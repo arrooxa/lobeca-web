@@ -1,14 +1,10 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Card, Input } from "./ui";
+﻿import React, { useState, useEffect, useRef } from "react";
+import { Button, Card } from "./ui";
 import { CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import {
   AlertCircle,
   CheckCircle,
   CreditCard,
-  Eye,
-  EyeOff,
   Lock,
   Shield,
 } from "lucide-react";
@@ -16,9 +12,7 @@ import { Badge } from "./ui/badge";
 import { Separator } from "./ui/separator";
 import { Label } from "./ui/label";
 import {
-  paymentFormSchema,
   type EstablishmentWithSubscription,
-  type PaymentFormData,
   type SubscriptionPlan,
 } from "@/types";
 import {
@@ -28,10 +22,10 @@ import {
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import {
-  formatCardNumber,
-  formatExpiryDate,
-  tokenizeFormData,
-} from "@/utils/pagarme";
+  createCardForm,
+  type MercadoPagoCardForm,
+  type MercadoPagoCardFormData,
+} from "@/utils/mercadopago";
 import { defaultToastProps, ROUTES } from "@/constants";
 import { formatMoney } from "@/utils/money";
 
@@ -48,90 +42,106 @@ const PaymentForm = ({
   externalCustomerId,
   externalSubscriptionId,
 }: PaymentFormProps) => {
-  const [showCvv, setShowCvv] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [cardFormInstance, setCardFormInstance] =
+    useState<MercadoPagoCardForm | null>(null);
+  const [isFormReady, setIsFormReady] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
   const navigate = useNavigate();
-
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<PaymentFormData>({
-    resolver: zodResolver(paymentFormSchema),
-    mode: "onChange",
-  });
 
   const createSubscriptionMutation = useCreateSubscription();
   const updateSubscriptionMutation = useUpdateSubscription();
 
-  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatCardNumber(e.target.value);
-    if (formatted.length <= 19) {
-      setValue("cardNumber", formatted, { shouldValidate: true });
-    }
-  };
+  useEffect(() => {
+    let mounted = true;
 
-  const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatExpiryDate(e.target.value);
-    if (formatted.length <= 5) {
-      setValue("expiryDate", formatted, { shouldValidate: true });
-    }
-  };
+    const initializeCardForm = async () => {
+      try {
+        const cardForm = await createCardForm(
+          plan.price.toString(),
+          async (token: string, cardFormData: MercadoPagoCardFormData) => {
+            if (!mounted) return;
 
-  const handleCvvChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, "");
-    if (value.length <= 4) {
-      setValue("cvv", value, { shouldValidate: true });
-    }
-  };
+            try {
+              setIsProcessing(true);
 
-  const onSubmit = async (data: PaymentFormData) => {
-    setIsProcessing(true);
+              if (externalCustomerId && externalSubscriptionId) {
+                await updateSubscriptionMutation.mutateAsync({
+                  establishment_id: establishment.id,
+                  plan_id: plan.id,
+                  card_token: token,
+                  cpf: cardFormData.identificationNumber,
+                });
+              } else {
+                await createSubscriptionMutation.mutateAsync({
+                  establishment_id: establishment.id,
+                  plan_id: plan.id,
+                  card_token: token,
+                  cpf: cardFormData.identificationNumber,
+                });
+              }
 
-    try {
-      const cardToken = await tokenizeFormData(data);
+              toast.success("Assinatura criada com sucesso!", defaultToastProps);
+              navigate(ROUTES.DASHBOARD_SUBSCRIPTION_SUCCESS, { replace: true });
+            } catch (error) {
+              console.error("Erro ao processar assinatura:", error);
 
-      if (externalCustomerId && externalSubscriptionId) {
-        await updateSubscriptionMutation.mutateAsync({
-          establishment_id: establishment.id,
-          plan_id: plan.id,
-          card_token: cardToken,
-          cpf: data.cpf,
-        });
-      } else {
-        await createSubscriptionMutation.mutateAsync({
-          establishment_id: establishment.id,
-          plan_id: plan.id,
-          card_token: cardToken,
-          cpf: data.cpf,
-        });
-      }
+              let errorMessage = "Erro ao processar pagamento";
 
-      toast.success("Assinatura criada com sucesso!", defaultToastProps);
+              if (error instanceof Error) {
+                errorMessage = error.message;
+              }
 
-      navigate(ROUTES.DASHBOARD_SUBSCRIPTION_SUCCESS, { replace: true });
-    } catch (error) {
-      console.error(error);
+              toast.error(errorMessage, defaultToastProps);
+            } finally {
+              setIsProcessing(false);
+            }
+          },
+          (error: Error) => {
+            if (!mounted) return;
+            console.error("Erro no CardForm:", error);
+            toast.error(
+              "Erro ao configurar formulário de pagamento",
+              defaultToastProps
+            );
+          }
+        );
 
-      let errorMessage = "Erro ao processar pagamento";
-
-      if (error instanceof Error) {
-        if (
-          error.message.includes("tokenização") ||
-          error.message.includes("cartão")
-        ) {
-          errorMessage = error.message;
-        } else if (error.message.includes("sistema de pagamento")) {
-          errorMessage = error.message;
-        } else if (error.message.includes("conexão")) {
-          errorMessage = error.message;
+        if (mounted) {
+          setCardFormInstance(cardForm);
+          setIsFormReady(true);
+        }
+      } catch (error) {
+        if (mounted) {
+          console.error("Erro ao inicializar CardForm:", error);
+          toast.error(
+            "Erro ao carregar formulário de pagamento",
+            defaultToastProps
+          );
         }
       }
+    };
 
-      toast.error(errorMessage, defaultToastProps);
-    } finally {
-      setIsProcessing(false);
+    initializeCardForm();
+
+    return () => {
+      mounted = false;
+      if (cardFormInstance) {
+        try {
+          cardFormInstance.unmount();
+        } catch (error) {
+          console.error("Erro ao desmontar CardForm:", error);
+        }
+      }
+    };
+  }, [plan.price, establishment.id, plan.id, externalCustomerId, externalSubscriptionId, createSubscriptionMutation, updateSubscriptionMutation, navigate, cardFormInstance]);
+
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    
+    if (!isFormReady || !cardFormInstance) {
+      toast.error("Formulário ainda não está pronto", defaultToastProps);
+      return;
     }
   };
 
@@ -150,100 +160,94 @@ const PaymentForm = ({
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <form
+                id="mercadopago-form"
+                ref={formRef}
+                onSubmit={onSubmit}
+                className="space-y-6"
+              >
                 <div className="space-y-2">
-                  <Label htmlFor="cardNumber">Número do Cartão</Label>
-                  <div className="relative">
-                    <Input
-                      id="cardNumber"
-                      type="text"
-                      placeholder="1234 5678 9012 3456"
-                      {...register("cardNumber")}
-                      onChange={handleCardNumberChange}
-                      className="text-lg tracking-wider pr-12"
-                    />
-                  </div>
-                  {errors.cardNumber && (
-                    <p className="text-sm text-red-600">
-                      {errors.cardNumber.message}
-                    </p>
-                  )}
+                  <Label htmlFor="form-checkout__cardNumber">
+                    Número do Cartão
+                  </Label>
+                  <div id="form-checkout__cardNumber" className="mp-field"></div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="cardholderName">Nome do Titular</Label>
-                  <Input
-                    id="cardholderName"
+                  <Label htmlFor="form-checkout__cardholderName">
+                    Nome do Titular
+                  </Label>
+                  <input
+                    id="form-checkout__cardholderName"
+                    name="cardholderName"
                     type="text"
-                    placeholder="João Silva"
-                    {...register("cardholderName")}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   />
-                  {errors.cardholderName && (
-                    <p className="text-sm text-red-600">
-                      {errors.cardholderName.message}
-                    </p>
-                  )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="cpf">CPF</Label>
-                  <Input
-                    id="cpf"
-                    type="text"
-                    placeholder="123.456.789-09"
-                    {...register("cpf")}
+                  <Label htmlFor="form-checkout__cardholderEmail">E-mail</Label>
+                  <input
+                    id="form-checkout__cardholderEmail"
+                    name="cardholderEmail"
+                    type="email"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   />
-                  {errors.cpf && (
-                    <p className="text-sm text-red-600">{errors.cpf.message}</p>
-                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="expiryDate">Data de Validade</Label>
-                    <Input
-                      id="expiryDate"
-                      type="text"
-                      placeholder="MM/AA"
-                      {...register("expiryDate")}
-                      onChange={handleExpiryChange}
-                    />
-                    {errors.expiryDate && (
-                      <p className="text-sm text-red-600">
-                        {errors.expiryDate.message}
-                      </p>
-                    )}
+                    <Label htmlFor="form-checkout__expirationDate">
+                      Data de Validade
+                    </Label>
+                    <div
+                      id="form-checkout__expirationDate"
+                      className="mp-field"
+                    ></div>
                   </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="cvv">CVV</Label>
-                    <div className="relative">
-                      <Input
-                        id="cvv"
-                        type={showCvv ? "text" : "password"}
-                        placeholder="123"
-                        {...register("cvv")}
-                        onChange={handleCvvChange}
-                        className="pr-10"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowCvv(!showCvv)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground"
-                      >
-                        {showCvv ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </button>
-                    </div>
-                    {errors.cvv && (
-                      <p className="text-sm text-red-600">
-                        {errors.cvv.message}
-                      </p>
-                    )}
+                    <Label htmlFor="form-checkout__securityCode">CVV</Label>
+                    <div
+                      id="form-checkout__securityCode"
+                      className="mp-field"
+                    ></div>
                   </div>
                 </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="form-checkout__identificationType">
+                    Tipo de Documento
+                  </Label>
+                  <select
+                    id="form-checkout__identificationType"
+                    name="identificationType"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="form-checkout__identificationNumber">
+                    CPF
+                  </Label>
+                  <input
+                    id="form-checkout__identificationNumber"
+                    name="identificationNumber"
+                    type="text"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                </div>
+
+                <select
+                  id="form-checkout__issuer"
+                  name="issuer"
+                  style={{ display: "none" }}
+                />
+                <select
+                  id="form-checkout__installments"
+                  name="installments"
+                  style={{ display: "none" }}
+                />
 
                 <Separator />
 
@@ -278,11 +282,18 @@ const PaymentForm = ({
                   type="submit"
                   className="w-full bg-brand-primary hover:bg-brand-primary/90 text-foreground-on-primary"
                   disabled={
-                    isProcessing || createSubscriptionMutation.isPending
+                    !isFormReady ||
+                    isProcessing ||
+                    createSubscriptionMutation.isPending
                   }
                   size="lg"
                 >
-                  {isProcessing || createSubscriptionMutation.isPending ? (
+                  {!isFormReady ? (
+                    <div className="flex items-center space-x-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-foreground-on-primary"></div>
+                      <span>Carregando formulário...</span>
+                    </div>
+                  ) : isProcessing || createSubscriptionMutation.isPending ? (
                     <div className="flex items-center space-x-2">
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-foreground-on-primary"></div>
                       <span>Processando...</span>
@@ -324,7 +335,6 @@ const PaymentForm = ({
             </CardContent>
           </Card>
 
-          {/* Aviso de Segurança */}
           <div className="bg-white border border-color-border rounded-lg p-4">
             <div className="flex items-start space-x-2">
               <AlertCircle className="h-5 w-5 text-foreground-info mt-0.5" />
