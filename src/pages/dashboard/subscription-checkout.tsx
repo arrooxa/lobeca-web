@@ -151,8 +151,6 @@ const SubscriptionCheckout = () => {
   const hasActiveSubscription =
     establishment.externalSubscriptionID && establishment.externalCustomerID;
 
-  console.log("Rendering SubscriptionCheckout for plan:", establishment);
-
   return (
     <DashboardLayout>
       <div className="min-h-screen py-8">
