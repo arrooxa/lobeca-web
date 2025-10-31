@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient, queryKeys } from "../queryClient";
 import { TIMES } from "@/constants";
 import { subscriptionService } from ".";
-import type { SubscriptionRequest } from "@/types";
+import type { CreateCheckoutSessionRequest } from "@/types";
 
 export const useGetSubscriptionsPlans = (enabled: boolean = true) => {
   return useQuery({
@@ -13,9 +13,10 @@ export const useGetSubscriptionsPlans = (enabled: boolean = true) => {
   });
 };
 
-export const useCreateSubscription = () => {
+export const useCreateCheckoutSession = () => {
   return useMutation({
-    mutationFn: (data: SubscriptionRequest) => subscriptionService.create(data),
+    mutationFn: (data: CreateCheckoutSessionRequest) =>
+      subscriptionService.createCheckoutSession(data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.users.me.establishment,
@@ -28,9 +29,10 @@ export const useCreateSubscription = () => {
   });
 };
 
-export const useUpdateSubscription = () => {
+export const useUpdateCheckoutSession = () => {
   return useMutation({
-    mutationFn: (data: SubscriptionRequest) => subscriptionService.update(data),
+    mutationFn: (data: CreateCheckoutSessionRequest) =>
+      subscriptionService.updateCheckoutSession(data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.users.me.establishment,

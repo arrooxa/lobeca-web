@@ -1,7 +1,7 @@
 import {
   mapSubscriptionPlanFromApi,
-  type PartialSubscriptionResponseAPI,
-  type SubscriptionRequest,
+  type CreateCheckoutSessionRequest,
+  type CreateCheckoutSessionResponseAPI,
   type SubscriptionPlanResponseAPI,
 } from "@/types";
 import api from "../instance";
@@ -17,18 +17,18 @@ export const subscriptionService = {
       throw new Error(
         error instanceof Error
           ? error.message
-          : "Error trying get all establishments"
+          : "Error trying get all subscription plans"
       );
     }
   },
 
-  create: async (data: SubscriptionRequest) => {
+  createCheckoutSession: async (data: CreateCheckoutSessionRequest) => {
     try {
-      const response = await api.post<PartialSubscriptionResponseAPI>(
+      const response = await api.post<CreateCheckoutSessionResponseAPI>(
         `/establishment/${data.establishment_id}/subscription/${data.plan_id}`,
         {
-          card_token: data.card_token,
-          cpf: data.cpf,
+          success_url: data.success_url,
+          cancel_url: data.cancel_url,
         }
       );
 
@@ -37,18 +37,18 @@ export const subscriptionService = {
       throw new Error(
         error instanceof Error
           ? error.message
-          : "Error trying create subscription with card token"
+          : "Error trying create checkout session"
       );
     }
   },
 
-  update: async (data: SubscriptionRequest) => {
+  updateCheckoutSession: async (data: CreateCheckoutSessionRequest) => {
     try {
-      const response = await api.patch<PartialSubscriptionResponseAPI>(
+      const response = await api.patch<CreateCheckoutSessionResponseAPI>(
         `/establishment/${data.establishment_id}/subscription/${data.plan_id}`,
         {
-          card_token: data.card_token,
-          cpf: data.cpf,
+          success_url: data.success_url,
+          cancel_url: data.cancel_url,
         }
       );
 

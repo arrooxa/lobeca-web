@@ -38,6 +38,9 @@ export default function SubscriptionPage() {
   const [isConfirmCancelOpen, setIsConfirmCancelOpen] = useState(false);
   const [isCancellingSubscription, setIsCancellingSubscription] =
     useState(false);
+  const [billingInterval, setBillingInterval] = useState<"monthly" | "annual">(
+    "monthly"
+  );
 
   const cancelSubscriptionMutation = useCancelSubscription();
 
@@ -93,9 +96,14 @@ export default function SubscriptionPage() {
 
   const currentPlan = plans.find((p) => p.id === establishment.planID);
 
-  const popularPlan = plans.find((p) => p.id === 2);
+  // Filtra planos pelo billing interval selecionado
+  const filteredPlans = plans.filter(
+    (p) => p.billingInterval === billingInterval
+  );
 
-  const enterprisePlan = plans.find((p) => p.maxWorkers === undefined);
+  const popularPlan = filteredPlans.find((p) => p.name === "Growth");
+
+  const enterprisePlan = filteredPlans.find((p) => p.maxWorkers === undefined);
 
   const handlePlanChange = async (planID: number) => {
     const searchParams = new URLSearchParams({
@@ -218,6 +226,30 @@ export default function SubscriptionPage() {
             </Card>
           )}
 
+          <div className="flex justify-center mb-6">
+            <div className="inline-flex items-center gap-2 bg-fill-color border border-color-border rounded-lg p-1">
+              <Button
+                variant={billingInterval === "monthly" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setBillingInterval("monthly")}
+                className="px-6"
+              >
+                Mensal
+              </Button>
+              <Button
+                variant={billingInterval === "annual" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setBillingInterval("annual")}
+                className="px-6"
+              >
+                Anual
+                <Badge variant="secondary" className="ml-2">
+                  Economize 17%
+                </Badge>
+              </Button>
+            </div>
+          </div>
+
           <Card className="border-brand-primary/20 bg-card">
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -238,7 +270,10 @@ export default function SubscriptionPage() {
                   <p className="text-2xl font-bold text-foreground">
                     R$ {formatMoney(currentPlan?.price || 0)}
                     <span className="text-sm font-normal text-foreground-muted">
-                      /mês
+                      /
+                      {currentPlan?.billingInterval === "annual"
+                        ? "ano"
+                        : "mês"}
                     </span>
                   </p>
                   {!isEstablishmentTrialing && !isEstablishmentCanceled && (
@@ -264,7 +299,7 @@ export default function SubscriptionPage() {
           </Card>
 
           <div className="grid gap-6 md:grid-cols-4">
-            {plans.map((plan) => (
+            {filteredPlans.map((plan) => (
               <Card
                 key={plan.id}
                 className={`relative transition-all duration-200 ${
@@ -311,7 +346,10 @@ export default function SubscriptionPage() {
                         <p className="text-3xl font-bold text-foreground">
                           R$ {formatMoney(plan.price)}
                         </p>
-                        <p className="text-sm text-foreground-muted">por mês</p>
+                        <p className="text-sm text-foreground-muted">
+                          por{" "}
+                          {plan.billingInterval === "annual" ? "ano" : "mês"}
+                        </p>
                       </div>
                     )}
                   </div>

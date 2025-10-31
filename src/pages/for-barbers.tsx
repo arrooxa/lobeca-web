@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoadingBarber } from "@/components/ui";
 import { ROUTES, WHATSAPP_WEB_LINK } from "@/constants";
@@ -16,8 +17,13 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { NavLink } from "react-router";
+import { useState } from "react";
 
 export default function ForBarbersPage() {
+  const [billingInterval, setBillingInterval] = useState<"monthly" | "annual">(
+    "monthly"
+  );
+
   const {
     data: plans,
     isLoading: isLoadingPlans,
@@ -38,9 +44,16 @@ export default function ForBarbersPage() {
     return <div>Error loading plans</div>;
   }
 
-  const popularPlan = plans.find((plan) => plan.id === 1);
+  // Filtra planos pelo billing interval selecionado
+  const filteredPlans = plans.filter(
+    (p) => p.billingInterval === billingInterval
+  );
 
-  const enterprisePlan = plans.find((plan) => plan.id === 4);
+  const popularPlan = filteredPlans.find((plan) => plan.name === "Growth");
+
+  const enterprisePlan = filteredPlans.find(
+    (plan) => plan.maxWorkers === undefined
+  );
 
   function getFeatures(planName: string) {
     switch (planName) {
@@ -197,13 +210,37 @@ export default function ForBarbersPage() {
           <h2 className="text-3xl font-bold text-center mb-4 text-foreground">
             Planos que se adaptam ao seu negócio
           </h2>
-          <p className="text-center text-foreground-muted mb-12 max-w-2xl mx-auto">
+          <p className="text-center text-foreground-muted mb-8 max-w-2xl mx-auto">
             Escolha o plano ideal para sua barbearia. Todos incluem suporte
             completo e atualizações gratuitas.
           </p>
 
+          <div className="flex justify-center mb-8">
+            <div className="inline-flex items-center gap-2 bg-white border border-color-border rounded-lg p-1">
+              <Button
+                variant={billingInterval === "monthly" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setBillingInterval("monthly")}
+                className="px-6"
+              >
+                Mensal
+              </Button>
+              <Button
+                variant={billingInterval === "annual" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setBillingInterval("annual")}
+                className="px-6"
+              >
+                Anual
+                <Badge variant="secondary" className="ml-2">
+                  Economize 17%
+                </Badge>
+              </Button>
+            </div>
+          </div>
+
           <div className="grid md:grid-cols-4 gap-8  mx-auto">
-            {plans.map((plan, index) => (
+            {filteredPlans.map((plan, index) => (
               <Card
                 key={index}
                 className={`relative border-color-border h-full ${
@@ -232,7 +269,9 @@ export default function ForBarbersPage() {
                         <span className="text-4xl font-bold text-foreground">
                           R${formatMoney(plan.price)}
                         </span>
-                        <span className="text-foreground-muted ml-1">/mês</span>
+                        <span className="text-foreground-muted ml-1">
+                          /{plan.billingInterval === "annual" ? "ano" : "mês"}
+                        </span>
                       </div>
                     )}
                   </div>
