@@ -15,20 +15,30 @@ import {
   Clock,
   Smartphone,
   CheckCircle,
+  X,
 } from "lucide-react";
 import { NavLink } from "react-router";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export default function ForBarbersPage() {
   const [billingInterval, setBillingInterval] = useState<"monthly" | "annual">(
     "monthly"
   );
+  const [showDemo, setShowDemo] = useState(false);
+  const demoRef = useRef<HTMLDivElement>(null);
 
   const {
     data: plans,
     isLoading: isLoadingPlans,
     error: plansError,
   } = useGetSubscriptionsPlans();
+
+  const handleDemoClick = () => {
+    setShowDemo(true);
+    setTimeout(() => {
+      demoRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 100);
+  };
 
   if (isLoadingPlans) {
     return (
@@ -128,7 +138,12 @@ export default function ForBarbersPage() {
             <Button size="lg" className="text-lg px-8 py-3" asChild>
               <NavLink to={ROUTES.REGISTER}>Começar Teste Grátis</NavLink>
             </Button>
-            <Button variant="outline" size="lg" className="text-lg px-8 py-3">
+            <Button
+              variant="outline"
+              size="lg"
+              className="text-lg px-8 py-3"
+              onClick={handleDemoClick}
+            >
               Ver Demonstração
             </Button>
           </div>
@@ -140,7 +155,50 @@ export default function ForBarbersPage() {
         </div>
       </section>
 
-      {/* Key Features */}
+      {/* Demo Video Section - Hidden preload */}
+      <div className="hidden">
+        <iframe
+          src="https://www.youtube.com/embed/R8-0IXQXyh8?autoplay=0"
+          title="Preload video"
+          aria-hidden="true"
+        />
+      </div>
+
+      {showDemo && (
+        <section ref={demoRef} className="py-16 px-4 bg-white animate-fade-in">
+          <div className="container mx-auto">
+            <div className="max-w-4xl mx-auto">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-3xl font-bold text-foreground">
+                  Demonstração da Plataforma
+                </h2>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowDemo(false)}
+                  className="rounded-full"
+                >
+                  <X className="h-6 w-6" />
+                </Button>
+              </div>
+              <div
+                className="relative w-full rounded-lg overflow-hidden shadow-2xl"
+                style={{ paddingBottom: "56.25%" }}
+              >
+                <iframe
+                  src="https://www.youtube.com/embed/R8-0IXQXyh8?autoplay=1"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="absolute top-0 left-0 w-full h-full"
+                  title="Demonstração da Plataforma Lobeca"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       <section className="py-16 px-4">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
@@ -204,7 +262,6 @@ export default function ForBarbersPage() {
         </div>
       </section>
 
-      {/* Pricing Plans */}
       <section className="py-16 px-4 bg-fill-color/30">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-center mb-4 text-foreground">
