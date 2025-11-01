@@ -23,7 +23,7 @@ export const useCreateCheckoutSession = () => {
       });
 
       queryClient.invalidateQueries({
-        queryKey: queryKeys.establishments.detail(variables.establishment_id),
+        queryKey: queryKeys.establishments.detail(variables.establishmentUUID),
       });
     },
   });
@@ -39,7 +39,7 @@ export const useUpdateCheckoutSession = () => {
       });
 
       queryClient.invalidateQueries({
-        queryKey: queryKeys.establishments.detail(variables.establishment_id),
+        queryKey: queryKeys.establishments.detail(variables.establishmentUUID),
       });
     },
   });
@@ -47,15 +47,17 @@ export const useUpdateCheckoutSession = () => {
 
 export const useCancelSubscription = () => {
   return useMutation({
-    mutationFn: (data: { establishmentId: number }) =>
-      subscriptionService.cancel({ establishment_id: data.establishmentId }),
+    mutationFn: (data: { establishmentUUID: string }) =>
+      subscriptionService.cancel({
+        establishment_uuid: data.establishmentUUID,
+      }),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.users.me.establishment,
       });
 
       queryClient.invalidateQueries({
-        queryKey: queryKeys.establishments.detail(variables.establishmentId),
+        queryKey: queryKeys.establishments.detail(variables.establishmentUUID),
       });
     },
   });

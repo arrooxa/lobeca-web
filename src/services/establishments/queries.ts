@@ -33,15 +33,15 @@ export const useGetCurrentUserEstablishment = (enabled: boolean = true) => {
   });
 };
 
-export const useGetEstablishmentByID = (
-  { establishmentID }: { establishmentID: number },
+export const useGetEstablishmentByUUID = (
+  { establishmentUUID }: { establishmentUUID: string },
   enabled: boolean = true
 ) => {
   return useQuery({
-    queryKey: queryKeys.establishments.detail(establishmentID),
-    queryFn: () => establishmentService.getByID({ establishmentID }),
+    queryKey: queryKeys.establishments.detail(establishmentUUID),
+    queryFn: () => establishmentService.getByUUID({ establishmentUUID }),
     staleTime: TIMES.DEFAULT_STALE,
-    enabled: enabled && Boolean(establishmentID),
+    enabled: enabled && Boolean(establishmentUUID),
   });
 };
 
@@ -60,7 +60,7 @@ export const useCreateEstablishment = () => {
       });
 
       queryClient.invalidateQueries({
-        queryKey: queryKeys.establishments.detail(data.id),
+        queryKey: queryKeys.establishments.detail(data.uuid),
       });
 
       queryClient.invalidateQueries({
@@ -79,12 +79,12 @@ export const useUpdateEstablishment = () => {
 
   return useMutation({
     mutationFn: ({
-      establishmentID,
+      establishmentUUID,
       formData,
     }: {
-      establishmentID: number;
+      establishmentUUID: string;
       formData: FormData;
-    }) => establishmentService.update(establishmentID, formData),
+    }) => establishmentService.update(establishmentUUID, formData),
     onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.establishments.all,
@@ -95,7 +95,7 @@ export const useUpdateEstablishment = () => {
       });
 
       queryClient.invalidateQueries({
-        queryKey: queryKeys.establishments.detail(data.id),
+        queryKey: queryKeys.establishments.detail(data.uuid),
       });
 
       queryClient.invalidateQueries({
@@ -152,7 +152,7 @@ export const useUpdateInvite = () => {
       });
 
       queryClient.invalidateQueries({
-        queryKey: queryKeys.establishments.detail(data.establishmentID),
+        queryKey: queryKeys.establishments.detail(data.establishmentUUID),
       });
 
       queryClient.invalidateQueries({
@@ -165,8 +165,8 @@ export const useUpdateInvite = () => {
 export const useDeleteEstablishment = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (establishmentID: number) =>
-      establishmentService.delete({ establishmentID }),
+    mutationFn: (establishmentUUID: string) =>
+      establishmentService.delete({ establishmentUUID }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.establishments.all,

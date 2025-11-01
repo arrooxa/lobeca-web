@@ -25,10 +25,10 @@ export const subscriptionService = {
   createCheckoutSession: async (data: CreateCheckoutSessionRequest) => {
     try {
       const response = await api.post<CreateCheckoutSessionResponseAPI>(
-        `/establishment/${data.establishment_id}/subscription/${data.plan_id}`,
+        `/establishment/${data.establishmentUUID}/subscription/${data.planID}`,
         {
-          success_url: data.success_url,
-          cancel_url: data.cancel_url,
+          successURL: data.successURL,
+          cancelURL: data.cancelURL,
         }
       );
 
@@ -45,10 +45,10 @@ export const subscriptionService = {
   updateCheckoutSession: async (data: CreateCheckoutSessionRequest) => {
     try {
       const response = await api.patch<CreateCheckoutSessionResponseAPI>(
-        `/establishment/${data.establishment_id}/subscription/${data.plan_id}`,
+        `/establishment/${data.establishmentUUID}/subscription/${data.planID}`,
         {
-          success_url: data.success_url,
-          cancel_url: data.cancel_url,
+          successURL: data.successURL,
+          cancelURL: data.cancelURL,
         }
       );
 
@@ -62,10 +62,10 @@ export const subscriptionService = {
     }
   },
 
-  cancel: async (data: { establishment_id: number }) => {
+  cancel: async (data: { establishment_uuid: string }) => {
     try {
       const response = await api.delete(
-        `/establishment/${data.establishment_id}/subscription`
+        `/establishment/${data.establishment_uuid}/subscription`
       );
 
       return response.data;

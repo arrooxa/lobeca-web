@@ -61,8 +61,8 @@ export const queryKeys = {
     list: (filters: Record<string, unknown>) =>
       [...queryKeys.establishments.lists(), { filters }] as const,
     details: () => [...queryKeys.establishments.all, "detail"] as const,
-    detail: (establishmentId: number) =>
-      [...queryKeys.establishments.details(), establishmentId] as const,
+    detail: (establishmentUUID: string) =>
+      [...queryKeys.establishments.details(), establishmentUUID] as const,
   },
   appointments: {
     all: ["appointments"] as const,

@@ -35,10 +35,10 @@ export const establishmentService = {
     }
   },
 
-  getByID: async ({ establishmentID }: { establishmentID: number }) => {
+  getByUUID: async ({ establishmentUUID }: { establishmentUUID: string }) => {
     try {
       const response = await api.get<PublicEstablishmentDetailsResponseAPI>(
-        `/establishment/${establishmentID}`
+        `/establishment/${establishmentUUID}`
       );
 
       return mapPublicEstablishmentDetailsFromApi(response.data);
@@ -46,7 +46,7 @@ export const establishmentService = {
       throw new Error(
         error instanceof Error
           ? error.message
-          : "Error trying get establishment by ID"
+          : "Error trying get establishment by UUID"
       );
     }
   },
@@ -89,11 +89,11 @@ export const establishmentService = {
     }
   },
 
-  update: async (establishmentID: number, formData: FormData) => {
+  update: async (establishmentUUID: string, formData: FormData) => {
     try {
       const response =
         await api.patch<EstablishmentWithSubscriptionResponseAPI>(
-          `/establishment/${establishmentID}`,
+          `/establishment/${establishmentUUID}`,
           formData,
           {
             headers: {
@@ -115,7 +115,7 @@ export const establishmentService = {
   createEstablishmentInvite: async (data: CreateEstablishmentInviteRequest) => {
     try {
       const response = await api.post<EstablishmentInviteResponseAPI>(
-        `/establishment/${data.establishmentID}/invite`,
+        `/establishment/${data.establishmentUUID}/invite`,
         {
           invitee_uuid: data.inviteeUUID,
           inviter_uuid: data.inviterUUID,
@@ -165,9 +165,9 @@ export const establishmentService = {
     }
   },
 
-  delete: async ({ establishmentID }: { establishmentID: number }) => {
+  delete: async ({ establishmentUUID }: { establishmentUUID: string }) => {
     try {
-      await api.delete(`/establishment/${establishmentID}`);
+      await api.delete(`/establishment/${establishmentUUID}`);
     } catch (error) {
       throw new Error(
         error instanceof Error

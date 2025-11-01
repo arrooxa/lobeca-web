@@ -23,6 +23,7 @@ import {
 export type InviteStatus = "pending" | "accepted" | "rejected";
 
 export interface Establishment extends BaseEntity {
+  uuid: string;
   name: string;
   address: string;
   latitude: number;
@@ -57,7 +58,7 @@ export interface PublicEstablishmentDetails {
 }
 
 export interface EstablishmentInvite extends BaseEntity {
-  establishmentID: number;
+  establishmentUUID: string;
   inviterUUID: string;
   inviteeUUID: string;
   status: InviteStatus;
@@ -77,6 +78,8 @@ export interface EstablishmentWithSubscription extends Establishment {
 // ========== API RESPONSE INTERFACES ==========
 
 export interface EstablishmentResponseAPI extends BaseApiResponse {
+  id: number;
+  uuid: string;
   name: string;
   address: string;
   latitude: number;
@@ -100,6 +103,7 @@ export interface EstablishmentWithSubscriptionResponseAPI
 
 export interface EstablishmentInviteResponseAPI extends BaseApiResponse {
   establishment_id: number;
+  establishment_uuid: string;
   inviter_uuid: string;
   status: InviteStatus;
   invitee_uuid: string;
@@ -196,6 +200,7 @@ export const mapEstablishmentFromApi = withApiTransform<
   EstablishmentResponseAPI,
   Establishment
 >((apiResponse) => ({
+  uuid: apiResponse.uuid,
   name: apiResponse.name,
   address: apiResponse.address,
   latitude: apiResponse.latitude,
@@ -251,7 +256,7 @@ export const mapEstablishmentInviteFromApi = withApiTransform<
   EstablishmentInviteResponseAPI,
   EstablishmentInvite
 >((apiResponse) => ({
-  establishmentID: apiResponse.establishment_id,
+  establishmentUUID: apiResponse.establishment_uuid,
   inviterUUID: apiResponse.inviter_uuid,
   inviteeUUID: apiResponse.invitee_uuid,
   status: apiResponse.status,

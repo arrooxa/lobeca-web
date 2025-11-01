@@ -15,7 +15,7 @@ export interface ServiceCategory extends BaseEntity {
 }
 
 export interface EstablishmentService extends BaseEntity {
-  establishmentID: number;
+  establishmentUUID: string;
   basePrice: number;
   categoryID: number;
   name: string;
@@ -50,7 +50,7 @@ export interface WorkerEstablishmentServiceWithDetails
 
 export type PartialEstablishmentService = Pick<
   EstablishmentService,
-  "id" | "establishmentID" | "categoryID"
+  "id" | "establishmentUUID" | "categoryID"
 >;
 
 // ========== API RESPONSE INTERFACES ==========
@@ -63,6 +63,7 @@ export interface ServiceCategoryResponseAPI extends BaseApiResponse {
 
 export interface EstablishmentServiceResponseAPI extends BaseApiResponse {
   establishment_id: number;
+  establishment_uuid: string;
   category_id: number;
   name: string;
   description?: string;
@@ -99,7 +100,7 @@ export interface WorkerEstablishmentServiceWithDetailsResponseAPI
 
 export type PartialEstablishmentServiceResponseAPI = Pick<
   EstablishmentServiceResponseAPI,
-  "id" | "category_id" | "establishment_id"
+  "id" | "category_id" | "establishment_uuid"
 >;
 
 // ========== REQUEST INTERFACES ==========
@@ -165,7 +166,7 @@ export const mapEstablishmentServiceFromApi = withApiTransform<
   EstablishmentServiceResponseAPI,
   EstablishmentService
 >((apiResponse) => ({
-  establishmentID: apiResponse.establishment_id,
+  establishmentUUID: apiResponse.establishment_uuid,
   categoryID: apiResponse.category_id,
   description: apiResponse.description,
   name: apiResponse.name,

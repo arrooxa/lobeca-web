@@ -9,7 +9,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { useGetEstablishmentByID } from "@/services/establishments/queries";
+import { useGetEstablishmentByUUID } from "@/services/establishments/queries";
 import type {
   EstablishmentServiceWithDetails,
   WorkerEstablishmentServiceWithDetails,
@@ -21,7 +21,7 @@ import { toast } from "react-toastify";
 import AvatarIcon from "@/components/AvatarIcon";
 
 export default function EstablishmentDetailsPage() {
-  const { id } = useParams<{ id: string }>();
+  const { uuid } = useParams<{ uuid: string }>();
   const navigate = useNavigate();
 
   const handleShareEstablishment = async () => {
@@ -36,10 +36,12 @@ export default function EstablishmentDetailsPage() {
     data: establishment,
     isLoading,
     error,
-  } = useGetEstablishmentByID(
-    { establishmentID: Number(id) },
-    Boolean(id) && isNaN(Number(id)) === false
+  } = useGetEstablishmentByUUID(
+    { establishmentUUID: uuid as string },
+    Boolean(uuid)
   );
+
+  console.log(establishment);
 
   if (isLoading) {
     return (

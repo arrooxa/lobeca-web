@@ -47,17 +47,17 @@ export interface CreateCheckoutSessionResponseAPI {
 // ========== REQUEST INTERFACES ==========
 
 export interface CreateCheckoutSessionRequest {
-  establishment_id: number;
-  plan_id: number;
-  success_url: string;
-  cancel_url: string;
+  establishmentUUID: string;
+  planID: number;
+  successURL: string;
+  cancelURL: string;
 }
 
 // ========== VALIDATION SCHEMAS ==========
 
 export const checkoutParamsSchema = z.object({
   plan: z.string().transform(Number).pipe(z.number().positive()),
-  establishment: z.string().transform(Number).pipe(z.number().positive()),
+  establishment: z.string().uuid("UUID inválido"),
 });
 
 // ========== MAPPERS/TRANSFORMERS ==========

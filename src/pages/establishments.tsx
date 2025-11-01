@@ -158,7 +158,7 @@ export default function EstablishmentsPage() {
 
                     <div className="flex gap-2 pt-2">
                       <Button className="flex-1" size="sm" asChild>
-                        <Link to={`/estabelecimentos/${establishment.id}`}>
+                        <Link to={`/estabelecimentos/${establishment.uuid}`}>
                           Ver detalhes
                         </Link>
                       </Button>

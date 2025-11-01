@@ -54,7 +54,7 @@ export const useCreateEstablishmentService = () => {
       });
 
       queryClient.invalidateQueries({
-        queryKey: queryKeys.establishments.detail(variables.establishmentID),
+        queryKey: queryKeys.establishments.detail(variables.establishmentUUID),
       });
     },
   });
@@ -111,7 +111,7 @@ export const useUpdateEstablishmentService = () => {
       });
 
       queryClient.invalidateQueries({
-        queryKey: queryKeys.establishments.detail(variables.establishment_id),
+        queryKey: queryKeys.establishments.detail(variables.establishment_uuid),
       });
 
       queryClient.invalidateQueries({
@@ -137,7 +137,7 @@ export const useDeleteService = () => {
       });
 
       queryClient.invalidateQueries({
-        queryKey: queryKeys.establishments.detail(variables.establishment_id),
+        queryKey: queryKeys.establishments.detail(variables.establishment_uuid),
       });
 
       queryClient.invalidateQueries({
