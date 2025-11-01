@@ -44,6 +44,7 @@ export interface GetUserAvailability {
   userUUID: string;
   date: string;
   dayOfWeek: number;
+  timezone: string; // IANA timezone identifier (e.g., "America/Sao_Paulo")
   workingHours: WorkingHours | null;
   availableSlots: TimeSlot[];
   unavailableSlots: UnavailableSlot[];
@@ -102,6 +103,7 @@ export interface GetUserAvailabilityResponseAPI {
   user_uuid: string;
   date: string;
   day_of_week: number;
+  timezone: string; // IANA timezone identifier (e.g., "America/Sao_Paulo")
   working_hours: WorkingHoursResponseAPI | null;
   available_slots: TimeSlotResponseAPI[];
   unavailable_slots: UnavailableSlotResponseAPI[];
@@ -232,6 +234,7 @@ export const mapUserAvailabilityFromApi = (
   userUUID: response.user_uuid,
   date: response.date,
   dayOfWeek: response.day_of_week,
+  timezone: response.timezone,
   workingHours: response.working_hours
     ? mapWorkingHoursFromApi(response.working_hours)
     : null,
