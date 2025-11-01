@@ -26,7 +26,7 @@ export interface User extends BaseEntityWithUUID {
   photoURL?: string;
   isActive: boolean;
   role?: string;
-  establishmentID?: number;
+  establishmentID?: number | string;
   recommendations: number;
 }
 

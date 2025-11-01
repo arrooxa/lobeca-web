@@ -93,16 +93,16 @@ const SubscriptionCheckout = () => {
 
       const response = hasActiveSubscription
         ? await updateCheckoutMutation.mutateAsync({
-            establishment_id: establishment.id,
-            plan_id: currentPlan.id,
-            success_url: successUrl,
-            cancel_url: cancelUrl,
+            establishmentUUID: establishment.uuid,
+            planID: currentPlan.id,
+            successURL: successUrl,
+            cancelURL: cancelUrl,
           })
         : await createCheckoutMutation.mutateAsync({
-            establishment_id: establishment.id,
-            plan_id: currentPlan.id,
-            success_url: successUrl,
-            cancel_url: cancelUrl,
+            establishmentUUID: establishment.uuid,
+            planID: currentPlan.id,
+            successURL: successUrl,
+            cancelURL: cancelUrl,
           });
 
       // Redireciona para o checkout do Stripe

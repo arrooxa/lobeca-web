@@ -369,6 +369,7 @@ const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
       <WorkerInviteModal
         open={inviteWorkerModalOpen}
         onOpenChange={setInviteWorkerModalOpen}
+        establishment={establishment}
       />
 
       <ServiceCreateModal

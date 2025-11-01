@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UserPlus, Search } from "lucide-react";
 import { useState, useMemo } from "react";
-import type { PublicWorker } from "@/types";
+import type { EstablishmentWithDetails, PublicWorker } from "@/types";
 import { z } from "zod";
 import {
   Dialog,
@@ -31,9 +31,14 @@ type InviteFormData = z.infer<typeof inviteSchema>;
 interface WorkerInviteModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  establishment: EstablishmentWithDetails;
 }
 
-const WorkerInviteModal = ({ open, onOpenChange }: WorkerInviteModalProps) => {
+const WorkerInviteModal = ({
+  open,
+  onOpenChange,
+  establishment,
+}: WorkerInviteModalProps) => {
   const { user } = useUser();
   const createInviteMutation = useCreateEstablishmentInvite();
 
@@ -93,7 +98,7 @@ const WorkerInviteModal = ({ open, onOpenChange }: WorkerInviteModalProps) => {
 
     try {
       await createInviteMutation.mutateAsync({
-        establishmentID: user.establishmentID,
+        establishmentUUID: establishment.uuid,
         inviterUUID: user.uuid,
         inviteeUUID: data.inviteeUUID,
         status: "pending",

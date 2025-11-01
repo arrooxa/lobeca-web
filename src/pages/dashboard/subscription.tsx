@@ -119,7 +119,7 @@ export default function SubscriptionPage() {
       setIsCancellingSubscription(true);
 
       await cancelSubscriptionMutation.mutateAsync({
-        establishmentId: establishment.id,
+        establishmentUUID: establishment.uuid,
       });
 
       toast.success("Assinatura cancelada com sucesso.", defaultToastProps);

@@ -42,7 +42,8 @@ const EstablishmentEmptyState = () => {
 
       if (status === "accepted") {
         toast.success("Convite aceito com sucesso!");
-        updateUser({ establishmentID: response.establishmentID });
+
+        updateUser({ establishmentID: response.establishmentUUID });
         setShowInvites(false);
       } else {
         toast.success("Convite recusado.");

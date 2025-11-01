@@ -137,7 +137,7 @@ const EstablishmentEditModal = ({
 
   const handleDelete = async () => {
     try {
-      await deleteEstablishmentMutation.mutateAsync(establishment.id);
+      await deleteEstablishmentMutation.mutateAsync(establishment.uuid);
       await updateUser({ establishmentID: undefined });
       toast.success("Barbearia deletada com sucesso!");
       setShowDeleteDialog(false);
@@ -155,7 +155,7 @@ const EstablishmentEditModal = ({
       const formData = createFormData(data);
 
       await updateEstablishmentMutation.mutateAsync({
-        establishmentID: establishment.id,
+        establishmentUUID: establishment.uuid,
         formData,
       });
 
