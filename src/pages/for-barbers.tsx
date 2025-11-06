@@ -322,13 +322,31 @@ export default function ForBarbersPage() {
                       {plan.description}
                     </p>
                     {enterprisePlan?.id !== plan.id && (
-                      <div className="flex items-baseline justify-center">
-                        <span className="text-4xl font-bold text-foreground">
-                          R${formatMoney(plan.price)}
-                        </span>
-                        <span className="text-foreground-muted ml-1">
-                          /{plan.billingInterval === "annual" ? "ano" : "mês"}
-                        </span>
+                      <div>
+                        {plan.billingInterval === "annual" ? (
+                          <>
+                            <div className="flex items-baseline justify-center">
+                              <span className="text-4xl font-bold text-foreground">
+                                R${formatMoney(plan.price / 12)}
+                              </span>
+                              <span className="text-foreground-muted ml-1">
+                                /mês
+                              </span>
+                            </div>
+                            <p className="text-sm text-foreground-muted mt-2">
+                              R${formatMoney(plan.price)} cobrados anualmente
+                            </p>
+                          </>
+                        ) : (
+                          <div className="flex items-baseline justify-center">
+                            <span className="text-4xl font-bold text-foreground">
+                              R${formatMoney(plan.price)}
+                            </span>
+                            <span className="text-foreground-muted ml-1">
+                              /mês
+                            </span>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
