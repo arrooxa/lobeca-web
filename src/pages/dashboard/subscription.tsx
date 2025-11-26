@@ -7,13 +7,11 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import {
   Crown,
   Scissors,
   Star,
-  Clock,
   Check,
   CheckCheck,
   X,
@@ -79,20 +77,7 @@ export default function SubscriptionPage() {
     );
   }
 
-  const isEstablishmentTrialing =
-    establishment.status === "trial" && !establishment.lastPaymentDate;
-
   const isEstablishmentCanceled = establishment.status === "canceled";
-
-  const trialDaysLeft =
-    isEstablishmentTrialing && establishment.trialEndsAt
-      ? intervalToDuration({
-          start: new Date(),
-          end: new Date(establishment.trialEndsAt),
-        }).days || 0
-      : 0;
-
-  const trialProgress = ((30 - trialDaysLeft) / 30) * 100;
 
   const currentPlan = plans.find((p) => p.id === establishment.planID);
 
@@ -141,20 +126,6 @@ export default function SubscriptionPage() {
     setIsConfirmCancelOpen(true);
   };
 
-  const getTrialCardColor = () => {
-    if (trialDaysLeft >= 20)
-      return "border-yellow-500 bg-gradient-to-r from-yellow-500/5 to-orange-500/5";
-    if (trialDaysLeft >= 10)
-      return "border-orange-500 bg-gradient-to-r from-orange-500/5 to-red-500/5";
-    return "border-brand-secondary bg-gradient-to-r from-red-500/5 to-red-700/5";
-  };
-
-  const getTrialCardTextColor = () => {
-    if (trialDaysLeft >= 20) return "text-yellow-500";
-    if (trialDaysLeft >= 10) return "text-orange-500";
-    return "text-red-500";
-  };
-
   return (
     <DashboardLayout>
       <div className="min-h-screen">
@@ -171,38 +142,8 @@ export default function SubscriptionPage() {
             </p>
           </div>
 
-          {isEstablishmentTrialing && (
-            <Card className={cn("border-2", getTrialCardColor())}>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <Clock className={cn("h-5 w-5", getTrialCardTextColor())} />
-                  <CardTitle className={getTrialCardTextColor()}>
-                    Período de Teste Ativo
-                  </CardTitle>
-                </div>
-                <CardDescription>
-                  Você tem {trialDaysLeft} dias restantes no seu período de
-                  teste gratuito
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Progresso do trial</span>
-                    <span>{Math.round(trialProgress)}%</span>
-                  </div>
-                  <Progress value={trialProgress} className="h-2" />
-                </div>
-                <p className="text-sm text-foreground-muted">
-                  Após o período de teste, você será automaticamente direcionado
-                  para o plano Starter.
-                </p>
-              </CardContent>
-            </Card>
-          )}
-
           {isEstablishmentCanceled && (
-            <Card className={cn("border-2", getTrialCardColor())}>
+            <Card className="border-2 border-red-500 bg-gradient-to-r from-red-500/5 to-red-700/5">
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <ShieldX className="h-5 w-5 text-red-500" />
@@ -256,8 +197,7 @@ export default function SubscriptionPage() {
                 <div className="flex items-center gap-2">
                   <Crown className="h-5 w-5 text-brand-primary" />
                   <CardTitle className="text-foreground">
-                    Plano Atual{" "}
-                    {isEstablishmentTrialing && "(Período de Teste)"}
+                    Plano Atual
                     {isEstablishmentCanceled && " (Cancelado)"}
                   </CardTitle>
                 </div>
@@ -276,13 +216,13 @@ export default function SubscriptionPage() {
                         : "mês"}
                     </span>
                   </p>
-                  {!isEstablishmentTrialing && !isEstablishmentCanceled && (
+                  {!isEstablishmentCanceled && establishment.nextBillingDate && (
                     <p className="text-sm text-foreground-muted">
                       Próxima cobrança em{" "}
                       {
                         intervalToDuration({
                           start: new Date(),
-                          end: new Date(establishment.nextBillingDate || ""),
+                          end: new Date(establishment.nextBillingDate),
                         }).days
                       }{" "}
                       dias
@@ -360,11 +300,41 @@ export default function SubscriptionPage() {
                     {plan.description}
                   </p>
                   <ul className="space-y-3 flex-1">
-                    {enterprisePlan?.id != plan.id && (
+                    {enterprisePlan?.id !== plan.id && plan.maxWorkers && (
                       <li className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-foreground-success mt-0.5 flex-shrink-0" />
                         <span className="text-sm text-foreground">
                           Até {plan.maxWorkers} funcionários
+                        </span>
+                      </li>
+                    )}
+                    {plan.name === "Solo" && (
+                      <>
+                        <li className="flex items-start gap-2">
+                          <Check className="h-4 w-4 text-foreground-success mt-0.5 flex-shrink-0" />
+                          <span className="text-sm text-foreground">
+                            Agendamento automatizado
+                          </span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <Check className="h-4 w-4 text-foreground-success mt-0.5 flex-shrink-0" />
+                          <span className="text-sm text-foreground">
+                            Gestão de serviços
+                          </span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <Check className="h-4 w-4 text-foreground-success mt-0.5 flex-shrink-0" />
+                          <span className="text-sm text-foreground">
+                            Relatórios básicos
+                          </span>
+                        </li>
+                      </>
+                    )}
+                    {plan.hasPublicStorefront && (
+                      <li className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-foreground-success mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-foreground">
+                          Vitrine digital pública
                         </span>
                       </li>
                     )}
@@ -375,14 +345,12 @@ export default function SubscriptionPage() {
                       enterprisePlan?.id === plan.id
                         ? "outline"
                         : currentPlan?.id === plan.id &&
-                          !isEstablishmentTrialing &&
                           !isEstablishmentCanceled
                         ? "secondary"
                         : "default"
                     }
                     disabled={
                       currentPlan?.id === plan.id &&
-                      !isEstablishmentTrialing &&
                       !isEstablishmentCanceled
                     }
                     onClick={() =>
@@ -393,10 +361,12 @@ export default function SubscriptionPage() {
                   >
                     {enterprisePlan?.id === plan.id
                       ? "Entrar em contato"
-                      : isEstablishmentTrialing || isEstablishmentCanceled
+                      : isEstablishmentCanceled
                       ? "Ativar plano"
                       : currentPlan?.id === plan.id
                       ? "Plano Atual"
+                      : plan.name === "Solo"
+                      ? "Mudar para gratuito"
                       : "Mudar para este plano"}
                   </Button>
                 </CardContent>
@@ -408,7 +378,7 @@ export default function SubscriptionPage() {
             <Button variant="link" onClick={() => navigate(ROUTES.DASHBOARD)}>
               Voltar para o Dashboard
             </Button>
-            {!isEstablishmentTrialing && (
+            {!isEstablishmentCanceled && (
               <Button
                 variant="link"
                 onClick={handleOpenCancelModal}

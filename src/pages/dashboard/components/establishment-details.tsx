@@ -68,11 +68,6 @@ const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
       (worker.role === "owner" || worker.role === "manager")
   );
 
-  const establishmentIsTrialing =
-    establishment.status === "trial" &&
-    Boolean(establishment.trialStartedAt) &&
-    Boolean(establishment.trialEndsAt);
-
   const allPeople = [
     ...establishment.users.map((worker) => ({
       uuid: worker.uuid,
@@ -159,19 +154,6 @@ const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
               </Button>
             )}
           </div>
-
-          {establishmentIsTrialing && establishment.trialEndsAt && (
-            <div className="mt-4 bg-brand-secondary/20 border border-brand-secondary p-4 rounded-lg">
-              <p className="text-brand-secondary font-semibold text-sm">
-                O seu período de teste termina em{" "}
-                {format(establishment.trialEndsAt, "dd/MM/yyyy", {
-                  locale: ptBR,
-                })}
-                . Atualize seu plano para continuar com seus serviços
-                disponíveis na plataforma.
-              </p>
-            </div>
-          )}
         </CardContent>
       </Card>
 

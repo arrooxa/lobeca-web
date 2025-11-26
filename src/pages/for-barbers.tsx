@@ -67,6 +67,16 @@ export default function ForBarbersPage() {
 
   function getFeatures(planName: string) {
     switch (planName) {
+      case "Solo":
+        return [
+          "Agendamentos ilimitados",
+          "Acesso ao app mobile",
+          "Gestão de serviços e horários",
+          "Agendamento automatizado",
+          "Gerenciamento de agendamentos",
+          "Relatórios básicos",
+          "Segurança dos dados",
+        ];
       case "Starter":
         return [
           "Agendamentos ilimitados",
@@ -77,6 +87,7 @@ export default function ForBarbersPage() {
           "Relatórios detalhados",
           "Segurança avançada dos dados",
           "Acompanhamento inicial",
+          "Vitrine digital pública",
         ];
       case "Growth":
         return [
@@ -149,7 +160,7 @@ export default function ForBarbersPage() {
           </div>
 
           <div className="text-sm text-foreground-muted">
-            ✓ 30 dias grátis • ✓ Sem cadastrar cartão de crédito • ✓ Sem
+            ✓ Plano Solo gratuito • ✓ Sem cadastrar cartão de crédito • ✓ Sem
             compromisso • ✓ Suporte completo
           </div>
         </div>
@@ -365,7 +376,11 @@ export default function ForBarbersPage() {
                   <Button
                     className="w-full mt-auto"
                     variant={
-                      enterprisePlan?.id === plan.id ? "outline" : "default"
+                      enterprisePlan?.id === plan.id
+                        ? "outline"
+                        : plan.name === "Solo"
+                        ? "default"
+                        : "default"
                     }
                     size="lg"
                     asChild
@@ -379,8 +394,10 @@ export default function ForBarbersPage() {
                     >
                       {enterprisePlan?.id === plan.id
                         ? "Entrar em contato"
+                        : plan.name === "Solo"
+                        ? "Começar grátis"
                         : popularPlan?.id === plan.id
-                        ? "Começar teste gratuíto"
+                        ? "Começar agora"
                         : "Começar agora"}
                     </NavLink>
                   </Button>

@@ -69,8 +69,6 @@ export interface EstablishmentWithSubscription extends Establishment {
   status: string;
   externalCustomerID?: string;
   externalSubscriptionID?: string;
-  trialStartedAt?: Date;
-  trialEndsAt?: Date;
   lastPaymentDate?: Date;
   nextBillingDate?: Date;
 }
@@ -95,8 +93,6 @@ export interface EstablishmentWithSubscriptionResponseAPI
   status: string;
   external_customer_id?: string;
   external_subscription_id?: string;
-  trial_started_at?: string;
-  trial_ends_at?: string;
   last_payment_date?: string;
   next_billing_date?: string;
 }
@@ -219,12 +215,6 @@ export const mapEstablishmentWithSubscriptionFromApi = withApiTransform<
   status: apiResponse.status,
   externalCustomerID: apiResponse.external_customer_id,
   externalSubscriptionID: apiResponse.external_subscription_id,
-  trialStartedAt: apiResponse.trial_started_at
-    ? new Date(apiResponse.trial_started_at)
-    : undefined,
-  trialEndsAt: apiResponse.trial_ends_at
-    ? new Date(apiResponse.trial_ends_at)
-    : undefined,
   lastPaymentDate: apiResponse.last_payment_date
     ? new Date(apiResponse.last_payment_date)
     : undefined,

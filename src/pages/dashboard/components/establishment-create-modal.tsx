@@ -88,6 +88,7 @@ const EstablishmentCreateModal = ({
     formData.append("address", data.address);
     formData.append("latitude", data.location.latitude.toString());
     formData.append("longitude", data.location.longitude.toString());
+    formData.append("plan_id", "1");
 
     if (selectedImage) {
       formData.append("photo", selectedImage);

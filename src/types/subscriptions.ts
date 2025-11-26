@@ -13,9 +13,9 @@ export interface SubscriptionPlan extends BaseEntity {
   description: string;
   price: number;
   maxWorkers?: number;
-  trialDays: number;
   billingInterval: "monthly" | "annual";
   isActive: boolean;
+  hasPublicStorefront: boolean;
   createdAt: Date;
 }
 
@@ -27,9 +27,9 @@ export interface SubscriptionPlanResponseAPI extends BaseApiResponse {
   external_plan_id?: string;
   price: number;
   max_workers?: number;
-  trial_days: number;
   billing_interval: "monthly" | "annual";
   is_active: boolean;
+  has_public_storefront: boolean;
   created_at: string;
 }
 
@@ -73,9 +73,9 @@ export const mapSubscriptionPlanFromApi = withApiTransform<
     description: apiResponse.description,
     price: apiResponse.price,
     maxWorkers: apiResponse.max_workers,
-    trialDays: apiResponse.trial_days,
     billingInterval: apiResponse.billing_interval,
     isActive: apiResponse.is_active,
+    hasPublicStorefront: apiResponse.has_public_storefront,
     createdAt: new Date(apiResponse.created_at),
   })
 );

@@ -76,6 +76,7 @@ const SubscriptionCheckout = () => {
   } = useGetSubscriptionsPlans(Boolean(params?.plan));
 
   const currentPlan = plans?.find((plan) => plan.id === Number(params?.plan));
+  const isSoloPlan = currentPlan?.name === "Solo" || currentPlan?.price === 0;
 
   const handleCheckout = async () => {
     if (!establishment || !currentPlan || !params) return;
@@ -85,7 +86,7 @@ const SubscriptionCheckout = () => {
     try {
       const baseUrl = window.location.origin;
       const successUrl = `${baseUrl}/dashboard/barbearia/assinatura/success?session_id={CHECKOUT_SESSION_ID}`;
-      const cancelUrl = `${baseUrl}/dashboard/barbearia/assinatura`; // Redireciona para o dashboard principal
+      const cancelUrl = `${baseUrl}/dashboard/barbearia/assinatura`;
 
       const hasActiveSubscription =
         establishment.externalSubscriptionID &&
@@ -157,13 +158,17 @@ const SubscriptionCheckout = () => {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-foreground">
-              {hasActiveSubscription
+              {isSoloPlan
+                ? "Ativar Plano Solo Gratuito"
+                : hasActiveSubscription
                 ? "Alterar Assinatura"
                 : "Finalizar Assinatura"}{" "}
               - {establishment.name}
             </h1>
             <p className="text-foreground-muted mt-2">
-              {hasActiveSubscription
+              {isSoloPlan
+                ? "Clique no botão abaixo para ativar seu plano gratuito"
+                : hasActiveSubscription
                 ? "Você será redirecionado para o checkout seguro do Stripe para alterar seu plano"
                 : "Você será redirecionado para o checkout seguro do Stripe para completar o pagamento"}
             </p>
@@ -174,30 +179,39 @@ const SubscriptionCheckout = () => {
               <Card className="border-color-border">
                 <CardHeader>
                   <div className="flex items-center space-x-2">
-                    <CreditCard className="h-5 w-5 text-foreground-accent" />
-                    <CardTitle>Checkout Seguro</CardTitle>
+                    {isSoloPlan ? (
+                      <CheckCircle className="h-5 w-5 text-foreground-success" />
+                    ) : (
+                      <CreditCard className="h-5 w-5 text-foreground-accent" />
+                    )}
+                    <CardTitle>
+                      {isSoloPlan ? "Plano Gratuito" : "Checkout Seguro"}
+                    </CardTitle>
                   </div>
                   <CardDescription>
-                    Processamento de pagamento gerenciado pelo Stripe
+                    {isSoloPlan
+                      ? "Sem necessidade de cartão de crédito"
+                      : "Processamento de pagamento gerenciado pelo Stripe"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="bg-fill-color p-6 rounded-lg border border-color-border">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <Shield className="h-6 w-6 text-foreground-success" />
-                      <span className="font-semibold text-foreground text-lg">
-                        Pagamento 100% Seguro
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-foreground-muted">
-                      <div className="flex items-center space-x-2">
-                        <Lock className="h-4 w-4 text-foreground-success" />
-                        <span>Criptografia SSL 256-bit</span>
+                  {!isSoloPlan && (
+                    <div className="bg-fill-color p-6 rounded-lg border border-color-border">
+                      <div className="flex items-center space-x-3 mb-4">
+                        <Shield className="h-6 w-6 text-foreground-success" />
+                        <span className="font-semibold text-foreground text-lg">
+                          Pagamento 100% Seguro
+                        </span>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <CheckCircle className="h-4 w-4 text-foreground-success" />
-                        <span>PCI DSS Certificado</span>
-                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-foreground-muted">
+                        <div className="flex items-center space-x-2">
+                          <Lock className="h-4 w-4 text-foreground-success" />
+                          <span>Criptografia SSL 256-bit</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <CheckCircle className="h-4 w-4 text-foreground-success" />
+                          <span>PCI DSS Certificado</span>
+                        </div>
                       <div className="flex items-center space-x-2">
                         <Shield className="h-4 w-4 text-foreground-success" />
                         <span>Processado pelo Stripe</span>
@@ -208,6 +222,7 @@ const SubscriptionCheckout = () => {
                       </div>
                     </div>
                   </div>
+                  )}
 
                   <Separator />
 
@@ -215,40 +230,66 @@ const SubscriptionCheckout = () => {
                     <h3 className="font-semibold text-foreground">
                       O que acontece agora?
                     </h3>
-                    <ol className="space-y-2 text-sm text-foreground-muted">
-                      <li className="flex items-start space-x-2">
-                        <span className="font-semibold text-foreground-accent">
-                          1.
-                        </span>
-                        <span>
-                          Você será redirecionado para a página de checkout do
-                          Stripe
-                        </span>
-                      </li>
-                      <li className="flex items-start space-x-2">
-                        <span className="font-semibold text-foreground-accent">
-                          2.
-                        </span>
-                        <span>
-                          Preencha as informações do seu cartão de crédito
-                        </span>
-                      </li>
-                      <li className="flex items-start space-x-2">
-                        <span className="font-semibold text-foreground-accent">
-                          3.
-                        </span>
-                        <span>Confirme o pagamento e aguarde a aprovação</span>
-                      </li>
-                      <li className="flex items-start space-x-2">
-                        <span className="font-semibold text-foreground-accent">
-                          4.
-                        </span>
-                        <span>
-                          Após aprovação, você será redirecionado de volta ao
-                          app
-                        </span>
-                      </li>
-                    </ol>
+                    {isSoloPlan ? (
+                      <ol className="space-y-2 text-sm text-foreground-muted">
+                        <li className="flex items-start space-x-2">
+                          <span className="font-semibold text-foreground-accent">
+                            1.
+                          </span>
+                          <span>Clique no botão abaixo para ativar</span>
+                        </li>
+                        <li className="flex items-start space-x-2">
+                          <span className="font-semibold text-foreground-accent">
+                            2.
+                          </span>
+                          <span>
+                            Comece a usar imediatamente, sem necessidade de
+                            pagamento
+                          </span>
+                        </li>
+                        <li className="flex items-start space-x-2">
+                          <span className="font-semibold text-foreground-accent">
+                            3.
+                          </span>
+                          <span>Acesse agendamentos e gerencie seus horários</span>
+                        </li>
+                      </ol>
+                    ) : (
+                      <ol className="space-y-2 text-sm text-foreground-muted">
+                        <li className="flex items-start space-x-2">
+                          <span className="font-semibold text-foreground-accent">
+                            1.
+                          </span>
+                          <span>
+                            Você será redirecionado para a página de checkout do
+                            Stripe
+                          </span>
+                        </li>
+                        <li className="flex items-start space-x-2">
+                          <span className="font-semibold text-foreground-accent">
+                            2.
+                          </span>
+                          <span>
+                            Preencha as informações do seu cartão de crédito
+                          </span>
+                        </li>
+                        <li className="flex items-start space-x-2">
+                          <span className="font-semibold text-foreground-accent">
+                            3.
+                          </span>
+                          <span>Confirme o pagamento e aguarde a aprovação</span>
+                        </li>
+                        <li className="flex items-start space-x-2">
+                          <span className="font-semibold text-foreground-accent">
+                            4.
+                          </span>
+                          <span>
+                            Após aprovação, você será redirecionado de volta ao
+                            app
+                          </span>
+                        </li>
+                      </ol>
+                    )}
                   </div>
 
                   <Button
@@ -260,12 +301,23 @@ const SubscriptionCheckout = () => {
                     {isProcessing ? (
                       <div className="flex items-center space-x-2">
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-foreground-on-primary"></div>
-                        <span>Redirecionando...</span>
+                        <span>
+                          {isSoloPlan ? "Ativando..." : "Redirecionando..."}
+                        </span>
                       </div>
                     ) : (
                       <div className="flex items-center space-x-2">
-                        <Lock className="h-4 w-4" />
-                        <span>Ir para o Checkout Seguro</span>
+                        {isSoloPlan ? (
+                          <>
+                            <CheckCircle className="h-4 w-4" />
+                            <span>Ativar Plano Gratuito</span>
+                          </>
+                        ) : (
+                          <>
+                            <Lock className="h-4 w-4" />
+                            <span>Ir para o Checkout Seguro</span>
+                          </>
+                        )}
                       </div>
                     )}
                   </Button>
