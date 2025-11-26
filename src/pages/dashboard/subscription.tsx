@@ -23,7 +23,6 @@ import {
   useCancelSubscription,
   useGetSubscriptionsPlans,
 } from "@/services/subscriptions/queries";
-import { cn } from "@/utils/cn";
 import { useNavigate } from "react-router";
 import { defaultToastProps, ROUTES, WHATSAPP_WEB_LINK } from "@/constants";
 import { intervalToDuration } from "date-fns";
@@ -93,7 +92,7 @@ export default function SubscriptionPage() {
   const handlePlanChange = async (planID: number) => {
     const searchParams = new URLSearchParams({
       plan: planID.toString(),
-      establishment: establishment.id.toString(),
+      establishment: establishment.uuid,
     });
 
     navigate(`${ROUTES.DASHBOARD_SUBSCRIPTION_CHECKOUT}?${searchParams}`);
@@ -216,18 +215,19 @@ export default function SubscriptionPage() {
                         : "mês"}
                     </span>
                   </p>
-                  {!isEstablishmentCanceled && establishment.nextBillingDate && (
-                    <p className="text-sm text-foreground-muted">
-                      Próxima cobrança em{" "}
-                      {
-                        intervalToDuration({
-                          start: new Date(),
-                          end: new Date(establishment.nextBillingDate),
-                        }).days
-                      }{" "}
-                      dias
-                    </p>
-                  )}
+                  {!isEstablishmentCanceled &&
+                    establishment.nextBillingDate && (
+                      <p className="text-sm text-foreground-muted">
+                        Próxima cobrança em{" "}
+                        {
+                          intervalToDuration({
+                            start: new Date(),
+                            end: new Date(establishment.nextBillingDate),
+                          }).days
+                        }{" "}
+                        dias
+                      </p>
+                    )}
                 </div>
                 {isEstablishmentCanceled ? (
                   <X className="h-8 w-8 text-red-500" />
@@ -350,8 +350,7 @@ export default function SubscriptionPage() {
                         : "default"
                     }
                     disabled={
-                      currentPlan?.id === plan.id &&
-                      !isEstablishmentCanceled
+                      currentPlan?.id === plan.id && !isEstablishmentCanceled
                     }
                     onClick={() =>
                       enterprisePlan?.id === plan.id

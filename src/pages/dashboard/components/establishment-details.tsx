@@ -3,8 +3,6 @@ import AvatarIcon from "@/components/AvatarIcon";
 import { Separator } from "@/components/ui/separator";
 import type { EstablishmentWithDetails, PublicWorker } from "@/types";
 import { Edit2, Plus, UserPlus } from "lucide-react";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import { useUser } from "@/context/UserContext";
 import { useState } from "react";
 import EstablishmentEditModal from "./establishment-edit-modal";

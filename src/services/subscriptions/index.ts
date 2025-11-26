@@ -27,8 +27,8 @@ export const subscriptionService = {
       const response = await api.post<CreateCheckoutSessionResponseAPI>(
         `/establishment/${data.establishmentUUID}/subscription/${data.planID}`,
         {
-          successURL: data.successURL,
-          cancelURL: data.cancelURL,
+          success_url: data.successURL,
+          cancel_url: data.cancelURL,
         }
       );
 
@@ -47,8 +47,8 @@ export const subscriptionService = {
       const response = await api.patch<CreateCheckoutSessionResponseAPI>(
         `/establishment/${data.establishmentUUID}/subscription/${data.planID}`,
         {
-          successURL: data.successURL,
-          cancelURL: data.cancelURL,
+          success_url: data.successURL,
+          cancel_url: data.cancelURL,
         }
       );
 

@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import { formatMoney } from "@/utils/money";
 import { toast } from "react-toastify";
-import { defaultToastProps } from "@/constants";
+import { defaultToastProps, ROUTES } from "@/constants";
 
 const SubscriptionCheckout = () => {
   const [searchParams] = useSearchParams();
@@ -37,11 +37,19 @@ const SubscriptionCheckout = () => {
 
   const validateParams = () => {
     try {
+      const plan = searchParams.get("plan");
+      const establishment = searchParams.get("establishment");
+
+      if (!plan || !establishment) {
+        return null;
+      }
+
       return checkoutParamsSchema.parse({
-        plan: searchParams.get("plan"),
-        establishment: searchParams.get("establishment"),
+        plan,
+        establishment,
       });
-    } catch {
+    } catch (error) {
+      console.error("Invalid checkout parameters:", error);
       return null;
     }
   };
@@ -53,13 +61,7 @@ const SubscriptionCheckout = () => {
 
   useEffect(() => {
     if (!params) {
-      navigate("/dashboard/subscription", {
-        replace: true,
-        state: {
-          error: true,
-          message: "Parâmetros inválidos. Selecione um plano novamente.",
-        },
-      });
+      navigate(ROUTES.DASHBOARD_SUBSCRIPTION, { replace: true });
     }
   }, [params, navigate]);
 
@@ -212,16 +214,16 @@ const SubscriptionCheckout = () => {
                           <CheckCircle className="h-4 w-4 text-foreground-success" />
                           <span>PCI DSS Certificado</span>
                         </div>
-                      <div className="flex items-center space-x-2">
-                        <Shield className="h-4 w-4 text-foreground-success" />
-                        <span>Processado pelo Stripe</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <CheckCircle className="h-4 w-4 text-foreground-success" />
-                        <span>Proteção antifraude</span>
+                        <div className="flex items-center space-x-2">
+                          <Shield className="h-4 w-4 text-foreground-success" />
+                          <span>Processado pelo Stripe</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <CheckCircle className="h-4 w-4 text-foreground-success" />
+                          <span>Proteção antifraude</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
                   )}
 
                   <Separator />
@@ -251,7 +253,9 @@ const SubscriptionCheckout = () => {
                           <span className="font-semibold text-foreground-accent">
                             3.
                           </span>
-                          <span>Acesse agendamentos e gerencie seus horários</span>
+                          <span>
+                            Acesse agendamentos e gerencie seus horários
+                          </span>
                         </li>
                       </ol>
                     ) : (
@@ -277,7 +281,9 @@ const SubscriptionCheckout = () => {
                           <span className="font-semibold text-foreground-accent">
                             3.
                           </span>
-                          <span>Confirme o pagamento e aguarde a aprovação</span>
+                          <span>
+                            Confirme o pagamento e aguarde a aprovação
+                          </span>
                         </li>
                         <li className="flex items-start space-x-2">
                           <span className="font-semibold text-foreground-accent">
