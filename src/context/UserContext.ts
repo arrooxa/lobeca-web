@@ -182,6 +182,17 @@ export function UserProvider({ children }: UserProviderProps) {
 
       if (!data.user) throw new Error("Usuário não autenticado");
 
+      const { error: updateError } = await supabase.auth.updateUser({
+        data: {
+          display_name: userData.name,
+          name: userData.name,
+        },
+      });
+
+      if (updateError) {
+        console.warn("Erro ao atualizar metadata do usuário:", updateError);
+      }
+
       const newUser = await userService.registerUser({
         name: userData.name,
         phone: phone,
@@ -198,8 +209,7 @@ export function UserProvider({ children }: UserProviderProps) {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const register = async (_name: string, phone: string, _typeID: number) => {
+  const register = async (name: string, phone: string, typeID: number) => {
     try {
       setIsLoading(true);
 
@@ -208,6 +218,11 @@ export function UserProvider({ children }: UserProviderProps) {
         options: {
           channel: "sms",
           shouldCreateUser: true,
+          data: {
+            display_name: name,
+            name: name,
+            type_id: typeID,
+          },
         },
       });
 
