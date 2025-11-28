@@ -54,7 +54,6 @@ export default function ForBarbersPage() {
     return <div>Error loading plans</div>;
   }
 
-  // Filtra planos pelo billing interval selecionado
   const filteredPlans = plans.filter(
     (p) => p.billingInterval === billingInterval
   );
@@ -64,6 +63,24 @@ export default function ForBarbersPage() {
   const enterprisePlan = filteredPlans.find(
     (plan) => plan.maxWorkers === undefined
   );
+
+  // Dynamic grid columns based on number of plans
+  const getGridCols = (planCount: number) => {
+    if (planCount === 1) {
+      return "grid-cols-1 max-w-sm mx-auto";
+    }
+    if (planCount === 2) {
+      return "grid-cols-1 sm:grid-cols-2 max-w-4xl mx-auto";
+    }
+    if (planCount === 3) {
+      return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto";
+    }
+    if (planCount === 4) {
+      return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 max-w-7xl mx-auto";
+    }
+    // For 5+ plans, use a responsive grid that wraps nicely
+    return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 max-w-[90rem] mx-auto";
+  };
 
   function getFeatures(planName: string) {
     switch (planName) {
@@ -222,44 +239,61 @@ export default function ForBarbersPage() {
                 title: "Agendamentos Automatizados",
                 description:
                   "Sistema inteligente que gerencia horários, evita conflitos e envia lembretes automáticos aos clientes",
+                comingSoon: false,
               },
               {
                 icon: <CreditCard className="h-8 w-8 text-brand-primary" />,
                 title: "Pagamentos no App",
                 description:
                   "Receba pagamentos via PIX, cartão e dinheiro. Controle total do fluxo de caixa em tempo real",
+                comingSoon: true,
               },
               {
                 icon: <Users className="h-8 w-8 text-brand-primary" />,
                 title: "Gestão de Clientes",
                 description:
                   "Histórico completo, preferências e dados de contato. Fidelização através de promoções personalizadas",
+                comingSoon: false,
               },
               {
                 icon: <TrendingUp className="h-8 w-8 text-brand-primary" />,
                 title: "Relatórios Inteligentes",
                 description:
                   "Análise de vendas, horários de pico e performance. Tome decisões baseadas em dados reais",
+                comingSoon: true,
               },
               {
                 icon: <Smartphone className="h-8 w-8 text-brand-primary" />,
                 title: "App Mobile Completo",
                 description:
                   "Gerencie sua barbearia de qualquer lugar. Interface otimizada para celular e tablet",
+                comingSoon: true,
               },
               {
                 icon: <Shield className="h-8 w-8 text-brand-primary" />,
                 title: "Segurança Total",
                 description:
                   "Dados protegidos com criptografia. Backup automático e conformidade com LGPD",
+                comingSoon: false,
               },
             ].map((feature, index) => (
               <Card
                 key={index}
-                className="hover:shadow-lg transition-shadow border-color-border"
+                className={`hover:shadow-lg transition-shadow border-color-border ${
+                  feature.comingSoon
+                    ? "opacity-75 border-dashed bg-muted/20"
+                    : ""
+                }`}
               >
                 <CardContent className="p-6">
-                  <div className="flex justify-center mb-4">{feature.icon}</div>
+                  <div className="flex justify-center mb-4 relative">
+                    {feature.icon}
+                    {feature.comingSoon && (
+                      <span className="absolute -top-1 -right-1 text-xs text-foreground-muted bg-muted px-1.5 py-0.5 rounded-full border border-border">
+                        Em breve
+                      </span>
+                    )}
+                  </div>
                   <h3 className="text-xl font-semibold mb-3 text-center text-foreground">
                     {feature.title}
                   </h3>
@@ -307,102 +341,114 @@ export default function ForBarbersPage() {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-4 gap-8  mx-auto">
+          <div
+            className={`grid ${getGridCols(
+              filteredPlans.length
+            )} gap-6 lg:gap-8`}
+          >
             {filteredPlans.map((plan, index) => (
-              <Card
+              <div
                 key={index}
-                className={`relative border-color-border h-full ${
-                  plan.id === popularPlan?.id
-                    ? "border-brand-primary shadow-lg scale-105"
-                    : ""
+                className={`min-w-0 flex ${
+                  filteredPlans.length <= 2 ? "justify-center" : ""
                 }`}
               >
-                {plan.id === popularPlan?.id && (
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-brand-primary text-white px-3 py-1 rounded-full text-sm font-medium">
-                      Mais Popular
-                    </span>
-                  </div>
-                )}
-                <CardContent className="p-6 h-full flex flex-col">
-                  <div className="text-center mb-6">
-                    <h3 className="text-2xl font-bold mb-2 text-foreground">
-                      {plan.name}
-                    </h3>
-                    <p className="text-foreground-muted mb-4">
-                      {plan.description}
-                    </p>
-                    {enterprisePlan?.id !== plan.id && (
-                      <div>
-                        {plan.billingInterval === "annual" ? (
-                          <>
+                <Card
+                  className={`relative border-color-border h-full w-full ${
+                    filteredPlans.length <= 2 ? "max-w-sm" : ""
+                  } transition-all duration-300 ${
+                    plan.id === popularPlan?.id
+                      ? "border-brand-primary shadow-lg md:scale-105 z-10"
+                      : "hover:shadow-md hover:border-brand-primary/30"
+                  }`}
+                >
+                  {plan.id === popularPlan?.id && (
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                      <span className="bg-brand-primary text-white px-3 py-1 rounded-full text-sm font-medium">
+                        Mais Popular
+                      </span>
+                    </div>
+                  )}
+                  <CardContent className="p-6 h-full flex flex-col">
+                    <div className="text-center mb-6">
+                      <h3 className="text-2xl font-bold mb-2 text-foreground">
+                        {plan.name}
+                      </h3>
+                      <p className="text-foreground-muted mb-4">
+                        {plan.description}
+                      </p>
+                      {enterprisePlan?.id !== plan.id && (
+                        <div>
+                          {plan.billingInterval === "annual" ? (
+                            <>
+                              <div className="flex items-baseline justify-center">
+                                <span className="text-4xl font-bold text-foreground">
+                                  R${formatMoney(plan.price / 12)}
+                                </span>
+                                <span className="text-foreground-muted ml-1">
+                                  /mês
+                                </span>
+                              </div>
+                              <p className="text-sm text-foreground-muted mt-2">
+                                R${formatMoney(plan.price)} cobrados anualmente
+                              </p>
+                            </>
+                          ) : (
                             <div className="flex items-baseline justify-center">
                               <span className="text-4xl font-bold text-foreground">
-                                R${formatMoney(plan.price / 12)}
+                                R${formatMoney(plan.price)}
                               </span>
                               <span className="text-foreground-muted ml-1">
                                 /mês
                               </span>
                             </div>
-                            <p className="text-sm text-foreground-muted mt-2">
-                              R${formatMoney(plan.price)} cobrados anualmente
-                            </p>
-                          </>
-                        ) : (
-                          <div className="flex items-baseline justify-center">
-                            <span className="text-4xl font-bold text-foreground">
-                              R${formatMoney(plan.price)}
-                            </span>
-                            <span className="text-foreground-muted ml-1">
-                              /mês
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
 
-                  <ul className="space-y-3 mb-6 flex-grow">
-                    {getFeatures(plan.name).map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-center">
-                        <CheckCircle className="h-5 w-5 text-brand-primary mr-3 flex-shrink-0" />
-                        <span className="text-sm text-foreground">
-                          {feature}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
+                    <ul className="space-y-3 mb-6 flex-grow">
+                      {getFeatures(plan.name).map((feature, featureIndex) => (
+                        <li key={featureIndex} className="flex items-center">
+                          <CheckCircle className="h-5 w-5 text-brand-primary mr-3 flex-shrink-0" />
+                          <span className="text-sm text-foreground">
+                            {feature}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
 
-                  <Button
-                    className="w-full mt-auto"
-                    variant={
-                      enterprisePlan?.id === plan.id
-                        ? "outline"
-                        : plan.name === "Solo"
-                        ? "default"
-                        : "default"
-                    }
-                    size="lg"
-                    asChild
-                  >
-                    <NavLink
-                      to={
+                    <Button
+                      className="w-full mt-auto"
+                      variant={
                         enterprisePlan?.id === plan.id
-                          ? WHATSAPP_WEB_LINK
-                          : ROUTES.REGISTER
+                          ? "outline"
+                          : plan.name === "Solo"
+                          ? "default"
+                          : "default"
                       }
+                      size="lg"
+                      asChild
                     >
-                      {enterprisePlan?.id === plan.id
-                        ? "Entrar em contato"
-                        : plan.name === "Solo"
-                        ? "Começar grátis"
-                        : popularPlan?.id === plan.id
-                        ? "Começar agora"
-                        : "Começar agora"}
-                    </NavLink>
-                  </Button>
-                </CardContent>
-              </Card>
+                      <NavLink
+                        to={
+                          enterprisePlan?.id === plan.id
+                            ? WHATSAPP_WEB_LINK
+                            : ROUTES.REGISTER
+                        }
+                      >
+                        {enterprisePlan?.id === plan.id
+                          ? "Entrar em contato"
+                          : plan.name === "Solo"
+                          ? "Começar grátis"
+                          : popularPlan?.id === plan.id
+                          ? "Começar agora"
+                          : "Começar agora"}
+                      </NavLink>
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
             ))}
           </div>
         </div>
