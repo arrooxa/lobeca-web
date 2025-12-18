@@ -2,7 +2,7 @@ import { Button, Card, CardContent } from "@/components";
 import AvatarIcon from "@/components/AvatarIcon";
 import { Separator } from "@/components/ui/separator";
 import type { EstablishmentWithDetails, PublicWorker } from "@/types";
-import { Edit2, Plus, UserPlus } from "lucide-react";
+import { Edit2, Plus, Share, UserPlus } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { useState } from "react";
 import EstablishmentEditModal from "./establishment-edit-modal";
@@ -11,6 +11,7 @@ import ServiceCreateModal from "./service-create-modal";
 import ServiceEditModal from "./service-edit-modal";
 import WorkerRoleModal from "./worker-role-modal";
 import WorkerServiceAssignModal from "./worker-service-assign-modal";
+import { toast } from "react-toastify";
 
 interface EstablishmentDetailsProps {
   establishment: EstablishmentWithDetails;
@@ -104,6 +105,15 @@ const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
     setEditServiceModalOpen(true);
   };
 
+  const handleShareEstablishment = async () => {
+    const currentHost = window.location.host;
+
+    const currentUrl = `${currentHost}/estabelecimentos/${establishment.uuid}`;
+
+    await navigator.clipboard.writeText(currentUrl);
+    toast.success("Link copiado para a área de transferência!");
+  };
+
   const handleWorkerClick = (workerUUID: string) => {
     if (!isUserOwnerOrManager) return;
 
@@ -140,17 +150,28 @@ const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
                 </p>
               </div>
             </div>
-            {isUserOwnerOrManager && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-2"
-                onClick={handleEditEstablishment}
-              >
-                <Edit2 className="w-4 h-4" />
-                Editar
-              </Button>
-            )}
+            <div className="flex items-center gap-2">
+              {isUserOwnerOrManager && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                  onClick={handleEditEstablishment}
+                >
+                  <Edit2 className="w-4 h-4" />
+                  Editar
+                </Button>
+              )}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={handleShareEstablishment}
+            >
+              <Share className="w-4 h-4" />
+              Compartilhar
+            </Button>
           </div>
         </CardContent>
       </Card>
