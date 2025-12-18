@@ -75,6 +75,7 @@ const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
       photoURL: worker.photoURL,
       description: formatRole(worker.role),
       isPending: false,
+      phone: worker.phone,
     })),
     ...establishment.invites
       .filter((invite) => invite.status === "pending")
@@ -85,6 +86,7 @@ const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
         photoURL: invite.inviteePhotoURL,
         description: formatInviteStatus(invite.status),
         isPending: true,
+        phone: "",
       })),
   ];
 
@@ -110,6 +112,13 @@ const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
 
     const currentUrl = `${currentHost}/estabelecimentos/${establishment.uuid}`;
 
+    await navigator.clipboard.writeText(currentUrl);
+    toast.success("Link copiado para a área de transferência!");
+  };
+
+  const handleShareWorker = async (workerPhone: string) => {
+    const currentHost = window.location.host;
+    const currentUrl = `${currentHost}/agendar/${workerPhone}`;
     await navigator.clipboard.writeText(currentUrl);
     toast.success("Link copiado para a área de transferência!");
   };
@@ -208,6 +217,15 @@ const EstablishmentDetails = ({ establishment }: EstablishmentDetailsProps) => {
                     : ""
                 }`}
               >
+                {!person.isPending && (
+                  <Button
+                    variant="ghost"
+                    className="self-end absolute z-50"
+                    onClick={() => handleShareWorker(person.phone)}
+                  >
+                    <Share className="w-4 h-4" />
+                  </Button>
+                )}
                 <AvatarIcon
                   name={person.name}
                   photoURL={person.photoURL}
