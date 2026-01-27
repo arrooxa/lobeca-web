@@ -8,8 +8,8 @@ import { cn } from "@/utils/cn";
 import { ErrorMessage, MaskedInput } from "@/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { codeSchema, registerUserSchema } from "@/types";
-import { NavLink, useNavigate } from "react-router";
-import { ROUTES } from "@/constants";
+import { NavLink, useNavigate, useSearchParams } from "react-router";
+import { APP_SCHEME, ROUTES } from "@/constants";
 import { formatToE164 } from "@/utils/formatter";
 import { checkPhoneExists } from "@/utils/auth";
 import { useUser } from "@/context/UserContext";
@@ -24,6 +24,9 @@ type CodeFormData = {
 };
 
 const RegisterPage = () => {
+  const [searchParams] = useSearchParams();
+  const isFromApp = searchParams.get("source") === "app";
+
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedUserType, setSelectedUserType] = useState<number | null>(null);
   const [registrationData, setRegistrationData] = useState<{
@@ -63,6 +66,7 @@ const RegisterPage = () => {
       registrationData={registrationData}
       isLoading={isLoading}
       setIsLoading={setIsLoading}
+      isFromApp={isFromApp}
     />,
   ];
 
@@ -97,7 +101,7 @@ const RegisterPage = () => {
                     "h-2 rounded-full transition-all duration-300",
                     step === currentStep
                       ? "w-12 bg-brand-primary"
-                      : "w-2 bg-brand-secondary"
+                      : "w-2 bg-brand-secondary",
                   )}
                 />
               ))}
@@ -150,7 +154,7 @@ const UserTypeSelection = ({
             "group relative overflow-hidden rounded-xl border-2 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]",
             selectedUserType === 2
               ? "border-brand-primary bg-brand-primary/20 shadow-lg shadow-brand-primary/20"
-              : "border-border bg-fill-color border-brand-primary/5 shadow-md"
+              : "border-border bg-fill-color border-brand-primary/5 shadow-md",
           )}
         >
           <div className="p-6 flex items-start gap-4">
@@ -159,7 +163,7 @@ const UserTypeSelection = ({
                 "rounded-full p-3 transition-colors duration-300",
                 selectedUserType === 2
                   ? "bg-brand-primary text-foreground-on-primary"
-                  : "bg-brand-primary/10 text-foreground-on-primary group-hover:bg-brand-primary group-hover:text-foreground-on-primary"
+                  : "bg-brand-primary/10 text-foreground-on-primary group-hover:bg-brand-primary group-hover:text-foreground-on-primary",
               )}
             >
               <Scissors className="h-6 w-6" />
@@ -201,7 +205,7 @@ const UserTypeSelection = ({
             "group relative overflow-hidden rounded-xl border-2 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]",
             selectedUserType === 1
               ? "border-brand-primary bg-brand-primary/20 shadow-lg shadow-brand-primary/20"
-              : "border-border bg-fill-color border-brand-primary/5 shadow-md"
+              : "border-border bg-fill-color border-brand-primary/5 shadow-md",
           )}
         >
           <div className="p-6 flex items-start gap-4">
@@ -210,7 +214,7 @@ const UserTypeSelection = ({
                 "rounded-full p-3 transition-colors duration-300",
                 selectedUserType === 1
                   ? "bg-brand-primary text-foreground-on-primary"
-                  : "bg-brand-primary/10 text-foreground-on-primary group-hover:bg-brand-primary group-hover:text-foreground-on-primary"
+                  : "bg-brand-primary/10 text-foreground-on-primary group-hover:bg-brand-primary group-hover:text-foreground-on-primary",
               )}
             >
               <User className="h-6 w-6" />
@@ -436,6 +440,7 @@ interface CodeInputProps {
   } | null;
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
+  isFromApp?: boolean;
 }
 
 const CodeInput = ({
@@ -443,6 +448,7 @@ const CodeInput = ({
   registrationData,
   isLoading,
   setIsLoading,
+  isFromApp,
 }: CodeInputProps) => {
   const { control, handleSubmit } = useForm<CodeFormData>({
     resolver: zodResolver(codeSchema),
@@ -464,7 +470,12 @@ const CodeInput = ({
         typeID: registrationData.typeID,
       });
 
-      navigate(ROUTES.DASHBOARD, { replace: true });
+      if (isFromApp) {
+        const callbackUrl = `${ROUTES.APP_CALLBACK}?phone=${encodeURIComponent(registrationData.phone)}`;
+        navigate(callbackUrl, { replace: true });
+      } else {
+        navigate(ROUTES.DASHBOARD, { replace: true });
+      }
     } catch (error) {
       console.error("Erro ao verificar código:", error);
     } finally {

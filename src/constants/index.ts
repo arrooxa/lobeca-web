@@ -19,7 +19,10 @@ export const ROUTES = {
   DASHBOARD_SUBSCRIPTION_CHECKOUT: "/dashboard/barbearia/assinatura/checkout",
   DASHBOARD_SUBSCRIPTION_SUCCESS: "/dashboard/barbearia/assinatura/success",
   DASHBOARD_SETTINGS: "/dashboard/configuracoes",
+  APP_CALLBACK: "/app/callback",
 } as const;
+
+export const APP_SCHEME = "lobecaapp";
 
 export const TIMES = {
   DEFAULT_STALE: 300000, // 5 minutes

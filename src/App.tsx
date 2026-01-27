@@ -21,6 +21,7 @@ import AppointmentDetailPage from "./pages/dashboard/appointment-detail";
 import CreateCustomAppointmentPage from "./pages/dashboard/create-custom-appointment";
 import BookingPage from "./pages/booking";
 import SettingsPage from "./pages/dashboard/settings";
+import AppCallbackPage from "./pages/app-callback";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
       />
       <Route path={ROUTES.LOGIN} element={<Loginpage />} />
       <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
+      <Route path={ROUTES.APP_CALLBACK} element={<AppCallbackPage />} />
       <Route path={ROUTES.FOR_BARBERS} element={<ForBarbers />} />
       <Route path={ROUTES.TERMS_OF_SERVICE} element={<TermsOfService />} />
       <Route path={ROUTES.PRIVACY_POLICY} element={<PrivacyPolicy />} />

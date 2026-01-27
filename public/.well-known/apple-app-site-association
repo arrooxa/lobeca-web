@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "BVB7657YTN.com.lobeca.app",
+        "paths": ["/app/*", "/auth/*"]
+      }
+    ]
+  }
+}
