@@ -9,7 +9,7 @@ import { ErrorMessage, MaskedInput } from "@/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { codeSchema, registerUserSchema } from "@/types";
 import { NavLink, useNavigate, useSearchParams } from "react-router";
-import { APP_SCHEME, ROUTES } from "@/constants";
+import { ROUTES } from "@/constants";
 import { formatToE164 } from "@/utils/formatter";
 import { checkPhoneExists } from "@/utils/auth";
 import { useUser } from "@/context/UserContext";
