@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, Smartphone } from "lucide-react";
 import { APP_SCHEME } from "@/constants";
@@ -12,16 +11,23 @@ const AppCallbackPage = () => {
 
   const appDeepLink = `${APP_SCHEME}://auth/callback?phone=${encodeURIComponent(phone || "")}`;
 
+  const triggerDeepLink = useCallback(() => {
+    const link = document.createElement("a");
+    link.href = appDeepLink;
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }, [appDeepLink]);
+
   useEffect(() => {
     if (phone && !redirectAttempted) {
       setRedirectAttempted(true);
-      window.location.href = appDeepLink;
+      setTimeout(() => {
+        triggerDeepLink();
+      }, 500);
     }
-  }, [phone, redirectAttempted, appDeepLink]);
-
-  const handleOpenApp = () => {
-    window.location.href = appDeepLink;
-  };
+  }, [phone, redirectAttempted, triggerDeepLink]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-fill-color/30">
@@ -42,10 +48,13 @@ const AppCallbackPage = () => {
               </p>
             </div>
 
-            <Button onClick={handleOpenApp} className="w-full gap-2" size="lg">
+            <a
+              href={appDeepLink}
+              className="inline-flex items-center justify-center gap-2 w-full h-11 px-8 rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
+            >
               <Smartphone className="h-5 w-5" />
               Abrir no App
-            </Button>
+            </a>
 
             <p className="text-sm text-foreground-subtle">
               Se o app não abrir automaticamente, toque no botão acima.
