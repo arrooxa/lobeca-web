@@ -28,7 +28,7 @@ interface UserContextData {
   verifyOtpAndCreateProfile: (
     phone: string,
     otp: string,
-    userData: { name: string; typeID: number }
+    userData: { name: string; typeID: number },
   ) => Promise<void>;
   register: (name: string, phone: string, typeID: number) => Promise<void>;
   logout: () => Promise<void>;
@@ -54,40 +54,19 @@ export function UserProvider({ children }: UserProviderProps) {
   const isWorker = user?.typeID === 2;
 
   useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-        setSession(session);
-
-        if (session?.user) {
-          await loadUserProfile(session.user.id);
-        }
-      } catch (error) {
-        console.error("❌ Erro ao inicializar auth:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    initializeAuth();
-
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       setSession(session);
 
       if (session?.user) {
-        if (event === "SIGNED_IN") {
-          await loadUserProfile(session.user.id);
-        }
+        await loadUserProfile(session.user.id);
       } else {
         setUser(null);
         try {
           await deleteItemAsync(USER_PROFILE_KEY);
         } catch (error) {
-          console.error("❌ Erro ao limpar cache:", error);
+          console.error("Erro ao limpar cache:", error);
         }
       }
 
@@ -106,7 +85,6 @@ export function UserProvider({ children }: UserProviderProps) {
         const parsedProfile = JSON.parse(cachedProfile) as User;
         if (parsedProfile.supabaseID === supabaseId) {
           setUser(parsedProfile);
-          return;
         }
       }
 
@@ -117,8 +95,8 @@ export function UserProvider({ children }: UserProviderProps) {
         await setItemAsync(USER_PROFILE_KEY, JSON.stringify(userProfile));
       }
     } catch (error) {
-      console.error("❌ Erro ao carregar perfil:", error);
-      setUser(null);
+      console.error("Erro ao carregar perfil:", error);
+      if (!user) setUser(null);
     }
   };
 
@@ -167,7 +145,7 @@ export function UserProvider({ children }: UserProviderProps) {
   const verifyOtpAndCreateProfile = async (
     phone: string,
     otp: string,
-    userData: { name: string; typeID: number }
+    userData: { name: string; typeID: number },
   ) => {
     try {
       setIsLoading(true);
